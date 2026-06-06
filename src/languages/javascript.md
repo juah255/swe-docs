@@ -1,3 +1,3 @@
 # JavaScript
 
-JavaScript notes, patterns, and gotchas.
+JavaScript notes, patterns, and got
