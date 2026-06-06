@@ -1,0 +1,92 @@
+site_name: SWE Docs
+site_description: Internal software engineering documentation
+site_url: https://example.com
+
+docs_dir: src
+
+theme:
+  name: material
+  language: en
+  features:
+    - navigation.instant
+    - navigation.sections
+    - navigation.expand
+    - navigation.indexes
+    - navigation.top
+    - toc.follow
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: blue grey
+      accent: teal
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: blue grey
+      accent: teal
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - def_list
+  - footnotes
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.details
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.keys
+  - pymdownx.snippets
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+
+plugins:
+  - search
+
+extra:
+  generator: false
+
+extra_css:
+  - stylesheets/extra.css
+
+nav:
+  - Basic: basic/index.md
+  - Backend:
+      - Overview: backend/index.md
+      - APIs and Communication: backend/apis-and-communication.md
+      - Dbms: backend/dbms.md
+      - System Design: backend/system-design.md
+      - DevOps and Infrastructure: backend/devops-and-infrastructure.md
+      - Design Patterns: backend/design-patterns.md
+      - Tab 24: backend/tab-24.md
+  - Languages:
+      - Overview: languages/index.md
+      - Go: languages/go.md
+      - JavaScript: languages/javascript.md
+      - Type Script: languages/type-script.md
+      - PHP: languages/php.md
+  - AI Engineering: ai-engineering/index.md
+  - Libraries & Frameworks:
+      - Overview: libraries-frameworks/index.md
+      - NestJS: libraries-frameworks/nestjs.md
+      - Fast Api: libraries-frameworks/fast-api.md
+      - Spring boot: libraries-frameworks/spring-boot.md
+      - React: libraries-frameworks/react.md
+      - NextJS: libraries-frameworks/nextjs.md
+  - OS: os/index.md
+  - Projects:
+      - Overview: projects/index.md
+      - DoNow: projects/donow.md
+      - CourseHub: projects/coursehub.md
