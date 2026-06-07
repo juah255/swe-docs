@@ -1,0 +1,99 @@
+---
+- name: Provision VPS for SWE Docs
+  hosts: docs
+  become: true
+
+  vars:
+    deploy_user: deploy
+    web_root: /var/www/swe-docs
+    nginx_site_name: swe-docs
+    server_name: "_"
+    listen_default_server: true
+    disable_default_nginx_site: true
+    deploy_public_key: ""
+
+  tasks:
+    - name: Install required packages
+      ansible.builtin.apt:
+        name:
+          - nginx
+          - rsync
+        state: present
+        update_cache: true
+        cache_valid_time: 3600
+
+    - name: Ensure deploy user exists
+      ansible.builtin.user:
+        name: "{{ deploy_user }}"
+        shell: /bin/bash
+        create_home: true
+        state: present
+
+    - name: Ensure deploy user SSH directory exists
+      ansible.builtin.file:
+        path: "/home/{{ deploy_user }}/.ssh"
+        state: directory
+        owner: "{{ deploy_user }}"
+        group: "{{ deploy_user }}"
+        mode: "0700"
+      when: deploy_public_key | length > 0
+
+    - name: Authorize deploy SSH key
+      ansible.builtin.lineinfile:
+        path: "/home/{{ deploy_user }}/.ssh/authorized_keys"
+        line: "{{ deploy_public_key }}"
+        create: true
+        owner: "{{ deploy_user }}"
+        group: "{{ deploy_user }}"
+        mode: "0600"
+        state: present
+      when: deploy_public_key | length > 0
+
+    - name: Ensure web root exists
+      ansible.builtin.file:
+        path: "{{ web_root }}"
+        state: directory
+        owner: "{{ deploy_user }}"
+        group: www-data
+        mode: "2775"
+
+    - name: Configure Nginx site
+      ansible.builtin.template:
+        src: swe-docs.nginx.j2
+        dest: "/etc/nginx/sites-available/{{ nginx_site_name }}"
+        owner: root
+        group: root
+        mode: "0644"
+      notify: Reload nginx
+
+    - name: Disable default Nginx site
+      ansible.builtin.file:
+        path: /etc/nginx/sites-enabled/default
+        state: absent
+      when: disable_default_nginx_site
+      notify: Reload nginx
+
+    - name: Enable Nginx site
+      ansible.builtin.file:
+        src: "/etc/nginx/sites-available/{{ nginx_site_name }}"
+        dest: "/etc/nginx/sites-enabled/{{ nginx_site_name }}"
+        state: link
+      notify: Reload nginx
+
+    - name: Ensure Nginx is enabled and running
+      ansible.builtin.service:
+        name: nginx
+        enabled: true
+        state: started
+
+  handlers:
+    - name: Test nginx configuration
+      ansible.builtin.command: nginx -t
+      changed_when: false
+      listen: Reload nginx
+
+    - name: Reload nginx
+      ansible.builtin.service:
+        name: nginx
+        state: reloaded
+      listen: Reload nginx

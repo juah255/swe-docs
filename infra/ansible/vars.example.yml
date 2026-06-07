@@ -1,0 +1,8 @@
+---
+deploy_user: deploy
+web_root: /var/www/swe-docs
+server_name: "_"
+
+# Paste the public key matching the private key stored in GitHub as VPS_SSH_KEY.
+# Example: ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAA... github-actions-swe-docs
+deploy_public_key: ""
