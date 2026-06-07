@@ -61,6 +61,7 @@ extra_css:
   - stylesheets/extra.css
 
 nav:
+  - Home: index.md
   - Backend:
       - Overview: backend/index.md
       - APIs and Communication: backend/apis-and-communication.md

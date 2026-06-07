@@ -57,6 +57,26 @@
         group: www-data
         mode: "2775"
 
+    - name: Create placeholder index before first deployment
+      ansible.builtin.copy:
+        dest: "{{ web_root }}/index.html"
+        content: |
+          <!doctype html>
+          <html lang="en">
+          <head>
+            <meta charset="utf-8">
+            <title>SWE Docs</title>
+          </head>
+          <body>
+            <h1>SWE Docs</h1>
+            <p>The server is ready. The MkDocs site has not been deployed yet.</p>
+          </body>
+          </html>
+        owner: "{{ deploy_user }}"
+        group: www-data
+        mode: "0664"
+        force: false
+
     - name: Configure Nginx site
       ansible.builtin.template:
         src: swe-docs.nginx.j2

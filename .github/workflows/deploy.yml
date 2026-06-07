@@ -63,6 +63,9 @@ jobs:
           chmod 600 ~/.ssh/deploy_key
           ssh-keyscan -p "${VPS_PORT:-22}" -H "$VPS_HOST" >> ~/.ssh/known_hosts
 
+      - name: Show deploy key fingerprint
+        run: ssh-keygen -lf ~/.ssh/deploy_key
+
       - name: Sync site to VPS
         env:
           VPS_HOST: ${{ secrets.VPS_HOST }}

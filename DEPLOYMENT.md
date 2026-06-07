@@ -190,3 +190,20 @@ ssh-keygen -y -f ~/.ssh/swe-docs-deploy
 ```
 
 The output should match the line in `/home/deploy/.ssh/authorized_keys`.
+
+If the browser shows `403 Forbidden`, Nginx is running but did not find a
+readable `index.html` in the configured web root. Check the deployed files:
+
+```sh
+sudo ls -la /var/www/swe-docs
+```
+
+After a successful deploy, this directory should contain `index.html`, `assets`,
+`search`, and the generated documentation folders. If it is empty, rerun the
+GitHub Actions deployment after fixing SSH access.
+
+Also confirm Nginx is using the expected site:
+
+```sh
+sudo nginx -T | grep -A20 "server_name _"
+```
