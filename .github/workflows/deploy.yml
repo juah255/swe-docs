@@ -70,6 +70,13 @@ jobs:
           VPS_PORT: ${{ secrets.VPS_PORT }}
           VPS_USER: ${{ secrets.VPS_USER }}
         run: |
+          ssh -i ~/.ssh/deploy_key \
+            -p "${VPS_PORT:-22}" \
+            -o BatchMode=yes \
+            -o IdentitiesOnly=yes \
+            "${VPS_USER}@${VPS_HOST}" \
+            "mkdir -p '${VPS_PATH}' && test -w '${VPS_PATH}'"
+
           rsync -az --delete \
-            -e "ssh -i ~/.ssh/deploy_key -p ${VPS_PORT:-22}" \
+            -e "ssh -i ~/.ssh/deploy_key -p ${VPS_PORT:-22} -o BatchMode=yes -o IdentitiesOnly=yes" \
             site/ "${VPS_USER}@${VPS_HOST}:${VPS_PATH}/"

@@ -122,6 +122,11 @@ Install the public key for the deploy user on the VPS:
 ssh-copy-id -i ~/.ssh/swe-docs-deploy.pub deploy@YOUR_VPS_IP
 ```
 
+This only works if the `deploy` user already has password-based SSH login. If
+the `deploy` user was created by the Ansible playbook, it has no password. In
+that case, put the public key in `infra/ansible/vars.yml` and rerun the
+playbook, or install the key while logged in as `root` or another sudo user.
+
 ## GitHub secrets
 
 Add these repository secrets in GitHub under
@@ -148,3 +153,40 @@ The workflow:
 If you are using only the VPS IP, set `site_url` in `mkdocs.yml` to
 `http://YOUR_VPS_IP`. If you later add a domain and HTTPS, change it to the
 final `https://...` URL.
+
+## Troubleshooting
+
+If GitHub Actions fails with `Permission denied (publickey,password)`, SSH
+reached the VPS but the key was not accepted.
+
+First test the exact deploy key from your local machine:
+
+```sh
+ssh -i ~/.ssh/swe-docs-deploy deploy@YOUR_VPS_IP
+```
+
+If your SSH port is not `22`, include it:
+
+```sh
+ssh -i ~/.ssh/swe-docs-deploy -p YOUR_SSH_PORT deploy@YOUR_VPS_IP
+```
+
+If that local command fails, GitHub Actions will fail too. Confirm the public key
+is installed for the same user:
+
+```sh
+sudo ls -la /home/deploy/.ssh
+sudo cat /home/deploy/.ssh/authorized_keys
+sudo chown -R deploy:deploy /home/deploy/.ssh
+sudo chmod 700 /home/deploy/.ssh
+sudo chmod 600 /home/deploy/.ssh/authorized_keys
+```
+
+Confirm that the private key in GitHub secret `VPS_SSH_KEY` matches the public
+key on the VPS:
+
+```sh
+ssh-keygen -y -f ~/.ssh/swe-docs-deploy
+```
+
+The output should match the line in `/home/deploy/.ssh/authorized_keys`.
