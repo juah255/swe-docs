@@ -10,8 +10,6 @@ theme:
   features:
     - navigation.instant
     - navigation.tabs
-    - navigation.sections
-    - navigation.expand
     - navigation.indexes
     - navigation.top
     - toc.follow
@@ -63,7 +61,6 @@ extra_css:
   - stylesheets/extra.css
 
 nav:
-  - Basic: basic/index.md
   - Backend:
       - Overview: backend/index.md
       - APIs and Communication: backend/apis-and-communication.md
@@ -72,22 +69,24 @@ nav:
       - DevOps and Infrastructure: backend/devops-and-infrastructure.md
       - Design Patterns: backend/design-patterns.md
       - Tab 24: backend/tab-24.md
-  - Languages:
-      - Overview: languages/index.md
-      - Go: languages/go.md
-      - JavaScript: languages/javascript.md
-      - Type Script: languages/type-script.md
-      - PHP: languages/php.md
+      - Basic: backend/basic/index.md
+      - Languages:
+          - Go: backend/languages/go.md
+          - JavaScript: backend/languages/javascript.md
+          - Type Script: backend/languages/type-script.md
+          - PHP: backend/languages/php.md
+      - Libraries & Frameworks:
+          - NestJS: backend/libraries-frameworks/nestjs.md
+          - Fast Api: backend/libraries-frameworks/fast-api.md
+          - Spring boot: backend/libraries-frameworks/spring-boot.md
+          - React: backend/libraries-frameworks/react.md
+          - NextJS: backend/libraries-frameworks/nextjs.md
+      - OS: backend/os/index.md
+  - DevOps: devops/index.md
   - AI Engineering: ai-engineering/index.md
-  - Libraries & Frameworks:
-      - Overview: libraries-frameworks/index.md
-      - NestJS: libraries-frameworks/nestjs.md
-      - Fast Api: libraries-frameworks/fast-api.md
-      - Spring boot: libraries-frameworks/spring-boot.md
-      - React: libraries-frameworks/react.md
-      - NextJS: libraries-frameworks/nextjs.md
-  - OS: os/index.md
+  - Frontend: frontend/index.md
   - Projects:
       - Overview: projects/index.md
       - DoNow: projects/donow.md
       - CourseHub: projects/coursehub.md
+  - Resources: resources/index.md
