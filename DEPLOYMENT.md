@@ -30,6 +30,20 @@ Run the playbook:
 ansible-playbook -i infra/ansible/inventory.ini infra/ansible/provision.yml -e @infra/ansible/vars.yml
 ```
 
+If your inventory uses a non-root user with sudo access, ask Ansible for the
+sudo password:
+
+```sh
+ansible-playbook -i infra/ansible/inventory.ini infra/ansible/provision.yml -e @infra/ansible/vars.yml --ask-become-pass
+```
+
+If your VPS also requires an SSH password instead of SSH key login, ask for both
+passwords:
+
+```sh
+ansible-playbook -i infra/ansible/inventory.ini infra/ansible/provision.yml -e @infra/ansible/vars.yml --ask-pass --ask-become-pass
+```
+
 The playbook installs Nginx and rsync, creates the deploy user, creates the web
 root, adds the deploy SSH key, configures Nginx for IP-based serving, and reloads
 Nginx.
