@@ -64,7 +64,12 @@ nav:
   - Backend:
       - Overview: backend/index.md
       - APIs and Communication: backend/apis-and-communication.md
-      - Dbms: backend/dbms.md
+      - DBMS:
+          - Overview: backend/dbms/overview.md
+          - SQL: backend/dbms/sql.md
+          - Transaction: backend/dbms/transaction.md
+          - Normalization: backend/dbms/normalization.md
+          - Indexing: backend/dbms/indexing.md
       - System Design: backend/system-design.md
       - DevOps and Infrastructure: backend/devops-and-infrastructure.md
       - Design Patterns: backend/design-patterns.md
