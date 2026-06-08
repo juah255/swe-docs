@@ -71,6 +71,12 @@ nav:
           - Transaction: backend/dbms/transaction.md
           - Normalization: backend/dbms/normalization.md
           - Indexing: backend/dbms/indexing.md
+      - OOP:
+          - Overview: backend/oop/overview.md
+          - SOLID: backend/oop/solid.md
+          - Design Patterns: backend/oop/design-patterns.md
+          - Relationship: backend/oop/relationship.md
+          - Questions: backend/oop/questions.md
       - System Design: backend/system-design.md
       - DevOps and Infrastructure: backend/devops-and-infrastructure.md
       - Design Patterns: backend/design-patterns.md

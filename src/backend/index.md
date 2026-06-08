@@ -129,6 +129,7 @@ This section covers the **core backend topics** listed across the backend pages.
 
 ## Software Engineering Practices
 
+- **Object-oriented programming** (`OOP`)
 - **Design patterns**: factory, repository, strategy, observer
 - **SOLID principles**
 - **Clean architecture**
