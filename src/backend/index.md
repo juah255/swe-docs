@@ -12,6 +12,8 @@ This section covers the **core backend topics** listed across the backend pages.
 - Memory management
 - Garbage collection
 
+See the dedicated concurrency section for detailed notes and questions.
+
 ## Networking & Protocols
 
 - TCP/IP

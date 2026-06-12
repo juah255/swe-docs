@@ -7,6 +7,7 @@ Software engineering notes organized by topic.
 - [Backend](backend/index.md)
 - [DevOps](devops/index.md)
 - [AI Engineering](ai-engineering/index.md)
+- [Cyber Security](cyber-security/index.md)
 - [Frontend](frontend/index.md)
 - [Projects](projects/index.md)
 - [Resources](resources/index.md)
