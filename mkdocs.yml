@@ -106,7 +106,20 @@ nav:
           - React: backend/libraries-frameworks/react.md
           - NextJS: backend/libraries-frameworks/nextjs.md
       - OS: backend/os/index.md
-  - DevOps: devops/index.md
+  - DevOps:
+      - Overview: devops/index.md
+      - Fundamentals: devops/fundamentals.md
+      - Git and Collaboration: devops/git-and-collaboration.md
+      - Networking and Web: devops/networking-and-web.md
+      - Containers: devops/containers.md
+      - CI/CD: devops/ci-cd.md
+      - Infrastructure as Code: devops/infrastructure-as-code.md
+      - Orchestration: devops/orchestration.md
+      - Cloud Platforms: devops/cloud-platforms.md
+      - Observability: devops/observability.md
+      - Security and Secrets: devops/security-and-secrets.md
+      - Testing and Reliability: devops/testing-and-reliability.md
+      - Deployment Troubleshooting: devops/deployment-troubleshooting.md
   - AI Engineering: ai-engineering/index.md
   - Cyber Security: cyber-security/index.md
   - Frontend: frontend/index.md
