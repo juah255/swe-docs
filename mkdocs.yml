@@ -91,7 +91,6 @@ nav:
           - Relationship: backend/oop/relationship.md
           - Questions: backend/oop/questions.md
       - System Design: backend/system-design.md
-      - DevOps and Infrastructure: backend/devops-and-infrastructure.md
       - Design Patterns: backend/design-patterns.md
       - Tab 24: backend/tab-24.md
       - Basic: backend/basic/index.md
