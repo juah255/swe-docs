@@ -2,6 +2,20 @@
 
 This section covers the **core backend topics** listed across the backend pages.
 
+## Data Structures & Algorithms
+
+- Big O time and space complexity
+- Arrays and strings
+- Hash maps and sets
+- Stacks and queues
+- Trees and graphs
+- Sorting and searching
+- Recursion and backtracking
+- Sliding window and two pointers
+- Dynamic programming
+
+See the dedicated DSA section for detailed notes and examples.
+
 ## Concurrency
 
 - Threads

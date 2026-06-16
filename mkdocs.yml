@@ -64,6 +64,8 @@ nav:
   - Home: index.md
   - Backend:
       - Overview: backend/index.md
+      - DSA:
+          - Overview: backend/dsa/index.md
       - Concurrency:
           - Overview: backend/concurrency/overview.md
           - Race Condition: backend/concurrency/race-condition.md
@@ -80,6 +82,7 @@ nav:
       - DBMS:
           - Overview: backend/dbms/overview.md
           - SQL: backend/dbms/sql.md
+          - NoSQL: backend/dbms/nosql.md
           - Transaction: backend/dbms/transaction.md
           - Normalization: backend/dbms/normalization.md
           - Indexing: backend/dbms/indexing.md
