@@ -1,5 +1,9 @@
 # Design Patterns
 
+### What is dependency injection?
+
+**Dependency injection** is a design pattern where objects are provided to a class instead of the class creating them manually.
+
 ## Strategy Pattern
 
 Useful when **behavior changes based on runtime conditions**.

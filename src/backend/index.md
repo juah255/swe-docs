@@ -140,11 +140,3 @@ See the dedicated concurrency section for detailed notes and questions.
 - **Technical debt**
 
 ## Common Concepts
-
-### What is dependency injection?
-
-**Dependency injection** is a design pattern where objects are provided to a class instead of the class creating them manually.
-
-### What is ORM?
-
-**ORM** (Object Relational Mapping) maps classes or models in application code to database tables.
