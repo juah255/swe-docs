@@ -99,10 +99,12 @@ nav:
       - Tab 24: backend/tab-24.md
       - Basic: backend/basic/index.md
       - Languages:
+          - Overview: backend/languages/index.md
           - Go: backend/languages/go.md
           - JavaScript: backend/languages/javascript.md
-          - Type Script: backend/languages/type-script.md
+          - TypeScript: backend/languages/type-script.md
           - PHP: backend/languages/php.md
+          - Python: backend/languages/python.md
       - Libraries & Frameworks:
           - NestJS: backend/libraries-frameworks/nestjs.md
           - Fast Api: backend/libraries-frameworks/fast-api.md
