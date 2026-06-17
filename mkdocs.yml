@@ -111,6 +111,7 @@ nav:
           - Spring boot: backend/libraries-frameworks/spring-boot.md
           - React: backend/libraries-frameworks/react.md
           - NextJS: backend/libraries-frameworks/nextjs.md
+          - WordPress: backend/libraries-frameworks/wordpress.md
       - OS: backend/os/index.md
   - DevOps:
       - Overview: devops/index.md
