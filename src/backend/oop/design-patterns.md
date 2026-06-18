@@ -108,3 +108,38 @@ Examples:
 - Undo/redo actions
 - Audit logs
 - Retryable operations
+
+## Mid/Senior Interview Questions and Answers
+
+### 1. When should a factory be used?
+
+**Answer:** Use a factory when object creation depends on runtime input,
+configuration, or complex setup that callers should not know about.
+
+Avoid factories when a direct constructor is clear. A pattern should remove
+coupling or complexity, not add ceremony.
+
+### 2. What problem does the strategy pattern solve?
+
+**Answer:** Strategy separates interchangeable behavior behind a shared
+interface. It is useful when an algorithm or policy varies, such as payment,
+pricing, shipping, tax, or notification behavior.
+
+It replaces fragile conditional trees when new behaviors are added regularly.
+
+### 3. Why can singleton be dangerous?
+
+**Answer:** Singleton can hide global mutable state and make tests order
+dependent. It also couples callers to a specific instance lifecycle.
+
+Singleton is acceptable for immutable configuration or process-level shared
+infrastructure, but avoid it for business state.
+
+### 4. How do observer and command differ?
+
+**Answer:** Observer notifies listeners when an event happens. Command
+represents an action as an object that can be queued, retried, logged, or
+executed later.
+
+Order placement might publish an `OrderPlaced` event to observers, while a
+`SendReceiptEmailCommand` can be placed on a job queue.

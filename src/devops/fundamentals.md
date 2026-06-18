@@ -40,9 +40,42 @@ DevOps combines development and operations practices to deliver software quickly
 - Signals and process termination
 - Resource limits
 
-## Questions to Answer
+## Mid/Senior Interview Questions and Answers
 
-- What happens between entering a command and receiving its output?
-- How do you find which process is consuming CPU, memory, disk, or a port?
-- How do file permissions differ for users, groups, and others?
-- How do you inspect and restart a failed service?
+### 1. What happens between entering a command and receiving its output?
+
+**Answer:** The shell parses the command, expands variables and globs, resolves
+the executable through `PATH`, starts a process, connects standard input,
+output, and error, then waits for the process to exit unless it is backgrounded.
+
+For pipelines, the shell connects the output of one process to the input of the
+next. The final exit status and captured output depend on shell configuration
+and pipeline behavior.
+
+### 2. How do you find which process is consuming CPU, memory, disk, or a port?
+
+**Answer:** Use `top` or `htop` for CPU and memory, `ps` for process details,
+`du` and `df` for disk usage, `iotop` or service metrics for disk I/O, and `ss
+-ltnp` or `lsof -i` to identify listening ports.
+
+Senior-level debugging correlates process data with logs, deployment changes,
+traffic, and resource limits instead of treating one command output as the full
+answer.
+
+### 3. How do file permissions differ for users, groups, and others?
+
+**Answer:** Unix permissions are evaluated for the file owner, group, and
+others. Read, write, and execute bits control access, while ownership and group
+membership determine which permission set applies.
+
+For directories, execute means traversal. A user may be unable to access a file
+if they lack execute permission on a parent directory.
+
+### 4. How do you inspect and restart a failed service?
+
+**Answer:** With `systemd`, inspect status with `systemctl status`, logs with
+`journalctl -u`, and configuration with the unit file and environment files.
+After fixing the cause, reload configuration if needed and restart the service.
+
+Avoid blind restarts in production. First capture the failure state, recent
+logs, exit code, resource usage, and dependency status.

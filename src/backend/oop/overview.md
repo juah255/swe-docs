@@ -76,3 +76,42 @@ All notification types can be handled as `Notification`.
 - Using inheritance where composition is simpler
 - Exposing internal state directly
 - Mixing business logic, database logic, and HTTP logic in the same class
+
+## Mid/Senior Interview Questions and Answers
+
+### 1. How do you know when OOP is helping rather than adding ceremony?
+
+**Answer:** OOP helps when objects represent stable domain concepts, protect
+invariants, and give clear collaboration boundaries. It becomes ceremony when
+classes only wrap simple functions without improving clarity, testability, or
+change isolation.
+
+Senior engineers choose object boundaries around behavior and ownership, not
+only around nouns.
+
+### 2. Why is encapsulation important in business code?
+
+**Answer:** Encapsulation prevents invalid state changes by exposing controlled
+methods instead of raw mutable fields.
+
+For example, an `Order` should not allow arbitrary status assignment if only
+certain transitions are legal. Methods such as `pay()`, `ship()`, and
+`cancel()` can enforce those rules.
+
+### 3. When should inheritance be avoided?
+
+**Answer:** Avoid inheritance when the relationship is not a true substitutable
+`is-a` relationship or when behavior needs to vary independently at runtime.
+
+Composition is usually better for roles, permissions, strategies, integrations,
+and optional behavior because it avoids fragile base classes and deep
+hierarchies.
+
+### 4. What makes an object easy to test?
+
+**Answer:** It has clear dependencies, minimal hidden global state, deterministic
+behavior, and focused responsibilities. Dependencies should be injected so tests
+can use fakes or mocks without reaching real databases or external services.
+
+Good OOP design makes important behavior testable without requiring the whole
+application to boot.

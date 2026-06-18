@@ -154,3 +154,48 @@ See the dedicated concurrency section for detailed notes and questions.
 - **Technical debt**
 
 ## Common Concepts
+
+- Idempotency
+- Backpressure
+- Rate limiting
+- Pagination
+- Data consistency
+- Fault tolerance
+- Graceful degradation
+- Dependency management
+- Operational readiness
+
+## Mid/Senior Interview Questions and Answers
+
+### 1. What distinguishes a senior backend answer from a basic one?
+
+**Answer:** A senior answer connects implementation choices to trade-offs:
+correctness, scale, latency, cost, security, operability, and failure behavior.
+
+For example, "use Redis" is basic. A stronger answer explains cache strategy,
+invalidation, TTLs, failure mode, stampede protection, and consistency impact.
+
+### 2. How do you design an idempotent backend operation?
+
+**Answer:** Define a stable idempotency key, store request outcome, make writes
+conditional, and ensure retries return the same result instead of creating
+duplicates.
+
+Payments, order creation, message processing, and webhook handling should often
+be idempotent.
+
+### 3. How do you protect a backend service from dependency failure?
+
+**Answer:** Use timeouts, retries with backoff, circuit breakers, bulkheads,
+caching, queues, graceful degradation, and clear fallback behavior.
+
+Retries must be bounded and safe. Unbounded retries can amplify an outage.
+
+### 4. How do you decide what to move to a background job?
+
+**Answer:** Move work off the request path when it is slow, retryable,
+non-critical for the immediate response, or dependent on unreliable external
+systems.
+
+Keep synchronous only what the user must know before continuing. Design jobs
+with idempotency and observability.

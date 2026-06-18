@@ -169,3 +169,48 @@ An ORM helps application code work with relational databases through models and
 objects. It improves productivity and consistency, but it does not remove the
 need to understand SQL, relationships, transactions, indexes, and query
 performance.
+
+## Mid/Senior Interview Questions and Answers
+
+### 1. What problem does an ORM solve?
+
+**Answer:** An ORM maps database tables and relationships to application models,
+reducing repetitive SQL for common CRUD operations and relationship handling.
+
+It improves productivity, but it does not remove the need to understand SQL,
+indexes, transactions, and query plans.
+
+### 2. What is the N+1 query problem?
+
+**Answer:** N+1 happens when code loads a list of records and then lazily loads
+related data one record at a time. A single endpoint can accidentally issue
+hundreds of queries.
+
+Fix it with eager loading, joins, batch loading, dataloaders, or explicit query
+design.
+
+### 3. When should raw SQL be preferred over ORM queries?
+
+**Answer:** Use raw SQL for complex reports, performance-critical queries,
+bulk operations, database-specific features, and queries that the ORM expresses
+poorly.
+
+Keep raw SQL parameterized and tested. It should be an intentional escape hatch,
+not scattered string concatenation.
+
+### 4. Why should database constraints still be used with an ORM?
+
+**Answer:** ORM validation can be bypassed by bugs, scripts, concurrent
+requests, or other services. Database constraints protect integrity at the final
+write boundary.
+
+Use not-null constraints, unique constraints, foreign keys, checks, and
+transactions for important invariants.
+
+### 5. What should be reviewed before running ORM migrations in production?
+
+**Answer:** Review generated SQL, locking behavior, data backfill cost, index
+creation strategy, rollback plan, and compatibility with currently deployed
+application versions.
+
+Destructive schema changes should usually be split across multiple deployments.

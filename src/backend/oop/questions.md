@@ -87,3 +87,39 @@ Implementations:
 - `PushSender`
 
 The caller uses the same method, but the behavior changes by implementation.
+
+## Mid/Senior Interview Questions and Answers
+
+### 1. How would you refactor a large service class?
+
+**Answer:** First identify separate reasons to change: validation, business
+rules, persistence, external integrations, notifications, and formatting. Then
+extract cohesive collaborators with clear interfaces.
+
+Do not split randomly by method count. Split around responsibilities and test
+the current behavior before refactoring risky code.
+
+### 2. How do you model domain invariants in OOP?
+
+**Answer:** Put invariants close to the data they protect. A domain object can
+expose methods that enforce legal transitions instead of allowing arbitrary
+field mutation.
+
+Database constraints should still enforce critical invariants at persistence
+boundaries.
+
+### 3. How do interfaces help in large systems?
+
+**Answer:** Interfaces define contracts between modules and let high-level code
+depend on behavior instead of concrete infrastructure.
+
+They are most useful at boundaries that change or need substitution, such as
+payment gateways, repositories, queues, storage, and external APIs.
+
+### 4. What is the risk of overusing design patterns?
+
+**Answer:** Overusing patterns can create unnecessary indirection, more files,
+harder debugging, and code that is abstract before requirements justify it.
+
+Senior engineers use patterns when they make change easier, not to make code
+look more formal.

@@ -118,3 +118,50 @@ In an e-commerce system:
 ## Serverless Architecture
 
 **Serverless architecture** is a way to run backend code where the cloud provider manages the servers and your code runs only when triggered.
+
+## Mid/Senior Interview Questions and Answers
+
+### 1. How should you start a system design interview?
+
+**Answer:** Start by clarifying functional requirements, non-functional
+requirements, scale, data model, core APIs, and constraints. Do not jump into
+databases or diagrams before understanding the problem.
+
+The first few minutes should reduce ambiguity: users, actions, data, traffic,
+latency, availability, consistency, and failure expectations.
+
+### 2. How do you decide between monolith and microservices?
+
+**Answer:** A monolith is often better for small teams, early products, and
+strongly coupled domains. Microservices are useful when independent scaling,
+deployment, ownership, or fault isolation justifies distributed-system
+complexity.
+
+Microservices add network failures, data consistency problems, observability
+needs, deployment coordination, and operational overhead.
+
+### 3. How do you design a rate limiter?
+
+**Answer:** Common algorithms include fixed window, sliding window, token
+bucket, and leaky bucket. Choose based on fairness, burst tolerance, storage
+cost, and distributed accuracy.
+
+For production, define the key, limit, window, response behavior, storage
+backend, consistency needs, and how limits differ by user, IP, route, or plan.
+
+### 4. What belongs on the critical path?
+
+**Answer:** Only operations that must complete before the user receives the
+response belong on the critical path. Everything else is a candidate for async
+processing.
+
+For checkout, inventory reservation and payment authorization may be critical.
+Sending marketing email should not be.
+
+### 5. When is serverless a good fit?
+
+**Answer:** Serverless fits event-driven workloads, spiky traffic, scheduled
+jobs, lightweight APIs, and teams that benefit from managed scaling.
+
+It is less ideal for long-running jobs, low-latency workloads sensitive to cold
+starts, heavy local state, or systems needing deep runtime control.

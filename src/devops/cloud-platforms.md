@@ -31,9 +31,43 @@ Learn the shared concepts behind cloud providers before memorizing individual se
 - **Google Cloud**: Compute Engine, GKE, Cloud Run, Cloud Storage, Cloud SQL, VPC, IAM, and Cloud Monitoring
 - **Azure**: Virtual Machines, AKS, Container Apps, Blob Storage, Azure SQL, Virtual Network, Entra ID, and Azure Monitor
 
-## Questions to Answer
+## Mid/Senior Interview Questions and Answers
 
-- How do regions and availability zones affect application design?
-- When should an application use virtual machines, containers, or serverless compute?
-- How do security groups and network access control lists differ?
-- How would you estimate and monitor the cost of a workload?
+### 1. How do regions and availability zones affect application design?
+
+**Answer:** Regions affect latency, compliance, disaster recovery, and data
+residency. Availability zones affect fault tolerance within a region.
+
+For production systems, deploy critical components across multiple zones when
+the availability target justifies it. Multi-region designs are more complex and
+should be reserved for strict latency, resilience, or regulatory needs.
+
+### 2. When should an application use virtual machines, containers, or serverless compute?
+
+**Answer:** Use virtual machines when you need OS-level control, legacy runtime
+support, or predictable long-running workloads. Use containers when you need
+portable packaging, repeatable deployments, and better orchestration. Use
+serverless when workloads are event-driven, spiky, and can fit within platform
+limits.
+
+Senior trade-off: serverless reduces infrastructure management but can increase
+cold-start, observability, local testing, and vendor lock-in concerns.
+
+### 3. How do security groups and network ACLs differ?
+
+**Answer:** Security groups usually apply to resources such as instances or
+interfaces and are commonly stateful. Network ACLs usually apply at the subnet
+boundary and are commonly stateless.
+
+Use security groups for service-level access control and network ACLs for coarse
+subnet-level rules. Exact behavior depends on the cloud provider.
+
+### 4. How would you estimate and monitor workload cost?
+
+**Answer:** Estimate cost from compute size and runtime, storage volume, data
+transfer, managed service pricing, logging volume, backup retention, and support
+costs. Then tag resources by owner, service, and environment so spending can be
+attributed.
+
+In production, use budgets, alerts, dashboards, anomaly detection, and regular
+review of idle or oversized resources.

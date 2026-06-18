@@ -195,3 +195,49 @@ NoSQL databases provide alternatives to relational storage models. They are
 useful for flexible schemas, distributed scale, caching, documents, events, and
 graphs. The main trade-off is that the application often takes on more
 responsibility for relationships, constraints, and consistency.
+
+## Mid/Senior Interview Questions and Answers
+
+### 1. How do you choose between SQL and NoSQL?
+
+**Answer:** Choose SQL when relationships, constraints, joins, transactions, and
+ad hoc querying are central. Choose NoSQL when the data model and access
+patterns fit documents, key-value lookups, wide-column writes, graphs, caching,
+or distributed scale.
+
+The decision should come from workload and consistency requirements, not from
+the idea that NoSQL is automatically more scalable.
+
+### 2. Why is NoSQL data modeling driven by query patterns?
+
+**Answer:** Many NoSQL systems do not provide flexible joins or arbitrary
+queries like relational databases. Data is often stored in the shape needed for
+fast reads or writes.
+
+That means you design from access patterns: keys, partitions, sort order,
+embedded data, duplication, and consistency requirements.
+
+### 3. What is eventual consistency?
+
+**Answer:** Eventual consistency means replicas or duplicated data may not show
+the latest write immediately, but they should converge if no new updates occur.
+
+Applications using eventual consistency must handle stale reads, conflict
+resolution, retries, and user experience around delayed visibility.
+
+### 4. What are common NoSQL partition-key mistakes?
+
+**Answer:** Common mistakes include choosing a low-cardinality key, creating hot
+partitions, ignoring query patterns, and using keys that make important reads
+require scans.
+
+Good partition keys distribute load while supporting the most important access
+patterns.
+
+### 5. When should duplicated NoSQL data be avoided?
+
+**Answer:** Avoid duplication when data must be strongly consistent everywhere,
+when update fan-out is large, or when the team lacks a reliable mechanism to
+repair inconsistencies.
+
+Duplication is a performance tool, not free storage design.

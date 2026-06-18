@@ -44,9 +44,44 @@ Infrastructure as code (`IaC`) makes infrastructure changes reviewable, repeatab
 - Apply from a controlled environment
 - Record outputs and monitor for drift
 
-## Questions to Answer
+## Mid/Senior Interview Questions and Answers
 
-- What is the difference between provisioning and configuration management?
-- Why must Terraform state be protected and locked?
-- What makes an Ansible task idempotent?
-- How should development, staging, and production infrastructure differ?
+### 1. What is the difference between provisioning and configuration management?
+
+**Answer:** Provisioning creates or changes infrastructure resources such as
+networks, servers, databases, and load balancers. Configuration management
+installs packages, writes config files, manages services, and prepares those
+resources to run workloads.
+
+Terraform is commonly used for provisioning. Ansible is commonly used for
+configuration management, though the boundary can vary by team.
+
+### 2. Why must Terraform state be protected and locked?
+
+**Answer:** Terraform state maps configuration to real resources and may contain
+sensitive outputs. If state is lost, corrupted, or exposed, infrastructure
+changes become risky and secrets may leak.
+
+Locking prevents two applies from changing the same infrastructure at once.
+Remote state with encryption, access control, backups, and locking is standard
+for production.
+
+### 3. What makes an Ansible task idempotent?
+
+**Answer:** An idempotent task can run repeatedly and leave the system in the
+same desired state without unnecessary changes. For example, using a package
+module to ensure a package is present is idempotent; running a raw install
+command every time may not be.
+
+Idempotency makes automation safe for repeated deployments, recovery, and drift
+correction.
+
+### 4. How should development, staging, and production infrastructure differ?
+
+**Answer:** They should be structurally similar enough to catch deployment
+issues, but scaled and protected according to risk. Production usually has
+stricter access control, backups, monitoring, high availability, and change
+approval.
+
+Avoid hidden manual differences. Use variables, modules, and environment
+configuration to express intentional differences in code.

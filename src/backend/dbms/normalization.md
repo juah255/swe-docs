@@ -174,3 +174,50 @@ A common memory aid is:
 Normalization improves data integrity, but highly normalized databases may
 require more joins. In read-heavy systems, selective **denormalization** may be
 used when measured performance needs justify the additional redundancy.
+
+## Mid/Senior Interview Questions and Answers
+
+### 1. Why is normalization important?
+
+**Answer:** Normalization reduces duplicated facts and prevents insertion,
+update, and deletion anomalies. It helps keep data consistent by storing each
+fact in the right place.
+
+In production systems, normalization also makes constraints and ownership easier
+to reason about.
+
+### 2. When is denormalization a good idea?
+
+**Answer:** Denormalization is useful when measured read performance,
+simplified queries, or reporting needs justify storing duplicate or derived
+data.
+
+It should come with a consistency strategy: transactions, background rebuilds,
+event processing, materialized views, or clear tolerance for stale data.
+
+### 3. How do you explain 1NF, 2NF, and 3NF in an interview?
+
+**Answer:** `1NF` means columns contain atomic values and rows are identifiable.
+`2NF` means non-key attributes depend on the whole composite key. `3NF` means
+non-key attributes do not depend on other non-key attributes.
+
+The practical summary is: each fact should be stored once and depend on the
+right key.
+
+### 4. How does normalization interact with application performance?
+
+**Answer:** Normalization can increase joins, which may affect read-heavy
+queries. However, poor schema design can create much worse problems through
+inconsistent data and expensive cleanup.
+
+Start normalized for correctness, measure real query patterns, then denormalize
+specific hot paths when needed.
+
+### 5. What mistakes do teams make with normalization?
+
+**Answer:** Common mistakes include over-normalizing simple read models,
+under-normalizing core transactional data, ignoring constraints, and
+denormalizing without a plan to keep duplicated data correct.
+
+Senior design separates transactional schemas from read-optimized projections
+when the workload needs both.

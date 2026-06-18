@@ -84,3 +84,40 @@ This makes it easier to test `OrderService` and replace Stripe with another prov
 - **L**: child classes must behave like their parent
 - **I**: keep interfaces small and focused
 - **D**: depend on abstractions, not concrete classes
+
+## Mid/Senior Interview Questions and Answers
+
+### 1. How do you apply single responsibility without creating too many classes?
+
+**Answer:** A responsibility is a reason to change, not a requirement that every
+method needs its own class. Split code when changes come from different sources,
+such as pricing rules, persistence, notification, and authorization.
+
+Keep cohesive behavior together. Avoid both giant service classes and tiny
+classes that hide simple flow.
+
+### 2. How does the open/closed principle apply to payment methods?
+
+**Answer:** Define a `PaymentMethod` or `PaymentGateway` abstraction and add new
+implementations for card, mobile wallet, or bank transfer. The checkout flow can
+depend on the abstraction instead of editing a large conditional every time.
+
+This works well when the extension points are stable. Do not over-abstract
+before the variation is real.
+
+### 3. What is a real Liskov Substitution Principle violation?
+
+**Answer:** A subclass violates LSP when it cannot safely be used anywhere the
+parent is expected. For example, a read-only repository subclass that throws on
+`save()` breaks callers expecting a writable repository.
+
+The fix is usually a better abstraction, smaller interface, or composition.
+
+### 4. Why does dependency inversion improve testability?
+
+**Answer:** Business logic depending on abstractions can be tested with fake
+implementations instead of real databases, payment gateways, queues, or HTTP
+clients.
+
+It also makes production code more flexible because infrastructure choices can
+change without rewriting core business behavior.

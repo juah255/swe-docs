@@ -30,9 +30,38 @@ Git is the foundation for source control, code review, automated delivery, and i
 - Signed commits and tags
 - Hooks and automated policy checks
 
-## Questions to Answer
+## Mid/Senior Interview Questions and Answers
 
-- What is the difference between `git merge` and `git rebase`?
-- When should a commit be reverted instead of reset?
-- How do protected branches improve delivery safety?
-- How would you recover a deleted branch or lost commit?
+### 1. What is the difference between `git merge` and `git rebase`?
+
+**Answer:** `merge` combines histories by creating a merge commit, preserving
+the original branch structure. `rebase` rewrites commits onto a new base,
+creating a linear history with new commit hashes.
+
+Use rebase for local cleanup before sharing. Be careful rebasing shared branches
+because it rewrites history that others may already depend on.
+
+### 2. When should a commit be reverted instead of reset?
+
+**Answer:** Use `revert` when the bad commit has already been pushed or shared.
+It creates a new commit that undoes the change without rewriting public history.
+
+Use `reset` only for local history cleanup or when the team explicitly agrees to
+rewrite a branch.
+
+### 3. How do protected branches improve delivery safety?
+
+**Answer:** Protected branches enforce review, required checks, signed commits,
+linear history, deployment gates, or restricted write access. They reduce the
+chance that unreviewed or unvalidated code reaches critical branches.
+
+They are most effective when paired with fast CI and clear ownership rules, so
+developers do not bypass process to keep work moving.
+
+### 4. How would you recover a deleted branch or lost commit?
+
+**Answer:** Use `git reflog` to find recent branch tips and checkout or recreate
+the branch from the commit hash. If the branch was pushed, the remote or another
+developer's clone may also still have it.
+
+The key is to act before unreachable commits are garbage-collected.

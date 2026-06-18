@@ -172,3 +172,48 @@ DSA is not only for interviews. It helps backend engineers choose efficient
 storage, caching, indexing, queueing, search, and scheduling strategies. The
 goal is not to memorize every algorithm, but to understand the trade-offs well
 enough to choose the right tool for the problem.
+
+## Mid/Senior Interview Questions and Answers
+
+### 1. How do you explain Big O in backend terms?
+
+**Answer:** Big O describes how runtime or memory grows as input size grows. In
+backend systems, this affects endpoint latency, batch job duration, memory
+usage, database query cost, and cache behavior.
+
+An `O(n^2)` operation may pass tests with 100 records and fail badly with
+100,000 records.
+
+### 2. When would you use a hash map?
+
+**Answer:** Use a hash map for fast key-based lookup, deduplication, grouping,
+frequency counting, and cache-like access.
+
+The average case is usually `O(1)`, but memory usage, hash quality, and key
+design still matter.
+
+### 3. Why are queues important in backend systems?
+
+**Answer:** Queues decouple producers from consumers, smooth traffic spikes, and
+move slow work off the synchronous request path.
+
+Senior design must handle retries, dead-letter queues, idempotency, ordering,
+visibility timeouts, and backpressure.
+
+### 4. Where do trees and graphs appear in real systems?
+
+**Answer:** Trees appear in indexes, filesystems, routing, DOM structures, and
+priority queues. Graphs appear in social networks, recommendations, dependency
+resolution, fraud detection, and service topology.
+
+Knowing traversal trade-offs helps with search, authorization inheritance, and
+dependency analysis.
+
+### 5. How do you approach an algorithm problem in an interview?
+
+**Answer:** Clarify inputs and constraints, start with a correct simple
+solution, analyze complexity, identify the bottleneck, improve the data
+structure or algorithm, and test edge cases.
+
+Explain trade-offs as you go. Senior interviews care about reasoning, not only
+the final code.

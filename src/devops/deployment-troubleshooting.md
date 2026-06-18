@@ -39,8 +39,44 @@ Troubleshoot deployments from the outside in: confirm the symptom, trace the req
 - Disk, memory, and CPU usage
 - Database and external-service connectivity
 
-## Deployment Troubleshooting Questions
+## Mid/Senior Interview Questions and Answers
 
-- The app is working on your local machine, but after deploying it to the server it is not working. How would you debug it?
-- What environment differences can break an application after deployment?
-- How do you verify environment variables, ports, DNS, SSL, file permissions, and process configuration on a server?
+### 1. The app works locally but fails after deployment. How would you debug it?
+
+**Answer:** Start from the user-visible symptom and trace the request path:
+DNS, TLS, load balancer, reverse proxy, application process, database, cache,
+queues, and external services.
+
+Check recent changes, deployment status, health checks, application logs,
+container logs, environment variables, secrets, migrations, file permissions,
+ports, and runtime versions. If impact is high, mitigate or roll back before
+continuing deep diagnosis.
+
+### 2. What environment differences commonly break deployed applications?
+
+**Answer:** Common differences include missing environment variables, wrong
+runtime versions, different dependency versions, filesystem case sensitivity,
+network restrictions, unavailable services, incorrect secrets, unapplied
+migrations, and different build-time versus runtime configuration.
+
+Senior engineers reduce this risk with containerization, lockfiles, deployment
+manifests, environment parity, smoke tests, and explicit configuration checks.
+
+### 3. How do you verify ports, DNS, TLS, and proxy configuration?
+
+**Answer:** Use `dig` or `nslookup` for DNS, `curl -v` for HTTP/TLS behavior,
+`openssl s_client` for certificates, `ss` or `netstat` for listening ports, and
+proxy logs to confirm upstream routing.
+
+Test each hop directly where possible. A failing public URL does not prove the
+application process is broken; the problem may be DNS, certificate, firewall,
+proxy, or load balancer configuration.
+
+### 4. When should you roll back instead of continuing to debug?
+
+**Answer:** Roll back or mitigate when the user impact exceeds the acceptable
+recovery window and the cause is not immediately clear. Debugging during an
+active outage should be balanced against service restoration.
+
+After recovery, preserve logs and deployment metadata so the team can identify
+the cause and prevent recurrence.

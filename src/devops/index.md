@@ -31,3 +31,37 @@ Follow these topics in order when learning DevOps from the beginning:
 ## Reference
 
 - <https://chatgpt.com/share/6a0b5f39-d084-8323-b2fc-b16d1fb7884c>
+
+## Mid/Senior Interview Questions and Answers
+
+### 1. What is DevOps really trying to improve?
+
+**Answer:** DevOps improves the flow from code change to reliable production
+operation. It focuses on automation, ownership, feedback, observability,
+repeatable delivery, and reducing handoff friction.
+
+It is not only tools. Tools support the operating model.
+
+### 2. What should a senior engineer care about in a deployment pipeline?
+
+**Answer:** Correctness checks, artifact integrity, reproducibility, secrets
+handling, environment promotion, approvals, rollback, observability, and audit
+history.
+
+A pipeline should make safe releases boring and failed releases recoverable.
+
+### 3. How do you measure operational maturity?
+
+**Answer:** Look at deployment frequency, lead time, change failure rate, mean
+time to recovery, incident quality, alert noise, runbook coverage, and how often
+manual steps or tribal knowledge are required.
+
+Metrics should guide improvement, not become vanity numbers.
+
+### 4. How do you reduce production risk?
+
+**Answer:** Use small changes, automated tests, staging validation, feature
+flags, canary or rolling deployments, health checks, fast rollback, monitoring,
+and incident reviews.
+
+Risk is reduced by both technical safeguards and team process discipline.
