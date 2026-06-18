@@ -1,6 +1,6 @@
 site_name: SWE Docs
 site_description: Internal software engineering documentation
-site_url: https://example.com
+site_url: https://swe-docs.ideacraft.dev
 
 docs_dir: src
 

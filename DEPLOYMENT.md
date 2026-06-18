@@ -1,133 +1,24 @@
 # Deployment
 
-This repository builds a static MkDocs site and deploys the generated `site/`
-directory to a VPS with GitHub Actions.
+This repository builds a static MkDocs site and deploys it as the `swe-docs`
+Docker app on the shared VPS.
 
-## Automated VPS setup
-
-Use the Ansible playbook in `infra/ansible` to automate the VPS setup.
-
-Install Ansible on your local machine:
+The VPS is provisioned from:
 
 ```sh
-python3 -m pip install --user ansible
+/home/kali/repositories/vps-setup
 ```
 
-Create local config files from the examples:
+That setup defines the production app as:
 
-```sh
-cp infra/ansible/inventory.example.ini infra/ansible/inventory.ini
-cp infra/ansible/vars.example.yml infra/ansible/vars.yml
-```
+| Field | Value |
+| --- | --- |
+| Domain | `swe-docs.ideacraft.dev` |
+| Type | Docker app behind host Nginx |
+| Server path | `/opt/apps/swe-docs` |
+| Host port | `127.0.0.1:8081` from the server-managed `.env` |
 
-Edit `infra/ansible/inventory.ini` and replace `YOUR_VPS_IP` with your VPS IP.
-Edit `infra/ansible/vars.yml` and paste the deploy public key into
-`deploy_public_key`.
-
-Run the playbook:
-
-```sh
-ansible-playbook -i infra/ansible/inventory.ini infra/ansible/provision.yml -e @infra/ansible/vars.yml
-```
-
-If your inventory uses a non-root user with sudo access, ask Ansible for the
-sudo password:
-
-```sh
-ansible-playbook -i infra/ansible/inventory.ini infra/ansible/provision.yml -e @infra/ansible/vars.yml --ask-become-pass
-```
-
-If your VPS also requires an SSH password instead of SSH key login, ask for both
-passwords:
-
-```sh
-ansible-playbook -i infra/ansible/inventory.ini infra/ansible/provision.yml -e @infra/ansible/vars.yml --ask-pass --ask-become-pass
-```
-
-The playbook installs Nginx and rsync, creates the deploy user, creates the web
-root, adds the deploy SSH key, configures Nginx for IP-based serving, and reloads
-Nginx.
-
-## Manual VPS setup
-
-Create a deployment user:
-
-```sh
-sudo adduser --disabled-password --gecos "" deploy
-```
-
-Create the web root and allow the deployment user to write to it:
-
-```sh
-sudo mkdir -p /var/www/swe-docs
-sudo chown -R deploy:www-data /var/www/swe-docs
-sudo chmod -R 775 /var/www/swe-docs
-```
-
-Install Nginx and rsync:
-
-```sh
-sudo apt update
-sudo apt install -y nginx rsync
-```
-
-Add an Nginx server block. If you are serving the site directly from the VPS
-IP address, use `default_server`:
-
-```nginx
-server {
-    listen 80 default_server;
-    listen [::]:80 default_server;
-    server_name _;
-
-    root /var/www/swe-docs;
-    index index.html;
-
-    location / {
-        try_files $uri $uri/ =404;
-    }
-}
-```
-
-Enable it:
-
-```sh
-sudo ln -s /etc/nginx/sites-available/swe-docs /etc/nginx/sites-enabled/swe-docs
-sudo nginx -t
-sudo systemctl reload nginx
-```
-
-If you later add a domain, change `server_name _;` to your domain and update
-the `listen` lines if this should no longer be the default site.
-
-For HTTPS with a domain, point DNS at the VPS and issue a certificate with
-Certbot:
-
-```sh
-sudo apt install -y certbot python3-certbot-nginx
-sudo certbot --nginx -d docs.example.com
-```
-
-## SSH key
-
-Generate a dedicated deploy key on your local machine:
-
-```sh
-ssh-keygen -t ed25519 -C "github-actions-swe-docs" -f ~/.ssh/swe-docs-deploy
-```
-
-Install the public key for the deploy user on the VPS:
-
-```sh
-ssh-copy-id -i ~/.ssh/swe-docs-deploy.pub deploy@YOUR_VPS_IP
-```
-
-This only works if the `deploy` user already has password-based SSH login. If
-the `deploy` user was created by the Ansible playbook, it has no password. In
-that case, put the public key in `infra/ansible/vars.yml` and rerun the
-playbook, or install the key while logged in as `root` or another sudo user.
-
-## GitHub secrets
+## GitHub Secrets
 
 Add these repository secrets in GitHub under
 `Settings -> Secrets and variables -> Actions`:
@@ -135,75 +26,77 @@ Add these repository secrets in GitHub under
 | Secret | Value |
 | --- | --- |
 | `VPS_HOST` | VPS IP address or hostname |
-| `VPS_USER` | `deploy` |
-| `VPS_PATH` | `/var/www/swe-docs` |
-| `VPS_SSH_KEY` | Contents of `~/.ssh/swe-docs-deploy` |
-| `VPS_PORT` | SSH port, optional; defaults to `22` |
+| `VPS_SSH_KEY` | Private key matching the deploy public key in `vps-setup/vars.yml` |
+| `VPS_USER` | Optional; defaults to `deploy` |
+| `VPS_PORT` | Optional; defaults to `22` |
 
-## Deployment flow
+`VPS_PATH` is no longer used. The production path comes from the VPS setup and
+is fixed in the workflow as `/opt/apps/swe-docs`.
+
+## Deployment Flow
 
 Every push to `main` runs `.github/workflows/deploy.yml`.
 
 The workflow:
 
 1. Installs Python dependencies from `requirements.txt`.
-2. Runs `mkdocs build --strict`.
-3. Uploads the generated `site/` directory to `VPS_PATH` with `rsync --delete`.
+2. Runs `mkdocs build --strict` as a CI validation step.
+3. Rsyncs the project files to `/opt/apps/swe-docs`.
+4. Preserves the server-managed `/opt/apps/swe-docs/.env`.
+5. Runs `docker compose up -d --build --remove-orphans` on the VPS.
 
-If you are using only the VPS IP, set `site_url` in `mkdocs.yml` to
-`http://YOUR_VPS_IP`. If you later add a domain and HTTPS, change it to the
-final `https://...` URL.
+The Docker image builds the MkDocs site in a Python build stage and serves the
+generated files with Nginx.
+
+## VPS Requirements
+
+Before deploying, run the Ansible playbook in `/home/kali/repositories/vps-setup`
+so the server has:
+
+- the `deploy` user with the GitHub Actions public key;
+- Docker Engine and the Compose plugin;
+- `/opt/apps/swe-docs` owned by the deploy user;
+- `/opt/apps/swe-docs/.env` containing `PORT=127.0.0.1:8081`;
+- host Nginx proxying `swe-docs.ideacraft.dev` to `127.0.0.1:8081`.
+
+## Manual Deployment
+
+For a manual deploy, run this from the repository root:
+
+```sh
+rsync -az --delete \
+  --exclude .env \
+  --exclude .git/ \
+  --exclude .github/ \
+  --exclude infra/ansible/inventory.ini \
+  --exclude infra/ansible/vars.yml \
+  --exclude site/ \
+  --exclude venv/ \
+  --exclude __pycache__/ \
+  ./ deploy@YOUR_VPS_IP:/opt/apps/swe-docs/
+
+ssh deploy@YOUR_VPS_IP \
+  'cd /opt/apps/swe-docs && docker compose up -d --build --remove-orphans'
+```
 
 ## Troubleshooting
 
 If GitHub Actions fails with `Permission denied (publickey,password)`, SSH
-reached the VPS but the key was not accepted.
+reached the VPS but the key was not accepted. Confirm that the private key in
+`VPS_SSH_KEY` matches the public key in the VPS setup repo's `deploy_public_key`
+value.
 
-First test the exact deploy key from your local machine:
+If the workflow fails because `/opt/apps/swe-docs/.env` is missing, rerun the
+VPS setup playbook. The workflow intentionally does not create or overwrite that
+file because it is managed by the server provisioning.
 
-```sh
-ssh -i ~/.ssh/swe-docs-deploy deploy@YOUR_VPS_IP
-```
-
-If your SSH port is not `22`, include it:
-
-```sh
-ssh -i ~/.ssh/swe-docs-deploy -p YOUR_SSH_PORT deploy@YOUR_VPS_IP
-```
-
-If that local command fails, GitHub Actions will fail too. Confirm the public key
-is installed for the same user:
+If the site is unreachable but the deploy succeeded, check the container and
+host proxy:
 
 ```sh
-sudo ls -la /home/deploy/.ssh
-sudo cat /home/deploy/.ssh/authorized_keys
-sudo chown -R deploy:deploy /home/deploy/.ssh
-sudo chmod 700 /home/deploy/.ssh
-sudo chmod 600 /home/deploy/.ssh/authorized_keys
+ssh deploy@YOUR_VPS_IP 'cd /opt/apps/swe-docs && docker compose ps'
+ssh deploy@YOUR_VPS_IP 'curl -I http://127.0.0.1:8081'
 ```
 
-Confirm that the private key in GitHub secret `VPS_SSH_KEY` matches the public
-key on the VPS:
-
-```sh
-ssh-keygen -y -f ~/.ssh/swe-docs-deploy
-```
-
-The output should match the line in `/home/deploy/.ssh/authorized_keys`.
-
-If the browser shows `403 Forbidden`, Nginx is running but did not find a
-readable `index.html` in the configured web root. Check the deployed files:
-
-```sh
-sudo ls -la /var/www/swe-docs
-```
-
-After a successful deploy, this directory should contain `index.html`, `assets`,
-`search`, and the generated documentation folders. If it is empty, rerun the
-GitHub Actions deployment after fixing SSH access.
-
-Also confirm Nginx is using the expected site:
-
-```sh
-sudo nginx -T | grep -A20 "server_name _"
-```
+On the VPS, Nginx should terminate HTTPS for `swe-docs.ideacraft.dev` and proxy
+traffic to the loopback Docker port.

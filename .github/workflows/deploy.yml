@@ -1,4 +1,4 @@
-name: Deploy MkDocs site
+name: Deploy SWE Docs
 
 on:
   push:
@@ -7,8 +7,11 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: deploy-docs-production
+  group: deploy-swe-docs-production
   cancel-in-progress: true
+
+env:
+  APP_PATH: /opt/apps/swe-docs
 
 jobs:
   build-and-deploy:
@@ -38,12 +41,10 @@ jobs:
       - name: Validate deployment secrets
         env:
           VPS_HOST: ${{ secrets.VPS_HOST }}
-          VPS_PATH: ${{ secrets.VPS_PATH }}
           VPS_SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
-          VPS_USER: ${{ secrets.VPS_USER }}
         run: |
           missing=0
-          for name in VPS_HOST VPS_PATH VPS_SSH_KEY VPS_USER; do
+          for name in VPS_HOST VPS_SSH_KEY; do
             if [ -z "${!name}" ]; then
               echo "::error::$name is not configured"
               missing=1
@@ -66,20 +67,45 @@ jobs:
       - name: Show deploy key fingerprint
         run: ssh-keygen -lf ~/.ssh/deploy_key
 
-      - name: Sync site to VPS
+      - name: Sync project to VPS
         env:
           VPS_HOST: ${{ secrets.VPS_HOST }}
-          VPS_PATH: ${{ secrets.VPS_PATH }}
           VPS_PORT: ${{ secrets.VPS_PORT }}
           VPS_USER: ${{ secrets.VPS_USER }}
         run: |
+          deploy_user="${VPS_USER:-deploy}"
+          ssh_target="${deploy_user}@${VPS_HOST}"
+          ssh_cmd="ssh -i ~/.ssh/deploy_key -p ${VPS_PORT:-22} -o BatchMode=yes -o IdentitiesOnly=yes"
+
           ssh -i ~/.ssh/deploy_key \
             -p "${VPS_PORT:-22}" \
             -o BatchMode=yes \
             -o IdentitiesOnly=yes \
-            "${VPS_USER}@${VPS_HOST}" \
-            "mkdir -p '${VPS_PATH}' && test -w '${VPS_PATH}'"
+            "$ssh_target" \
+            "mkdir -p '${APP_PATH}' && test -w '${APP_PATH}'"
 
           rsync -az --delete \
-            -e "ssh -i ~/.ssh/deploy_key -p ${VPS_PORT:-22} -o BatchMode=yes -o IdentitiesOnly=yes" \
-            site/ "${VPS_USER}@${VPS_HOST}:${VPS_PATH}/"
+            --exclude '.env' \
+            --exclude '.git/' \
+            --exclude '.github/' \
+            --exclude 'infra/ansible/inventory.ini' \
+            --exclude 'infra/ansible/vars.yml' \
+            --exclude 'site/' \
+            --exclude 'venv/' \
+            --exclude '__pycache__/' \
+            -e "$ssh_cmd" \
+            ./ "$ssh_target:${APP_PATH}/"
+
+      - name: Rebuild and restart container
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_PORT: ${{ secrets.VPS_PORT }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+        run: |
+          deploy_user="${VPS_USER:-deploy}"
+          ssh -i ~/.ssh/deploy_key \
+            -p "${VPS_PORT:-22}" \
+            -o BatchMode=yes \
+            -o IdentitiesOnly=yes \
+            "${deploy_user}@${VPS_HOST}" \
+            "if [ ! -f '${APP_PATH}/.env' ]; then echo 'Missing ${APP_PATH}/.env. Run the vps-setup Ansible playbook before deploying.'; exit 1; fi; cd '${APP_PATH}' && docker compose up -d --build --remove-orphans && docker compose ps"

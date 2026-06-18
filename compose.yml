@@ -1,0 +1,8 @@
+services:
+  web:
+    image: swe-docs:latest
+    build:
+      context: .
+    restart: unless-stopped
+    ports:
+      - "${PORT:-127.0.0.1:8081}:80"

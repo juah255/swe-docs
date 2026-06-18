@@ -1,7 +1,10 @@
-venv/
-site/
-__pycache__/
-.DS_Store
+.git/
+.github/
 .env
+site/
+venv/
+__pycache__/
+*.pyc
+.DS_Store
 infra/ansible/inventory.ini
 infra/ansible/vars.yml
