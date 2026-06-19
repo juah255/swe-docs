@@ -1,6 +1,45 @@
-# Fast Api
+# FastAPI
 
 FastAPI patterns, routing conventions, and service examples.
+
+## Core Concepts
+
+### What is FastAPI?
+
+FastAPI is a lightweight Python framework for building APIs. It is built on top
+of Starlette and Pydantic.
+
+- **Starlette** handles the web/server layer, including routing, requests,
+  responses, middleware, WebSockets, and background tasks.
+- **Pydantic** handles data validation, parsing, and serialization.
+
+### What is Starlette?
+
+Starlette is a lightweight ASGI web framework used to build async web
+applications in Python.
+
+ASGI means **Asynchronous Server Gateway Interface**. It is a standard interface
+that connects Python web applications with async web servers.
+
+An async web server can handle many requests efficiently by not waiting idly
+while one request is doing slow I/O work, such as database queries, HTTP calls,
+or file operations.
+
+### What is `Depends()`?
+
+`Depends()` is FastAPI's dependency injection mechanism. It allows routes to
+reuse logic such as database sessions, authentication, permission checks, or
+common query parameters.
+
+### FastAPI vs Django
+
+FastAPI is lightweight and mainly focused on APIs. Django is a full-stack
+framework with a built-in ORM, admin panel, authentication, forms, and
+templating.
+
+FastAPI is often a strong fit for high-performance APIs and microservices.
+Django is often a strong fit when a product benefits from built-in full-stack
+features and convention-heavy application structure.
 
 ## Mid/Senior Interview Questions and Answers
 

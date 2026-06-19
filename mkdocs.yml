@@ -107,7 +107,7 @@ nav:
           - Python: backend/languages/python.md
       - Libraries & Frameworks:
           - NestJS: backend/libraries-frameworks/nestjs.md
-          - Fast Api: backend/libraries-frameworks/fast-api.md
+          - FastAPI: backend/libraries-frameworks/fast-api.md
           - Spring boot: backend/libraries-frameworks/spring-boot.md
           - React: backend/libraries-frameworks/react.md
           - NextJS: backend/libraries-frameworks/nextjs.md
