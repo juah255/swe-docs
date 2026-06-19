@@ -59,7 +59,8 @@ Uses **last in, first out** (`LIFO`) ordering.
 Common uses:
 
 - function call stack;
-- undo operations;
+- browser back button history;
+- undo and redo operations;
 - parsing;
 - depth-first search.
 
@@ -69,7 +70,8 @@ Uses **first in, first out** (`FIFO`) ordering.
 
 Common uses:
 
-- job queues;
+- support ticket handling;
+- background job processing;
 - request processing;
 - breadth-first search;
 - message handling.
