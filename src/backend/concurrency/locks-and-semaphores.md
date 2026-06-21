@@ -2,6 +2,8 @@
 
 ## Lock / Mutex
 
+A mutex (Mutual Exclusion) is a synchronization mechanism used to ensure that only one thread or process can access a shared resource at a time.
+
 A **lock** or **mutex** allows only one worker at a time to enter a critical section.
 
 Use a mutex when shared data must be protected from concurrent modification.
