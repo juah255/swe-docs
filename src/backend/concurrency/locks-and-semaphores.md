@@ -8,6 +8,13 @@ A **lock** or **mutex** allows only one worker at a time to enter a critical sec
 
 Use a mutex when shared data must be protected from concurrent modification.
 
+Common examples:
+
+- updating a shared counter
+- writing to a shared file
+- modifying an in-memory cache
+- updating inventory or order state inside one worker process
+
 ## Semaphore
 
 A **semaphore** controls access to a limited number of resources.
@@ -27,6 +34,85 @@ Example:
 ## Critical Section
 
 A **critical section** is the part of the code that accesses shared resources and must be protected.
+
+## Lock Scope
+
+Mutexes and semaphores are usually application synchronization primitives, but
+their enforcement may be backed by the operating system.
+
+| Lock type | Scope | Typical use |
+| --- | --- | --- |
+| In-process mutex | Threads or tasks inside one process | Protect shared memory in one application process |
+| OS-backed process lock | Multiple processes on one machine | Coordinate file writes or shared memory |
+| Database lock | Transactions across application instances | Protect rows, tables, or database invariants |
+| Distributed lock | Multiple machines or services | Coordinate work through Redis, etcd, ZooKeeper, or similar systems |
+
+A normal in-memory mutex in one process is not visible to another process.
+Cross-process coordination needs a lock object managed by the OS, a database, or
+an external coordination service.
+
+## Thread vs Process Mutex in Python
+
+Threads in one process share memory, so they can coordinate with the same
+`threading.Lock` object:
+
+```py
+import threading
+
+counter = 0
+lock = threading.Lock()
+
+def increment():
+    global counter
+
+    for _ in range(100_000):
+        with lock:
+            counter += 1
+
+threads = [
+    threading.Thread(target=increment),
+    threading.Thread(target=increment),
+]
+
+for thread in threads:
+    thread.start()
+
+for thread in threads:
+    thread.join()
+
+print(counter)  # 200000
+```
+
+Separate processes do not share normal process memory. Use shared memory plus an
+OS-backed lock:
+
+```py
+from multiprocessing import Lock, Process, Value
+
+counter = Value("i", 0)
+lock = Lock()
+
+def increment():
+    for _ in range(100_000):
+        with lock:
+            counter.value += 1
+
+processes = [
+    Process(target=increment),
+    Process(target=increment),
+]
+
+for process in processes:
+    process.start()
+
+for process in processes:
+    process.join()
+
+print(counter.value)  # 200000
+```
+
+Without the process lock, both processes can read and write the shared value at
+the same time, so the final count can be lower than expected.
 
 ## Mid/Senior Interview Questions and Answers
 
@@ -64,3 +150,13 @@ database, Redis, ZooKeeper, or etcd.
 Distributed locks are harder because they must handle timeouts, process crashes,
 network partitions, and ownership expiry. Prefer database constraints or
 idempotent design when they solve the problem.
+
+### 5. Can a mutex protect multiple processes?
+
+**Answer:** Yes, but only if the mutex is backed by something all processes can
+coordinate through, such as the operating system, shared memory, a database, or a
+distributed lock service.
+
+Threads can share an in-memory mutex because they live inside the same process.
+Separate processes have separate memory spaces, so a mutex stored only in one
+process cannot protect another process.

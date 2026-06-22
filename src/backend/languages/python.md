@@ -12,6 +12,11 @@ production service design.
 **Answer:** The `GIL` is a lock in CPython that allows only one thread to
 execute Python bytecode at a time.
 
+CPython uses the `GIL` to simplify memory management and protect interpreter
+internals while Python objects are being accessed or modified. The `GIL` is
+process-local: each Python process has its own interpreter state and its own
+`GIL`.
+
 Impact:
 
 - threads can help with I/O-bound work;
@@ -21,6 +26,13 @@ Impact:
 
 The `GIL` does not mean Python cannot handle concurrent I/O. It means CPU-bound
 parallelism needs different design choices.
+
+| Workload | Good choice | Why |
+| --- | --- | --- |
+| Blocking I/O | Threads | The `GIL` is released during many I/O waits. |
+| High-concurrency I/O | `asyncio` | Many waits can overlap in one event loop. |
+| CPU-bound Python code | Processes | Each process has its own `GIL` and can run on another core. |
+| CPU-heavy native code | Native extensions | Libraries such as NumPy can release the `GIL` during heavy work. |
 
 ### 2. When should you use threads, processes, or `asyncio`?
 
