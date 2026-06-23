@@ -1,49 +1,60 @@
 # Cyber Security
 
-Cyber security notes organized by topic.
+Cyber security is the practice of protecting applications, infrastructure,
+data, users, and delivery systems from misuse, compromise, and accidental
+exposure.
 
-- csrf
-- CORS (Cross Origin Resource Sharing)
+For software engineers, security is not a separate phase. It affects design,
+implementation, deployment, operations, dependency management, and incident
+response.
 
-## Mid/Senior Interview Questions and Answers
+## Learning Path
 
-### 1. What is CSRF?
+Follow these topics in order when learning cyber security for software
+engineering:
 
-**Answer:** Cross-site request forgery tricks a logged-in browser into sending a
-state-changing request to a site where the user is authenticated.
+1. [Security Fundamentals](fundamentals.md): risk, threat, vulnerability,
+   controls, least privilege, and defense in depth.
+2. [Web Security](web-security.md): browser security, XSS, CSRF, CORS, cookies,
+   headers, and content security policy.
+3. [Authentication and Sessions](authentication-and-sessions.md): login,
+   passwords, MFA, sessions, cookies, JWTs, OAuth, and OIDC.
+4. [Authorization and Access Control](authorization-and-access-control.md):
+   RBAC, ABAC, object-level authorization, tenancy, and permission checks.
+5. [Injection and Input Validation](injection-and-input-validation.md): SQL
+   injection, command injection, SSRF, path traversal, and validation.
+6. [Cryptography Basics](cryptography-basics.md): hashing, encryption,
+   signatures, TLS, password hashing, and key handling.
+7. [Secrets and Key Management](secrets-and-key-management.md): credentials,
+   environment variables, vaults, rotation, and leakage prevention.
+8. [Secure API Design](secure-api-design.md): API authentication, rate limits,
+   request validation, idempotency, pagination, and abuse resistance.
+9. [Network Security](network-security.md): firewalls, TLS, VPNs, segmentation,
+   private networking, and zero trust basics.
+10. [Cloud and Container Security](cloud-and-container-security.md): IAM,
+    storage policies, container images, Kubernetes, and runtime controls.
+11. [Dependency and Supply Chain Security](dependency-and-supply-chain.md):
+    package risk, lockfiles, SBOMs, signing, CI/CD, and build integrity.
+12. [Logging, Monitoring, and Incident Response](logging-monitoring-incident-response.md):
+    audit logs, alerts, detection, triage, containment, and post-incident
+    reviews.
+13. [Threat Modeling](threat-modeling.md): assets, actors, trust boundaries,
+    attack paths, and mitigations.
+14. [Security Testing](security-testing.md): code review, SAST, DAST,
+    dependency scanning, penetration testing, and regression tests.
 
-Defenses include `SameSite` cookies, CSRF tokens, checking origin or referer for
-sensitive requests, and avoiding unsafe state changes through `GET`.
+## Suggested Practice
 
-### 2. What is CORS, and what does it not protect?
+- Add CSRF protection to a form-based web application.
+- Fix an insecure direct object reference by enforcing object-level access
+  control.
+- Convert unsafe SQL string concatenation to parameterized queries.
+- Add secure cookie flags and review session lifetime behavior.
+- Create a basic threat model for a file-upload feature.
+- Add dependency scanning to a CI pipeline.
+- Write an incident runbook for leaked credentials.
 
-**Answer:** CORS controls whether browser JavaScript from one origin can read
-responses from another origin. It is enforced by browsers.
+## Interview Preparation
 
-CORS is not authentication, authorization, or server-to-server protection.
-Postman, curl, and backend services are not blocked by browser CORS rules.
-
-### 3. How do you prevent XSS?
-
-**Answer:** Escape output by context, sanitize rich HTML, avoid unsafe DOM APIs,
-use framework-safe rendering defaults, validate input, and apply a restrictive
-content security policy where practical.
-
-Storing untrusted input safely is not enough. Output must be encoded for the
-specific context where it appears.
-
-### 4. How do you prevent SQL injection?
-
-**Answer:** Use parameterized queries, prepared statements, query builders, or
-ORM APIs that bind values safely. Never concatenate untrusted input into SQL.
-
-Database permissions should also be least-privilege so one injection does not
-become full database compromise.
-
-### 5. What is the difference between hashing and encryption?
-
-**Answer:** Hashing is one-way and used for integrity or password verification.
-Encryption is reversible with a key and used for confidentiality.
-
-Passwords should be hashed with a password-hashing algorithm and per-password
-salt, not encrypted for later recovery.
+Use [Cyber Security Questions](questions.md) for mid/senior interview questions
+and answers.

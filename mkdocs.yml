@@ -146,7 +146,23 @@ nav:
       - Deployment: ai-engineering/deployment.md
       - MLOps and LLMOps: ai-engineering/mlops-and-llmops.md
       - Questions: ai-engineering/questions.md
-  - Cyber Security: cyber-security/index.md
+  - Cyber Security:
+      - Overview: cyber-security/index.md
+      - Fundamentals: cyber-security/fundamentals.md
+      - Web Security: cyber-security/web-security.md
+      - Authentication and Sessions: cyber-security/authentication-and-sessions.md
+      - Authorization and Access Control: cyber-security/authorization-and-access-control.md
+      - Injection and Input Validation: cyber-security/injection-and-input-validation.md
+      - Cryptography Basics: cyber-security/cryptography-basics.md
+      - Secrets and Key Management: cyber-security/secrets-and-key-management.md
+      - Secure API Design: cyber-security/secure-api-design.md
+      - Network Security: cyber-security/network-security.md
+      - Cloud and Container Security: cyber-security/cloud-and-container-security.md
+      - Dependency and Supply Chain: cyber-security/dependency-and-supply-chain.md
+      - Logging, Monitoring, and Incident Response: cyber-security/logging-monitoring-incident-response.md
+      - Threat Modeling: cyber-security/threat-modeling.md
+      - Security Testing: cyber-security/security-testing.md
+      - Questions: cyber-security/questions.md
   - Frontend: frontend/index.md
   - Projects:
       - Overview: projects/index.md
