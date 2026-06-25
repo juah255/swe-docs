@@ -84,6 +84,7 @@ nav:
           - SQL: backend/dbms/sql.md
           - NoSQL: backend/dbms/nosql.md
           - Transaction: backend/dbms/transaction.md
+          - Concurrency Control: backend/dbms/concurrency-control.md
           - Normalization: backend/dbms/normalization.md
           - Indexing: backend/dbms/indexing.md
           - ORM: backend/dbms/orm.md
