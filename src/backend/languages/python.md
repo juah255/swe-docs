@@ -5,6 +5,12 @@ learning systems, and scripting. Mid-level and senior interviews usually focus
 on runtime behavior, concurrency, typing, memory, packaging, testing, and
 production service design.
 
+**GIL**: It is a mutex in CPython that allows only one thread to execute Python bytecode at a time.
+
+**Asyncio**:It is python library that enables concurrent execution of I/O-bound tasks on a single thread using an event loop and coroutines.
+
+**Coroutine:** It is a special function that can pause its execution and later resume from the same point.
+
 ## Questions and Answers
 
 ### 1. What is the Global Interpreter Lock (`GIL`)?
