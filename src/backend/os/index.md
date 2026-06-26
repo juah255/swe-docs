@@ -1,6 +1,55 @@
-# OS
+# Operating Systems
 
-Operating system notes, shell commands, and environment setup references.
+An **operating system (OS)** is the layer between application code and hardware.
+For backend engineers it matters because almost every production problem —
+latency spikes, memory pressure, connection limits, crashes under load — is
+ultimately the OS reacting to how your service uses resources.
+
+## What an OS Does
+
+The kernel manages the shared resources of a machine and arbitrates access
+between competing processes:
+
+- **Process management**: creating, scheduling, and tearing down processes and
+  threads.
+- **Memory management**: giving each process a private virtual address space and
+  mapping it to physical memory.
+- **File and I/O management**: exposing files, sockets, pipes, and devices
+  through a uniform interface.
+- **CPU scheduling**: deciding which runnable thread gets the CPU next.
+- **Protection and isolation**: enforcing permissions and keeping processes from
+  corrupting each other.
+
+## Kernel Space vs User Space
+
+The OS splits execution into two privilege levels:
+
+- **Kernel space** runs the kernel with full hardware access.
+- **User space** runs your application code with restricted access.
+
+Application code cannot touch hardware directly. When it needs a privileged
+operation — open a file, send bytes on a socket, allocate memory — it asks the
+kernel through a **system call**.
+
+```text
+your code  ->  read()  ->  [user/kernel boundary]  ->  kernel reads disk/socket
+```
+
+System calls are not free. Crossing the user/kernel boundary costs CPU cycles,
+which is why high-throughput servers batch I/O and avoid making one syscall per
+byte.
+
+## Subtopics
+
+- [Processes and Threads](processes-and-threads.md) — units of execution, IPC,
+  and concurrency.
+- [Memory Management](memory-management.md) — virtual memory, paging, leaks, and
+  the OOM killer.
+- [CPU Scheduling](scheduling.md) — how the kernel shares the CPU and what that
+  means for latency.
+- [File Systems and I/O](file-systems-and-io.md) — files, descriptors,
+  permissions, and I/O models.
+- [OS Questions](questions.md) — a quick Q&A reference.
 
 ## Mid/Senior Interview Questions and Answers
 
@@ -36,11 +85,3 @@ OS map virtual addresses to physical memory or swap.
 
 It improves isolation and memory management, but excessive memory pressure can
 cause paging, latency spikes, or out-of-memory kills.
-
-### 5. How do permissions affect deployed applications?
-
-**Answer:** File ownership and permissions determine whether a service can read
-configuration, write logs, execute binaries, bind ports, or access volumes.
-
-Run services with least privilege and avoid using root unless the workload
-requires it.

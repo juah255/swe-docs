@@ -64,8 +64,13 @@ nav:
   - Home: index.md
   - Backend:
       - Overview: backend/index.md
+      - Basic: backend/basic/index.md
       - DSA:
           - Overview: backend/dsa/index.md
+          - Complexity Analysis: backend/dsa/complexity.md
+          - Data Structures: backend/dsa/data-structures.md
+          - Algorithms: backend/dsa/algorithms.md
+          - Questions: backend/dsa/questions.md
       - Concurrency:
           - Overview: backend/concurrency/overview.md
           - Race Condition: backend/concurrency/race-condition.md
@@ -95,10 +100,18 @@ nav:
           - Design Patterns: backend/oop/design-patterns.md
           - Relationship: backend/oop/relationship.md
           - Questions: backend/oop/questions.md
-      - System Design: backend/system-design.md
-      - Design Patterns: backend/design-patterns.md
-      - Tab 24: backend/tab-24.md
-      - Basic: backend/basic/index.md
+      - System Design:
+          - Overview: backend/system-design/index.md
+          - Requirements: backend/system-design/requirements.md
+          - Scalability: backend/system-design/scalability.md
+          - Microservices: backend/system-design/microservices.md
+          - Questions: backend/system-design/questions.md
+      - Design Patterns:
+          - Overview: backend/design-patterns/index.md
+          - Creational: backend/design-patterns/creational.md
+          - Structural: backend/design-patterns/structural.md
+          - Behavioral: backend/design-patterns/behavioral.md
+          - Questions: backend/design-patterns/questions.md
       - Languages:
           - Overview: backend/languages/index.md
           - Go: backend/languages/go.md
@@ -113,7 +126,13 @@ nav:
           - React: backend/libraries-frameworks/react.md
           - NextJS: backend/libraries-frameworks/nextjs.md
           - WordPress: backend/libraries-frameworks/wordpress.md
-      - OS: backend/os/index.md
+      - OS:
+          - Overview: backend/os/index.md
+          - Processes and Threads: backend/os/processes-and-threads.md
+          - Memory Management: backend/os/memory-management.md
+          - CPU Scheduling: backend/os/scheduling.md
+          - File Systems and I/O: backend/os/file-systems-and-io.md
+          - Questions: backend/os/questions.md
   - DevOps:
       - Overview: devops/index.md
       - Fundamentals: devops/fundamentals.md
