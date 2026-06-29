@@ -81,6 +81,7 @@ nav:
       - APIs and Communication:
           - Overview: backend/apis-and-communication/index.md
           - HTTP and REST: backend/apis-and-communication/http-and-rest.md
+          - WebSockets: backend/apis-and-communication/websockets.md
           - Auth and Tokens: backend/apis-and-communication/auth-and-tokens.md
           - API Architecture: backend/apis-and-communication/api-architecture.md
           - Questions: backend/apis-and-communication/questions.md

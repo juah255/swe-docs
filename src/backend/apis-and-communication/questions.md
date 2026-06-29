@@ -90,3 +90,44 @@ access.
 
 The service should not know SQL details, and the repository should not decide
 business rules such as whether an order can be cancelled after shipment.
+
+### 11. What is a WebSocket?
+
+**Answer:** A WebSocket is a long-lived, full-duplex connection between a client
+and server. After an HTTP upgrade handshake, both sides can send messages over
+the same connection.
+
+WebSockets are useful for chat, live notifications, presence, collaboration,
+multiplayer features, and dashboards where the server needs to push updates
+without waiting for a new HTTP request.
+
+### 12. How is WebSocket different from normal HTTP?
+
+**Answer:** Normal HTTP is request/response: the client sends a request and the
+server returns a response. A WebSocket stays open, so either side can send
+messages at any time.
+
+The trade-off is operational complexity. WebSockets need connection lifecycle
+handling, heartbeats, backpressure, reconnect logic, and infrastructure support
+for long-lived upgraded connections.
+
+### 13. When should you use WebSocket instead of polling or SSE?
+
+**Answer:** Use WebSockets when communication must be low-latency and
+bidirectional. Use polling for simple occasional updates, long polling when
+compatibility matters, and Server-Sent Events (`SSE`) when updates only need to
+flow from server to browser.
+
+For example, a stock ticker or notification stream may work well with SSE, but
+a chat app or collaborative editor usually benefits from WebSockets.
+
+### 14. What should be considered when scaling WebSockets?
+
+**Answer:** WebSocket servers are stateful because each open connection lives on
+a specific server instance. A horizontally scaled system usually needs load
+balancer upgrade support, sensible idle timeouts, graceful connection draining,
+and shared pub/sub for cross-instance message delivery.
+
+Sticky sessions can reduce routing complexity, but they do not replace a proper
+broadcast or pub/sub strategy when users connected to different instances need
+to receive the same event.

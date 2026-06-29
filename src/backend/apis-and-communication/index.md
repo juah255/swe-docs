@@ -3,6 +3,7 @@
 This section covers core backend communication concepts:
 
 - HTTP methods and REST basics
+- WebSockets and real-time communication
 - Authentication and authorization
 - JWT, access tokens, and refresh tokens
 - Middleware, controllers, services, and repositories
