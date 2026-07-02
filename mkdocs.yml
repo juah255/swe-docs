@@ -113,6 +113,14 @@ nav:
           - Structural: backend/design-patterns/structural.md
           - Behavioral: backend/design-patterns/behavioral.md
           - Questions: backend/design-patterns/questions.md
+      - Software Architecture:
+          - Overview: backend/software-architecture/index.md
+          - Architectural Styles: backend/software-architecture/architectural-styles.md
+          - Building Blocks: backend/software-architecture/building-blocks.md
+          - Principles: backend/software-architecture/principles.md
+          - Domain-Driven Design: backend/software-architecture/domain-driven-design.md
+          - Quality Attributes: backend/software-architecture/quality-attributes.md
+          - Questions: backend/software-architecture/questions.md
       - Languages:
           - Overview: backend/languages/index.md
           - Go: backend/languages/go.md
