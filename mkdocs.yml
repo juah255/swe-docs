@@ -106,6 +106,7 @@ nav:
           - Requirements: backend/system-design/requirements.md
           - Scalability: backend/system-design/scalability.md
           - Microservices: backend/system-design/microservices.md
+          - Multi-Tenancy: backend/system-design/multi-tenancy.md
           - Questions: backend/system-design/questions.md
       - Design Patterns:
           - Overview: backend/design-patterns/index.md
