@@ -2,6 +2,96 @@
 
 NestJS architecture notes, module conventions, and examples.
 
+## Core Concepts
+
+### What is NestJS?
+
+NestJS is a progressive Node.js framework for building server-side applications.
+It is built on top of Express (default) or Fastify and uses TypeScript by
+default.
+
+It borrows ideas from Angular such as modules, decorators, and dependency
+injection, which makes application structure predictable across teams.
+
+### Modules
+
+A module groups related controllers and providers into a cohesive unit. Every
+Nest application has at least one root module.
+
+```ts
+@Module({
+  imports: [UsersModule],
+  controllers: [AppController],
+  providers: [AppService],
+})
+export class AppModule {}
+```
+
+Modules can import other modules and export providers to make them available
+elsewhere. Only exported providers can be injected outside the module that
+declares them.
+
+### Controllers and Providers
+
+Controllers handle incoming requests and return responses to the client.
+Providers are classes annotated with `@Injectable()` and are instantiated by the
+Nest IoC container.
+
+```ts
+@Controller('users')
+export class UsersController {
+  constructor(private readonly usersService: UsersService) {}
+
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.usersService.findOne(id);
+  }
+}
+```
+
+Controllers should stay thin. Business logic belongs in services, which are the
+most common kind of provider.
+
+### Dependency Injection
+
+Nest resolves dependencies by their type at construction time. Providers are
+singletons by default within a module scope.
+
+Scopes can be changed to `REQUEST` or `TRANSIENT` when a provider must be
+instantiated per request or per injection, but singleton scope is preferred for
+performance.
+
+### Guards, Pipes, Interceptors, and Filters
+
+These are the four request-lifecycle hooks that surround controller handlers.
+
+- **Guards** decide whether a request proceeds, typically for authentication
+  and authorization.
+- **Pipes** transform and validate incoming data, often paired with
+  `class-validator` and DTOs.
+- **Interceptors** wrap handler execution for cross-cutting concerns such as
+  logging, caching, response mapping, or timing.
+- **Filters** catch exceptions thrown during request handling and convert them
+  into HTTP responses.
+
+### DTOs and Validation
+
+Data Transfer Objects define the shape of request and response payloads. Combined
+with `ValidationPipe` and `class-validator` decorators, they enforce input
+constraints at the boundary.
+
+```ts
+export class CreateUserDto {
+  @IsEmail()
+  email: string;
+
+  @MinLength(8)
+  password: string;
+}
+```
+
+This keeps controllers and services free of manual validation code.
+
 ## Mid/Senior Interview Questions and Answers
 
 ### 1. What problem does NestJS solve in Node.js backend projects?
