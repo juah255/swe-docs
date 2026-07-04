@@ -41,6 +41,80 @@ FastAPI is often a strong fit for high-performance APIs and microservices.
 Django is often a strong fit when a product benefits from built-in full-stack
 features and convention-heavy application structure.
 
+### Path, Query, and Body Parameters
+
+FastAPI infers parameter location from function signatures and type hints. Path
+parameters appear in the route, query parameters are simple types, and body
+parameters are Pydantic models.
+
+```python
+@app.get("/items/{item_id}")
+def read_item(item_id: int, q: str | None = None):
+    return {"item_id": item_id, "q": q}
+
+@app.post("/items")
+def create_item(item: Item):
+    return item
+```
+
+Explicit `Path()`, `Query()`, and `Body()` helpers are used when metadata such as
+validation constraints or examples is needed.
+
+### Pydantic Models
+
+Pydantic models define request and response schemas. FastAPI uses them to
+validate input, serialize output, and generate the OpenAPI schema.
+
+```python
+class Item(BaseModel):
+    name: str
+    price: float
+    is_available: bool = True
+```
+
+Separate models are commonly used for input (`ItemCreate`), output (`ItemRead`),
+and internal representations to keep boundaries clean.
+
+### Dependency Injection with `Depends()`
+
+Dependencies are functions or callables that FastAPI runs before the endpoint.
+They can return values, yield resources with cleanup, or raise exceptions to
+short-circuit the request.
+
+```python
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
+@app.get("/users/{user_id}")
+def get_user(user_id: int, db: Session = Depends(get_db)):
+    return db.query(User).get(user_id)
+```
+
+Dependencies can be nested, cached per request, and overridden in tests, which
+makes them a strong fit for database sessions, auth, and configuration.
+
+### Middleware and Background Tasks
+
+Middleware wraps every request for cross-cutting concerns such as CORS, request
+IDs, or timing. Background tasks run after the response is returned and are
+useful for lightweight side effects.
+
+Heavy or long-running work should go to a task queue such as Celery, RQ, or
+Arq rather than background tasks.
+
+### Async vs Sync Endpoints
+
+`async def` endpoints run on the event loop and are appropriate when the handler
+awaits non-blocking I/O. `def` endpoints run in a threadpool so they do not
+block the loop.
+
+Mixing blocking libraries inside `async def` endpoints blocks the entire event
+loop and is a common performance mistake.
+
 ## Mid/Senior Interview Questions and Answers
 
 ### 1. What makes FastAPI different from many older Python web frameworks?
