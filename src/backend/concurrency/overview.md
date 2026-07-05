@@ -1,6 +1,6 @@
 # Concurrency
 
-Concurrency is the ability of a system to make progress on multiple tasks during overlapping periods of time.
+**Concurrency:** It is the ability of a system to make progress on multiple tasks during overlapping periods of time. For example, concurrency is achieved using context switching. Example: Event Loop.
 
 In backend systems, concurrency is important for:
 
