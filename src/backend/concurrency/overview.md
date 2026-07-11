@@ -1,6 +1,6 @@
 # Concurrency
 
-**Concurrency:** It is the ability of a system to make progress on multiple tasks during overlapping periods of time. For example, concurrency is achieved using context switching. Example: Event Loop.
+**Concurrency:** It is the ability of a system to make progress on multiple tasks by managing and switching between them, even if they are not executed simultaneously. For example, concurrency is achieved using context switching. Example: Event Loop.
 
 **Parallelism:** It is the ability of a system to execute multiple tasks, or parts of a task, simultaneously on multiple CPU cores or processors.
 
