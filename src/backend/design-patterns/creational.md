@@ -111,6 +111,8 @@ cause subtle bugs when the copy mutates state the original still points to.
 
 ## Dependency Injection
 
+**Dependency Injection (DI):** It is a design pattern where a class or function receives its dependencies from the outside instead of creating them itself.
+
 **Intent:** Provide an object with its dependencies from the outside instead of
 having it create them internally.
 
