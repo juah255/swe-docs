@@ -4,6 +4,10 @@
 that uses an object from the code that constructs it, which makes systems easier
 to extend and test when construction logic grows complex.
 
+Dependency injection is a practical creational pattern for passing dependencies
+into an object instead of letting the object construct them itself. In backend
+code, it is one of the most common ways to keep services testable and replaceable.
+
 ## Singleton
 
 **Intent:** Ensure a class has only one instance and provide a single global
@@ -104,6 +108,38 @@ defaultReportConfig.clone() then override a few fields per tenant
 **Trade-offs:** Avoids costly re-initialization and captures complex setup once.
 The main hazard is **shallow vs deep copy**: cloning shared mutable references can
 cause subtle bugs when the copy mutates state the original still points to.
+
+## Dependency Injection
+
+**Intent:** Provide an object with its dependencies from the outside instead of
+having it create them internally.
+
+**When to use:** When a class depends on other services, repositories, clients,
+or helpers and you want to make those dependencies explicit, swappable, and
+easy to fake in tests.
+
+**Backend example:**
+
+```text
+OrderService(paymentGateway, orderRepository, eventBus)
+```
+
+The `OrderService` receives its collaborators through the constructor rather
+than calling `new StripePaymentGateway()` or `new PostgresOrderRepository()`
+inside its own methods.
+
+**Common forms:**
+
+- **Constructor injection**: pass dependencies when creating the object.
+- **Setter injection**: assign dependencies after construction.
+- **Method injection**: pass dependencies to the specific method that needs them.
+
+**Trade-offs:** Improves testability, clarity, and separation of concerns by
+making dependencies explicit. It adds wiring code, and overly large dependency
+lists can be a sign that the class is doing too much.
+
+In practice, a DI container often manages object creation and scope, but the
+pattern still matters even without a framework.
 
 ## Mid/Senior Interview Questions and Answers
 

@@ -2,6 +2,8 @@
 
 **Concurrency:** It is the ability of a system to make progress on multiple tasks during overlapping periods of time. For example, concurrency is achieved using context switching. Example: Event Loop.
 
+**Parallelism:** It is the ability of a system to execute multiple tasks, or parts of a task, simultaneously on multiple CPU cores or processors.
+
 In backend systems, concurrency is important for:
 
 - handling many requests at once

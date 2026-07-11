@@ -139,6 +139,7 @@ See the dedicated concurrency section for detailed notes and questions.
 - **Unit tests**
 - **Integration tests**
 - **End-to-end tests**
+- **Regression tests**
 - **Test doubles**: mocks, stubs, fakes
 - **Load testing**: `k6`, JMeter
 - **Code review practices**

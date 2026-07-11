@@ -170,6 +170,8 @@ The current state is rebuilt by replaying events.
 
 ## Microservices
 
+**Microservices:** It is a software architectural style where the backend application is split into multiple independent services, and each service can be developed, deployed, and scaled independently.
+
 The system is a set of small, independently deployable services, each owning
 its data.
 
@@ -183,6 +185,8 @@ its data.
 See also [System Design → Microservices](../system-design/microservices.md).
 
 ## Monolith
+
+**Monolith:** It is a software architectural style where the entire backend application is developed, deployed, and scaled as a single unit.
 
 A single deployable that contains the whole application, usually against a
 single database.

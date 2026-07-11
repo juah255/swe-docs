@@ -34,6 +34,7 @@ data, and how they interact.
   monolith, event-driven, CQRS, microservices, and where each fits.
 - **Building Blocks**: the components most systems are made of — controller,
   service, repository, entity, DTO, middleware, and how they fit together.
+- **Diagrams**: architecture diagrams, sequence diagrams, and class diagrams.
 - **Principles**: separation of concerns, dependency direction, cohesion and
   coupling, boundaries.
 - **Domain-Driven Design**: modeling around the business domain with
