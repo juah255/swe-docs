@@ -11,6 +11,159 @@ A database transaction groups one or more operations into a single logical unit 
 - Locks and deadlocks
 - Optimistic and pessimistic concurrency control
 
+## ACID Properties
+
+ACID is the standard set of guarantees for database transactions.
+
+| Property | Meaning | How it is achieved |
+| --- | --- | --- |
+| Atomicity | All operations succeed together or none do | `BEGIN`, `COMMIT`, `ROLLBACK` |
+| Consistency | The database stays valid before and after the transaction | Constraints, invariants, and application rules |
+| Isolation | Concurrent transactions do not interfere in unsafe ways | Isolation levels, locks, MVCC, conditional updates |
+| Durability | Committed changes survive crashes | Transaction logs, flushes, replication depending on the database |
+
+### How each property is enforced
+
+#### Atomicity
+
+Atomicity is enforced by wrapping related statements in one transaction and
+ending it with either `COMMIT` or `ROLLBACK`.
+
+Typical mechanisms:
+
+- Transaction boundaries: `BEGIN`, `COMMIT`, `ROLLBACK`
+- Error handling in application code
+- Savepoints for partial rollback inside a larger transaction
+
+If one statement fails, the whole unit of work is rolled back so the database
+does not end up half-updated.
+
+#### Consistency
+
+Consistency means the transaction moves the database from one valid state to
+another valid state. The database and the application both help enforce this.
+
+Typical mechanisms:
+
+- Primary key, foreign key, unique, and `CHECK` constraints
+- Triggers for rules that must run in the database
+- Transaction validation in application code
+- Domain invariants checked before `COMMIT`
+
+Consistency is broader than SQL constraints alone. The business rule still has
+to be encoded somewhere, but the database should protect the parts that must
+never be violated.
+
+#### Isolation
+
+Isolation is enforced by preventing one transaction from seeing or corrupting
+another transaction's in-progress work.
+
+Typical mechanisms:
+
+- Row, table, and page locks
+- Locking reads such as `SELECT ... FOR UPDATE`
+- Multi-version concurrency control (`MVCC`)
+- Isolation levels such as read committed, repeatable read, and serializable
+- Optimistic concurrency control with version checks
+
+The stronger the isolation level, the fewer anomalies you allow, but the lower
+the concurrency may be.
+
+#### Durability
+
+Durability is enforced by making committed changes survive process crashes,
+machine failures, and restarts.
+
+Typical mechanisms:
+
+- Write-ahead logging (`WAL`)
+- Transaction logs
+- `fsync` or disk flushes
+- Checkpoints
+- Crash recovery on restart
+
+Durability is usually a storage-engine concern. The application asks for a
+commit; the database guarantees the commit is persisted according to its
+durability settings.
+
+### Practical example
+
+Imagine a money transfer that must debit one account and credit another.
+
+```sql
+BEGIN;
+
+SELECT balance
+FROM accounts
+WHERE id = 1
+FOR UPDATE;
+
+UPDATE accounts
+SET balance = balance - 100
+WHERE id = 1
+  AND balance >= 100;
+
+UPDATE accounts
+SET balance = balance + 100
+WHERE id = 2;
+
+COMMIT;
+```
+
+If any step fails, the application rolls back:
+
+```sql
+ROLLBACK;
+```
+
+This example shows how ACID works in practice:
+
+- **Atomicity**: both balance changes happen together, or neither happens.
+- **Consistency**: the `balance >= 100` condition prevents overdrawing the
+  account, and other constraints can enforce additional rules.
+- **Isolation**: `FOR UPDATE` prevents another transaction from changing the
+  same row at the same time.
+- **Durability**: once `COMMIT` succeeds, the database guarantees the result
+  survives a crash according to its durability settings.
+
+In application code, the pattern usually looks like this:
+
+```python
+def transfer_money(db, from_id, to_id, amount):
+    try:
+        db.begin()
+
+        db.execute(
+            "SELECT balance FROM accounts WHERE id = %s FOR UPDATE",
+            [from_id],
+        )
+
+        updated = db.execute(
+            "UPDATE accounts "
+            "SET balance = balance - %s "
+            "WHERE id = %s AND balance >= %s",
+            [amount, from_id, amount],
+        )
+
+        if updated.rowcount != 1:
+            raise ValueError("insufficient funds")
+
+        db.execute(
+            "UPDATE accounts SET balance = balance + %s WHERE id = %s",
+            [amount, to_id],
+        )
+
+        db.commit()
+    except Exception:
+        db.rollback()
+        raise
+```
+
+The important part is not the exact syntax. The important part is that the
+database enforces correctness through one transaction, row locking, and
+conditional updates rather than through ad hoc in-memory state.
+
 ## Database-Level Locks
 
 Database locks are managed by the database engine so concurrent transactions do
