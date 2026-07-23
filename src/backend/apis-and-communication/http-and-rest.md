@@ -1,10 +1,34 @@
 # HTTP and REST
 
+4xx client side issue:
+400 bad request:
+401 unauthorized:
+authentication required
+
+403 Forbidden: unauthorized
+
+404 not found:
+the requested resource does not exist
+
+5xx server issue:
+
+500 Internal Server Error:
+The application processed the request but failed. (Bug in fast api backend)
+
+502 Bad gateway:
+The gateway got a bad response from the application. ( Fast api sends and invalid response)
+
+503 Service Unavailable:
+The application/service is not available to handle requests. ( fastapi stopped)
+
+504 Gateway Timeout:
+The application didn't respond in time. (Fast api took long time to give response)
+
 ## What is a REST API?
 
 A **REST API** is a **stateless**, HTTP-based interface through which clients access and manipulate server resources using HTTP methods on URL endpoints.
 
-**Stateless** means the server does not remember previous requests. Each request must include all data needed to process it, such as authentication tokens or parameters.
+**Stateless:** It means each request contains all the information (authentication tokens or parameters) needed for the server to process it. The server does not store client session state between requests. The server does not remember previous requests.
 
 ## Difference Between `GET` and `POST`
 

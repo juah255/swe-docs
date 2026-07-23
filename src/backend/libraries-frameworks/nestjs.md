@@ -33,9 +33,10 @@ declares them.
 
 ### Controllers and Providers
 
+**Provider:** It is a component managed by the dependency injection container that can be injected into other parts of the application to provide functionality, data, or dependencies.
+
 Controllers handle incoming requests and return responses to the client.
-Providers are classes annotated with `@Injectable()` and are instantiated by the
-Nest IoC container.
+Providers are classes annotated with `@Injectable()` and are instantiated by the Nest IoC container.
 
 ```ts
 @Controller('users')
@@ -49,13 +50,11 @@ export class UsersController {
 }
 ```
 
-Controllers should stay thin. Business logic belongs in services, which are the
-most common kind of provider.
+Controllers should stay thin. Business logic belongs in services, which are the most common kind of provider.
 
 ### Dependency Injection
 
-Nest resolves dependencies by their type at construction time. Providers are
-singletons by default within a module scope.
+Nest resolves dependencies by their type at construction time. Providers are singletons by default within a module scope.
 
 Scopes can be changed to `REQUEST` or `TRANSIENT` when a provider must be
 instantiated per request or per injection, but singleton scope is preferred for
@@ -63,10 +62,35 @@ performance.
 
 ### Guards, Pipes, Interceptors, and Filters
 
+**Guard:** It is a class that determines whether a request is allowed to access a specific route by evaluating conditions such as authentication or authorization before the route handler is executed.
+
+**Usage:**
+
+- JWT authentication
+- Role-based authorization
+- API key validation
+
+**Example:**
+
+An **AuthGuard** verifies a JWT token before allowing access to a protected endpoint.
+
 These are the four request-lifecycle hooks that surround controller handlers.
 
 - **Guards** decide whether a request proceeds, typically for authentication
   and authorization.
+
+**Pipe:** It is a class that validates and transforms incoming request data before it reaches the route handler.
+
+**Usage:**
+
+- Validate DTOs
+- Parse route or query parameters (e.g., convert a string to an integer)
+- Transform incoming request data into the expected types
+
+**Example:**
+
+ValidationPipe validates DTOs and can automatically transform incoming request data into the expected types when transformation is enabled.
+
 - **Pipes** transform and validate incoming data, often paired with
   `class-validator` and DTOs.
 - **Interceptors** wrap handler execution for cross-cutting concerns such as
@@ -75,6 +99,8 @@ These are the four request-lifecycle hooks that surround controller handlers.
   into HTTP responses.
 
 ### DTOs and Validation
+
+**DTO (Data Transfer Object):** It is an object used to transfer data between different layers or systems without exposing the internal business or database model and it can also define validation rules to ensure incoming data is valid before processing.
 
 Data Transfer Objects define the shape of request and response payloads. Combined
 with `ValidationPipe` and `class-validator` decorators, they enforce input

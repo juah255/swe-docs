@@ -186,7 +186,7 @@ See also [System Design → Microservices](../system-design/microservices.md).
 
 ## Monolith
 
-**Monolith:** It is a software architectural style where the entire backend application is developed, deployed, and scaled as a single unit.
+**Monolith:** It is a software architectural style where the entire application is built as a single unit and all of its components are developed, deployed, and scaled together.
 
 A single deployable that contains the whole application, usually against a
 single database.

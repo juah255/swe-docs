@@ -1,5 +1,23 @@
 # DBMS
 
+Users
+ ------------------
+
+Id:
+Name:
+Position_id:
+
+Positions
+----------------------
+
+Id:
+Position name:
+Salary:
+
+What is the relation between users and positions?
+
+It is many to one, because many users can have one positions
+
 ## Questions and Topics
 
 ### When do we need a database trigger?

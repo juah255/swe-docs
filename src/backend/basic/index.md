@@ -1,6 +1,12 @@
 # Basic
 
-Use this section for foundational notes and starter material.
+**Business Logic:** It is the set of rules and processes that determine how an application handles data and fulfills business requirements.
+
+**Business Requirements:** It is a specific goal or need that the software must fulfill to solve a business problem or deliver value to users.
+
+what happens when you enter a url in the browser?
+
+The browser performs a DNS lookup, establishes a TCP connection with the server, performs a TLS handshake if HTTPS is used, sends the HTTP request, receives the HTTP response, downloads additional resources, and renders the page.
 
 ## Mid/Senior Interview Questions and Answers
 

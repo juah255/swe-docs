@@ -1,5 +1,13 @@
 # Networking and Web Infrastructure
 
+**localhost:** A hostname that refers to your own machine.
+**127.0.0.1:** The IPv4 loopback IP address; functionally equivalent to localhost in most cases.
+**::1:** The IPv6 loopback IP address; functionally equivalent to localhost in IPv6.
+**0.0.0.0:** A special IPv4 address used by servers to mean "listen on all available IPv4 network interfaces." It is typically not used as the address a client connects to; clients usually connect to localhost, 127.0.0.1, or a specific IP address.
+**:::** A special IPv6 address used by servers to mean "listen on all available IPv6 network interfaces." It is typically not used as the address a client connects to; clients usually connect to localhost, ::1, or a specific IPv6 address.
+
+**loopback IP:** It is a special IP address that always refers to the same computer that is sending the request.
+
 Networking knowledge is required to deploy applications, expose services, and debug connectivity failures.
 
 ## Network Fundamentals
