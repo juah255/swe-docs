@@ -144,6 +144,17 @@ nav:
           - CPU Scheduling: backend/os/scheduling.md
           - File Systems and I/O: backend/os/file-systems-and-io.md
           - Questions: backend/os/questions.md
+      - Security:
+          - Overview: backend/security/index.md
+          - Authentication: backend/security/authentication.md
+          - Authorization: backend/security/authorization.md
+          - Sessions and Cookies: backend/security/sessions-and-cookies.md
+          - JWT and Tokens: backend/security/jwt-and-tokens.md
+          - Password Security: backend/security/password-security.md
+          - API Security: backend/security/api-security.md
+          - HTTPS and TLS: backend/security/https-and-tls.md
+          - OWASP Top 10: backend/security/owasp-top-10.md
+          - Questions: backend/security/questions.md
   - DevOps:
       - Overview: devops/index.md
       - Fundamentals: devops/fundamentals.md
