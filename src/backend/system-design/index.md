@@ -20,9 +20,9 @@ This overview covers the approach. The details live in focused subtopics:
 
 1. Requirements: functional and non-functional
 2. Capacity estimation
-3. API design / high-level design
+3. High-level design / architecture
 4. Data model
-5. High-level architecture
+5. API design
 6. Detailed design: component deep-dive
 7. Bottlenecks and trade-offs
 

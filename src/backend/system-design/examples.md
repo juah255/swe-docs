@@ -1,6 +1,17 @@
 # System Design Examples
 
-This section contains worked examples of common system design problems. Each example follows the standard approach: functional requirements, non-functional requirements, API design, capacity estimation, high-level design, data model, deep dive, and trade-offs.
+This section contains worked examples of common system design problems. Each example follows the standard approach:
+
+1. Functional Requirements
+2. Non-Functional Requirements
+3. Capacity Estimation
+4. High-Level Design
+5. Data Model
+6. API Design
+7. Deep Dives
+8. Trade-offs
+
+---
 
 ## URL Shortener
 
@@ -21,6 +32,57 @@ This section contains worked examples of common system design problems. Each exa
 | Consistency | Eventual for analytics; strong for URL uniqueness |
 | Durability | No data loss for URL mappings |
 | Security | No arbitrary redirect to malicious sites; rate limit creation |
+
+### Capacity Estimation
+
+- 100M new URLs/month = ~40 QPS average, ~200 QPS peak
+- 10B redirects/month = ~4K QPS average, ~20K QPS peak
+- Each short URL record: ~500 bytes
+- Storage per year: `100M * 12 * 500B = ~600 GB`
+- Read-heavy system (redirects dominate writes, estimated 100:1 read/write ratio)
+
+### High-Level Design
+
+```text
+Client -> Load Balancer -> API Server -> Cache (Redis) -> Database
+                              |
+                              v
+                         Analytics Pipeline
+```
+
+Components:
+
+- **API Servers** -- stateless, horizontally scaled behind a load balancer
+- **Cache (Redis)** -- store hot URLs to reduce database reads
+- **Database** -- store URL mappings (MySQL, PostgreSQL, or DynamoDB)
+- **Analytics pipeline** -- async click event processing (Kafka -> processing -> data warehouse)
+
+### URL Encoding
+
+Base62 encoding of an auto-increment ID or a random hash:
+
+| Method | Pros | Cons |
+|---|---|---|
+| Auto-increment ID + Base62 | No collisions, short URLs | Predictable, sequential |
+| Random hash (MD5/SHA256) | Unpredictable | Collision risk, longer |
+| Counter + Base62 with salt | Unpredictable, short | Requires coordination |
+
+Standard length: 7 characters gives `62^7 ≈ 3.5 trillion` unique URLs.
+
+### Data Model
+
+```sql
+CREATE TABLE urls (
+    id          BIGINT PRIMARY KEY,
+    short_code  VARCHAR(7) UNIQUE NOT NULL,
+    original_url TEXT NOT NULL,
+    user_id     BIGINT,
+    created_at  TIMESTAMP,
+    expires_at  TIMESTAMP
+);
+
+CREATE INDEX idx_short_code ON urls(short_code);
+```
 
 ### API Design
 
@@ -80,57 +142,6 @@ Response:
 DELETE /api/v1/urls/{short_code}
 ```
 
-### Capacity Estimation
-
-- 100M new URLs/month = ~40 QPS average, ~200 QPS peak
-- 10B redirects/month = ~4K QPS average, ~20K QPS peak
-- Each short URL record: ~500 bytes
-- Storage per year: `100M * 12 * 500B = ~600 GB`
-- Read-heavy system (redirects dominate writes, estimated 100:1 read/write ratio)
-
-### High-Level Design
-
-```text
-Client -> Load Balancer -> API Server -> Cache (Redis) -> Database
-                              |
-                              v
-                         Analytics Pipeline
-```
-
-Components:
-
-- **API Servers** -- stateless, horizontally scaled behind a load balancer
-- **Cache (Redis)** -- store hot URLs to reduce database reads
-- **Database** -- store URL mappings (MySQL, PostgreSQL, or DynamoDB)
-- **Analytics pipeline** -- async click event processing (Kafka -> processing -> data warehouse)
-
-### URL Encoding
-
-Base62 encoding of an auto-increment ID or a random hash:
-
-| Method | Pros | Cons |
-|---|---|---|
-| Auto-increment ID + Base62 | No collisions, short URLs | Predictable, sequential |
-| Random hash (MD5/SHA256) | Unpredictable | Collision risk, longer |
-| Counter + Base62 with salt | Unpredictable, short | Requires coordination |
-
-Standard length: 7 characters gives `62^7 ≈ 3.5 trillion` unique URLs.
-
-### Data Model
-
-```sql
-CREATE TABLE urls (
-    id          BIGINT PRIMARY KEY,
-    short_code  VARCHAR(7) UNIQUE NOT NULL,
-    original_url TEXT NOT NULL,
-    user_id     BIGINT,
-    created_at  TIMESTAMP,
-    expires_at  TIMESTAMP
-);
-
-CREATE INDEX idx_short_code ON urls(short_code);
-```
-
 ### Key Deep Dives
 
 **Read path:**
@@ -164,6 +175,14 @@ CREATE INDEX idx_short_code ON urls(short_code);
 - Strong consistency is not required for reads; eventual consistency with cache is fine
 - Click analytics can be processed async (fire-and-forget events)
 
+### Scaling Summary
+
+- **Cache hot URLs** in Redis (20% of URLs get 80% of traffic)
+- **Read replicas** for the database to handle redirect read load
+- **Shard data** by short code hash if billions of URLs
+- **CDN** in front of the redirect endpoint to absorb geographic traffic
+- **Async analytics pipeline** (Kafka) to decouple click tracking from redirect path
+
 ---
 
 ## Notification Service
@@ -185,6 +204,56 @@ CREATE INDEX idx_short_code ON urls(short_code);
 | Consistency | At-least-once delivery with deduplication |
 | Durability | No lost notifications; delivery log retained for 90 days |
 | Security | API key authentication; no notification content in logs; PII handling for SMS/email |
+
+### Capacity Estimation
+
+- 10M users, each receiving ~5 notifications/day
+- Average: ~600 notifications/second, peak: ~3000/second
+- Each notification payload: ~1 KB
+- Storage for delivery logs: ~5 GB/day, ~450 GB for 90 days
+
+### High-Level Design
+
+```text
+Notification Service -> Message Queue (Kafka/SQS) -> Channel Workers
+    |                                                       |
+    |  User Preferences                                     v
+    v                                               Push / SMS / Email / In-App
+  Database
+```
+
+Components:
+
+- **API Gateway** -- receives notification requests, validates, rate limits
+- **Notification Service** -- core logic, preference lookup, deduplication
+- **Message Queue** -- decouples request from delivery, handles backpressure
+- **Channel Workers** -- separate workers per channel (push, SMS, email, in-app)
+- **Preference Service** -- user notification settings
+- **Delivery Log Store** -- tracks status per notification
+
+### Data Model
+
+```sql
+CREATE TABLE notifications (
+    id          UUID PRIMARY KEY,
+    user_id     BIGINT NOT NULL,
+    channel     ENUM('push', 'sms', 'email', 'in_app'),
+    title       VARCHAR(255),
+    body        TEXT,
+    status      ENUM('pending', 'sent', 'delivered', 'failed'),
+    created_at  TIMESTAMP,
+    sent_at     TIMESTAMP
+);
+
+CREATE TABLE user_preferences (
+    user_id     BIGINT PRIMARY KEY,
+    push_enabled    BOOLEAN DEFAULT TRUE,
+    sms_enabled     BOOLEAN DEFAULT FALSE,
+    email_enabled   BOOLEAN DEFAULT TRUE,
+    quiet_hours_start TIME,
+    quiet_hours_end   TIME
+);
+```
 
 ### API Design
 
@@ -264,56 +333,6 @@ Content-Type: application/json
 }
 ```
 
-### Capacity Estimation
-
-- 10M users, each receiving ~5 notifications/day
-- Average: ~600 notifications/second, peak: ~3000/second
-- Each notification payload: ~1 KB
-- Storage for delivery logs: ~5 GB/day, ~450 GB for 90 days
-
-### High-Level Design
-
-```text
-Notification Service -> Message Queue (Kafka/SQS) -> Channel Workers
-    |                                                       |
-    |  User Preferences                                     v
-    v                                               Push / SMS / Email / In-App
-  Database
-```
-
-Components:
-
-- **API Gateway** -- receives notification requests, validates, rate limits
-- **Notification Service** -- core logic, preference lookup, deduplication
-- **Message Queue** -- decouples request from delivery, handles backpressure
-- **Channel Workers** -- separate workers per channel (push, SMS, email, in-app)
-- **Preference Service** -- user notification settings
-- **Delivery Log Store** -- tracks status per notification
-
-### Data Model
-
-```sql
-CREATE TABLE notifications (
-    id          UUID PRIMARY KEY,
-    user_id     BIGINT NOT NULL,
-    channel     ENUM('push', 'sms', 'email', 'in_app'),
-    title       VARCHAR(255),
-    body        TEXT,
-    status      ENUM('pending', 'sent', 'delivered', 'failed'),
-    created_at  TIMESTAMP,
-    sent_at     TIMESTAMP
-);
-
-CREATE TABLE user_preferences (
-    user_id     BIGINT PRIMARY KEY,
-    push_enabled    BOOLEAN DEFAULT TRUE,
-    sms_enabled     BOOLEAN DEFAULT FALSE,
-    email_enabled   BOOLEAN DEFAULT TRUE,
-    quiet_hours_start TIME,
-    quiet_hours_end   TIME
-);
-```
-
 ### Key Deep Dives
 
 **Message queue pattern:**
@@ -346,6 +365,14 @@ CREATE TABLE user_preferences (
 - Synchronous vs async delivery: async is required at scale but adds complexity
 - Fallback channels (SMS if push fails) add reliability but increase cost and complexity
 
+### Scaling Summary
+
+- **Message queue** (Kafka/SQS) absorbs traffic spikes and decouples ingestion from delivery
+- **Partition by user ID** for ordered delivery per user
+- **Separate workers per channel** scale independently (email workers vs SMS workers)
+- **Shard delivery logs** by time or user for storage scaling
+- **Pre-warm templates** and connections to third-party providers (Twilio, SendGrid)
+
 ---
 
 ## Rate Limiter
@@ -368,60 +395,47 @@ CREATE TABLE user_preferences (
 | Security | Prevent brute-force, DDoS, and API abuse; protect the limiter store itself |
 | Failure mode | Fail open (allow traffic) when the limiter store is unavailable |
 
-### API Design
+### Capacity Estimation
 
-The rate limiter is a middleware, not a user-facing API. It intercepts requests and adds headers.
+- 100K QPS per region, peak 500K QPS
+- Each rate limit key: ~64 bytes (counter + TTL metadata)
+- 10M active keys = ~640 MB memory in Redis
+- Sub-millisecond latency for rate limit checks (Redis `INCR` + `EXPIRE`)
 
-**Rate limit headers (on every response):**
+### High-Level Design
 
-```http
-HTTP/1.1 200 OK
-X-RateLimit-Limit: 100
-X-RateLimit-Remaining: 45
-X-RateLimit-Reset: 1640995200
+```text
+Client -> Load Balancer -> API Gateway -> Rate Limiter Middleware -> Service
+                                        |
+                                        v
+                                   Redis Cluster
 ```
 
-**When limit exceeded:**
+Placement options:
 
-```http
-HTTP/1.1 429 Too Many Requests
-Retry-After: 30
-X-RateLimit-Limit: 100
-X-RateLimit-Remaining: 0
-X-RateLimit-Reset: 1640995200
+- **API Gateway** -- centralized, most common
+- **Middleware in each service** -- distributed, harder to coordinate
+- **Dedicated sidecar** -- sidecar proxy per service instance
 
-{
-  "error": "rate_limit_exceeded",
-  "message": "Too many requests. Retry after 30 seconds.",
-  "retry_after": 30
-}
+### Data Model
+
+```sql
+CREATE TABLE rate_limit_rules (
+    id              BIGINT PRIMARY KEY,
+    api_path        VARCHAR(255),
+    tier            VARCHAR(50),
+    max_requests    INT,
+    window_seconds  INT
+);
 ```
 
-**Admin API for managing rules:**
+Live state stored in Redis:
 
-```http
-POST /api/v1/admin/rate-limit-rules
-Content-Type: application/json
-
-{
-  "api_path": "/api/v1/urls",
-  "tier": "free",
-  "max_requests": 100,
-  "window_seconds": 60
-}
+```text
+Key:    rl:{client_id}:{api_path}:{window}
+Value:  request_count
+TTL:    window_seconds
 ```
-
-```http
-GET /api/v1/admin/rate-limit-rules
-```
-
-### Where to Place the Rate Limiter
-
-- **Client-side** -- easily bypassed, not reliable
-- **API Gateway** -- centralized, but adds a hop
-- **Middleware in each service** -- distributed, but hard to coordinate
-
-Most production systems use the **API gateway** or a dedicated **sidecar**.
 
 ### Algorithms
 
@@ -478,23 +492,81 @@ If queue is full, reject
 - Smooths traffic to a constant output rate
 - Good for protecting downstream services
 
-### Distributed Rate Limiting
+### API Design
+
+The rate limiter is a middleware, not a user-facing API. It intercepts requests and adds headers.
+
+**Rate limit headers (on every response):**
+
+```http
+HTTP/1.1 200 OK
+X-RateLimit-Limit: 100
+X-RateLimit-Remaining: 45
+X-RateLimit-Reset: 1640995200
+```
+
+**When limit exceeded:**
+
+```http
+HTTP/1.1 429 Too Many Requests
+Retry-After: 30
+X-RateLimit-Limit: 100
+X-RateLimit-Remaining: 0
+X-RateLimit-Reset: 1640995200
+
+{
+  "error": "rate_limit_exceeded",
+  "message": "Too many requests. Retry after 30 seconds.",
+  "retry_after": 30
+}
+```
+
+**Admin API for managing rules:**
+
+```http
+POST /api/v1/admin/rate-limit-rules
+Content-Type: application/json
+
+{
+  "api_path": "/api/v1/urls",
+  "tier": "free",
+  "max_requests": 100,
+  "window_seconds": 60
+}
+```
+
+```http
+GET /api/v1/admin/rate-limit-rules
+```
+
+### Key Deep Dives
+
+**Distributed rate limiting:**
 
 - Use **Redis** as the central counter store
 - Atomic operations: `INCR` + `EXPIRE` for fixed window, Lua scripts for token bucket
 - For multi-region: use local rate limiting with async sync, or accept slightly relaxed limits
 
-### Data Model
+**Response headers:**
 
-```sql
-CREATE TABLE rate_limit_rules (
-    id              BIGINT PRIMARY KEY,
-    api_path        VARCHAR(255),
-    tier            VARCHAR(50),
-    max_requests    INT,
-    window_seconds  INT
-);
+```http
+X-RateLimit-Limit: 100
+X-RateLimit-Remaining: 45
+X-RateLimit-Reset: 1640995200
+Retry-After: 30
 ```
+
+**Failure mode:**
+
+- If Redis is down, fail open (allow requests) or fail closed (reject)
+- Fail open is usually preferred -- availability over strict rate limiting
+- Alert on Redis failures and monitor rate limit bypasses
+
+**Multi-tier limiting:**
+
+- Global limit per user across all endpoints
+- Per-endpoint limits (e.g., stricter on expensive operations)
+- Per-tier limits (free vs paid users)
 
 ### Trade-offs
 
@@ -502,6 +574,14 @@ CREATE TABLE rate_limit_rules (
 - Fail-open vs fail-closed: availability vs strictness
 - Centralized vs distributed: consistency vs latency
 - Fixed window is simple but has burst issues; token bucket is flexible but more complex
+
+### Scaling Summary
+
+- **Redis Cluster** for distributed counters across multiple API servers
+- **Local rate limiting** with periodic sync for multi-region deployments
+- **Tiered keys** (per-user, per-IP, per-API-key) to prevent abuse at multiple levels
+- **Prefer token bucket** for production -- allows bursts while enforcing average rate
+- **Fail open** when Redis is down to avoid total service outage
 
 ---
 
@@ -525,6 +605,69 @@ CREATE TABLE rate_limit_rules (
 | Consistency | Message ordering per channel (not global) |
 | Durability | Messages must not be lost; at-least-once delivery |
 | Security | End-to-end encryption optional; TLS required; message content not logged |
+
+### Capacity Estimation
+
+- 10M DAU, ~500K concurrent connections
+- Average message size: ~100 bytes
+- Each user sends ~40 messages/day
+- Total messages: ~400M/day (~4600 messages/second average, ~20K peak)
+
+### High-Level Design
+
+```text
+Client <--WebSocket--> Chat Server <---> Message Queue (Kafka)
+                                            |
+                                     Presence Service
+                                     Message Storage
+                                     Notification Service
+```
+
+Components:
+
+- **Chat Servers** -- maintain WebSocket connections with clients
+- **Message Queue** -- decouples message ingestion from delivery
+- **Message Store** -- persistent storage for message history
+- **Presence Service** -- tracks online/offline status
+- **Push Notification Service** -- notifies offline users
+- **File Service** -- handles image and file uploads
+
+### Connection Management
+
+- Each client maintains a persistent **WebSocket** connection to a chat server
+- Chat servers are stateful -- a user is always connected to the same server
+- Connection mapping: `user_id -> chat_server_id -> WebSocket connection`
+- Store mapping in Redis for cross-server routing
+
+### Data Model
+
+```sql
+CREATE TABLE messages (
+    id          UUID PRIMARY KEY,
+    channel_id  UUID NOT NULL,
+    sender_id   BIGINT NOT NULL,
+    content     TEXT,
+    type        ENUM('text', 'image', 'file'),
+    created_at  TIMESTAMP,
+    read_at     TIMESTAMP
+);
+
+CREATE TABLE channels (
+    id          UUID PRIMARY KEY,
+    type        ENUM('direct', 'group'),
+    name        VARCHAR(255),
+    created_at  TIMESTAMP
+);
+
+CREATE TABLE channel_members (
+    channel_id  UUID,
+    user_id     BIGINT,
+    joined_at   TIMESTAMP,
+    PRIMARY KEY (channel_id, user_id)
+);
+
+CREATE INDEX idx_messages_channel ON messages(channel_id, created_at);
+```
 
 ### API Design
 
@@ -609,40 +752,9 @@ Content-Type: application/json
 GET /api/v1/channels/{channel_id}/members
 ```
 
-### Capacity Estimation
+### Key Deep Dives
 
-- 10M DAU, ~500K concurrent connections
-- Average message size: ~100 bytes
-- Each user sends ~40 messages/day
-- Total messages: ~400M/day (~4600 messages/second average, ~20K peak)
-
-### High-Level Design
-
-```text
-Client <--WebSocket--> Chat Server <---> Message Queue (Kafka)
-                                            |
-                                     Presence Service
-                                     Message Storage
-                                     Notification Service
-```
-
-Components:
-
-- **Chat Servers** -- maintain WebSocket connections with clients
-- **Message Queue** -- decouples message ingestion from delivery
-- **Message Store** -- persistent storage for message history
-- **Presence Service** -- tracks online/offline status
-- **Push Notification Service** -- notifies offline users
-- **File Service** -- handles image and file uploads
-
-### Connection Management
-
-- Each client maintains a persistent **WebSocket** connection to a chat server
-- Chat servers are stateful -- a user is always connected to the same server
-- Connection mapping: `user_id -> chat_server_id -> WebSocket connection`
-- Store mapping in Redis for cross-server routing
-
-### Message Flow (1-on-1)
+**Message flow (1-on-1):**
 
 1. User A sends message to User B via WebSocket
 2. Chat server receives the message
@@ -652,7 +764,7 @@ Components:
 6. If User B is on a different server, route via Redis lookup or Kafka consumer
 7. If User B is offline, queue for push notification
 
-### Message Flow (Group)
+**Message flow (group):**
 
 1. User sends message to group
 2. Chat server publishes to Kafka with group ID
@@ -664,38 +776,6 @@ Components:
 - **Push on write** -- write message to each member's inbox on send (fast reads, slow writes)
 - **Pull on read** -- each member fetches group messages on demand (slow reads, fast writes)
 - **Hybrid** -- push for small groups, pull for large groups
-
-### Data Model
-
-```sql
-CREATE TABLE messages (
-    id          UUID PRIMARY KEY,
-    channel_id  UUID NOT NULL,
-    sender_id   BIGINT NOT NULL,
-    content     TEXT,
-    type        ENUM('text', 'image', 'file'),
-    created_at  TIMESTAMP,
-    read_at     TIMESTAMP
-);
-
-CREATE TABLE channels (
-    id          UUID PRIMARY KEY,
-    type        ENUM('direct', 'group'),
-    name        VARCHAR(255),
-    created_at  TIMESTAMP
-);
-
-CREATE TABLE channel_members (
-    channel_id  UUID,
-    user_id     BIGINT,
-    joined_at   TIMESTAMP,
-    PRIMARY KEY (channel_id, user_id)
-);
-
-CREATE INDEX idx_messages_channel ON messages(channel_id, created_at);
-```
-
-### Key Deep Dives
 
 **Message ordering:**
 
@@ -735,6 +815,14 @@ CREATE INDEX idx_messages_channel ON messages(channel_id, created_at);
 - Message ordering via sequence IDs is simpler than global ordering but does not span channels
 - Storing all message history is expensive; consider archival policies for old messages
 
+### Scaling Summary
+
+- **Multiple WebSocket servers** with consistent hashing for connection distribution
+- **Redis Pub/Sub** or Kafka for cross-server message routing
+- **Database partitioning** by channel_id or time for message storage scaling
+- **Hybrid fan-out** (push for small groups, pull for large groups)
+- **CDN** for media file downloads to reduce chat server load
+
 ---
 
 ## Authentication System
@@ -757,6 +845,97 @@ CREATE INDEX idx_messages_channel ON messages(channel_id, created_at);
 | Consistency | Strong for credentials (no duplicate emails); eventual for MFA state |
 | Durability | User credentials and MFA secrets must survive all failures |
 | Security | Passwords hashed with Argon2; tokens signed with RS256; rate limited endpoints; audit logging; no plaintext secrets anywhere |
+
+### Capacity Estimation
+
+- 10M registered users, ~1M daily logins
+- Login QPS: ~12 average, ~500 peak (login bursts during work hours)
+- Token validation QPS: ~5K average, ~20K peak (every API call validates a token)
+- Storage per user: ~1 KB (credentials, profile, MFA state)
+- Total user data: ~10 GB
+- Refresh token store: ~10 GB (10M tokens * 1 KB)
+
+### High-Level Design
+
+```text
+Client -> API Gateway -> Auth Service -> User DB
+                        |                |
+                        |           Token Service
+                        |                |
+                        v                v
+                   Rate Limiter     Redis (token store)
+                        |
+                        v
+                   Notification Service (email/SMS)
+```
+
+Components:
+
+- **Auth Service** -- handles registration, login, MFA, token management
+- **User Store** -- stores user credentials, profiles
+- **Token Service** -- issues and validates JWTs
+- **Rate Limiter** -- protects auth endpoints from brute-force
+- **Notification Service** -- sends verification emails, MFA codes, password reset links
+
+### Token Design
+
+**Access Token (JWT):**
+
+```json
+{
+  "sub": "12345",
+  "email": "user@example.com",
+  "roles": ["user"],
+  "iat": 1640995200,
+  "exp": 1640995500
+}
+```
+
+**Refresh Token:**
+
+- Opaque, high-entropy random string
+- Stored server-side in Redis with TTL (7 days)
+- Supports rotation: each refresh issues a new refresh token and invalidates the old one
+
+### Data Model
+
+```sql
+CREATE TABLE users (
+    id              BIGINT PRIMARY KEY,
+    email           VARCHAR(255) UNIQUE NOT NULL,
+    password_hash   VARCHAR(255) NOT NULL,
+    email_verified  BOOLEAN DEFAULT FALSE,
+    mfa_enabled     BOOLEAN DEFAULT FALSE,
+    mfa_secret      VARCHAR(255),
+    created_at      TIMESTAMP,
+    updated_at      TIMESTAMP
+);
+
+CREATE TABLE refresh_tokens (
+    token_hash  VARCHAR(255) PRIMARY KEY,
+    user_id     BIGINT NOT NULL,
+    family_id   UUID NOT NULL,
+    expires_at  TIMESTAMP,
+    created_at  TIMESTAMP,
+    revoked     BOOLEAN DEFAULT FALSE
+);
+
+CREATE TABLE password_reset_tokens (
+    token_hash  VARCHAR(255) PRIMARY KEY,
+    user_id     BIGINT NOT NULL,
+    expires_at  TIMESTAMP,
+    used        BOOLEAN DEFAULT FALSE
+);
+
+CREATE TABLE auth_audit_log (
+    id          BIGINT PRIMARY KEY,
+    user_id     BIGINT,
+    event       ENUM('login_success', 'login_failed', 'register', 'mfa_verify', 'password_reset'),
+    ip_address  INET,
+    user_agent  TEXT,
+    created_at  TIMESTAMP
+);
+```
 
 ### API Design
 
@@ -886,88 +1065,6 @@ Response:
 }
 ```
 
-### High-Level Design
-
-```text
-Client -> API Gateway -> Auth Service -> User DB
-                        |                |
-                        |           Token Service
-                        |                |
-                        v                v
-                   Rate Limiter     Redis (token store)
-                        |
-                        v
-                   Notification Service (email/SMS)
-```
-
-Components:
-
-- **Auth Service** -- handles registration, login, MFA, token management
-- **User Store** -- stores user credentials, profiles
-- **Token Service** -- issues and validates JWTs
-- **Rate Limiter** -- protects auth endpoints from brute-force
-- **Notification Service** -- sends verification emails, MFA codes, password reset links
-
-### Token Design
-
-**Access Token (JWT):**
-
-```json
-{
-  "sub": "12345",
-  "email": "user@example.com",
-  "roles": ["user"],
-  "iat": 1640995200,
-  "exp": 1640995500
-}
-```
-
-**Refresh Token:**
-
-- Opaque, high-entropy random string
-- Stored server-side in Redis with TTL (7 days)
-- Supports rotation: each refresh issues a new refresh token and invalidates the old one
-
-### Data Model
-
-```sql
-CREATE TABLE users (
-    id              BIGINT PRIMARY KEY,
-    email           VARCHAR(255) UNIQUE NOT NULL,
-    password_hash   VARCHAR(255) NOT NULL,
-    email_verified  BOOLEAN DEFAULT FALSE,
-    mfa_enabled     BOOLEAN DEFAULT FALSE,
-    mfa_secret      VARCHAR(255),
-    created_at      TIMESTAMP,
-    updated_at      TIMESTAMP
-);
-
-CREATE TABLE refresh_tokens (
-    token_hash  VARCHAR(255) PRIMARY KEY,
-    user_id     BIGINT NOT NULL,
-    family_id   UUID NOT NULL,
-    expires_at  TIMESTAMP,
-    created_at  TIMESTAMP,
-    revoked     BOOLEAN DEFAULT FALSE
-);
-
-CREATE TABLE password_reset_tokens (
-    token_hash  VARCHAR(255) PRIMARY KEY,
-    user_id     BIGINT NOT NULL,
-    expires_at  TIMESTAMP,
-    used        BOOLEAN DEFAULT FALSE
-);
-
-CREATE TABLE auth_audit_log (
-    id          BIGINT PRIMARY KEY,
-    user_id     BIGINT,
-    event       ENUM('login_success', 'login_failed', 'register', 'mfa_verify', 'password_reset'),
-    ip_address  INET,
-    user_agent  TEXT,
-    created_at  TIMESTAMP
-);
-```
-
 ### Key Deep Dives
 
 **MFA implementation:**
@@ -1006,6 +1103,14 @@ CREATE TABLE auth_audit_log (
 - Social login simplifies UX but adds dependency on third-party providers
 - Account lockout protects against brute-force but can be used for denial-of-service
 
+### Scaling Summary
+
+- **Redis** for token store (refresh tokens, rate limit counters) -- fast and shared
+- **JWT validation** is stateless -- any server can verify without hitting the database
+- **Separate auth service** scales independently from business services
+- **Rate limit at the API gateway** before requests reach the auth service
+- **Read replica** for user lookups; write primary for credential changes only
+
 ---
 
 ## File Upload Service
@@ -1029,6 +1134,105 @@ CREATE TABLE auth_audit_log (
 | Consistency | Strong for metadata; eventual for CDN cache |
 | Durability | 99.999999999% (11 nines) via object storage replication |
 | Security | Pre-signed URLs with expiration; no public directory listing; virus scan before serving; access control per file |
+
+### Capacity Estimation
+
+- 1M users, each uploading ~5 files/day
+- Average file size: ~5 MB
+- Daily upload volume: ~25 TB
+- Peak upload throughput: ~200 MB/s
+- Read-heavy (downloads dominate uploads, ~10:1 ratio)
+- Download QPS: ~100K peak (CDN absorbs most traffic)
+
+### High-Level Design
+
+```text
+Client -> API Gateway -> Upload Service -> Object Storage (S3)
+                        |                      |
+                        v                      v
+                   Metadata DB           CDN (CloudFront)
+                        |
+                        v
+                   Processing Pipeline (thumbnails, virus scan)
+```
+
+Components:
+
+- **Upload Service** -- handles upload requests, generates pre-signed URLs
+- **Object Storage** -- durable, scalable file storage (S3, GCS, MinIO)
+- **Metadata Database** -- stores file metadata, user quotas
+- **CDN** -- caches and serves downloads from edge locations
+- **Processing Pipeline** -- async post-upload tasks (thumbnails, virus scan, content extraction)
+
+### Upload Flow (Small Files, < 100 MB)
+
+1. Client requests an upload slot with file metadata
+2. Upload service validates user quota and file type
+3. Upload service generates a pre-signed URL for direct upload to object storage
+4. Client uploads directly to object storage (bypasses your servers)
+5. Object storage returns success
+6. Upload service records metadata in the database
+7. Publishing event to processing pipeline (thumbnail generation, virus scan)
+
+### Upload Flow (Large Files, Resumable)
+
+Use **tus protocol** or chunked upload:
+
+1. Client requests a new upload session
+2. Upload service creates an upload record with status `in_progress`
+3. Client uploads file in chunks (e.g., 5 MB each)
+4. Each chunk is uploaded to object storage with a part number
+5. Upload service tracks which parts have been received
+6. On final chunk, client signals completion
+7. Upload service triggers a `CompleteMultipartUpload` on object storage
+8. Processing pipeline runs
+
+**Resumability:**
+
+- Client queries upload status to learn which parts were received
+- Client re-uploads only missing parts
+- Upload session expires after 24 hours of inactivity
+
+### Data Model
+
+```sql
+CREATE TABLE files (
+    id          UUID PRIMARY KEY,
+    user_id     BIGINT NOT NULL,
+    object_key  VARCHAR(1024) NOT NULL,
+    file_name   VARCHAR(255) NOT NULL,
+    mime_type   VARCHAR(127),
+    size_bytes  BIGINT,
+    status      ENUM('uploading', 'processing', 'ready', 'failed'),
+    created_at  TIMESTAMP,
+    updated_at  TIMESTAMP
+);
+
+CREATE TABLE upload_parts (
+    upload_id   UUID,
+    part_number INT,
+    object_key  VARCHAR(1024),
+    size_bytes  BIGINT,
+    received_at TIMESTAMP,
+    PRIMARY KEY (upload_id, part_number)
+);
+
+CREATE TABLE download_links (
+    token       VARCHAR(255) PRIMARY KEY,
+    file_id     UUID NOT NULL,
+    expires_at  TIMESTAMP,
+    max_downloads INT,
+    download_count INT DEFAULT 0
+);
+
+CREATE TABLE user_storage (
+    user_id     BIGINT PRIMARY KEY,
+    used_bytes  BIGINT DEFAULT 0,
+    quota_bytes BIGINT
+);
+
+CREATE INDEX idx_files_user ON files(user_id, created_at);
+```
 
 ### API Design
 
@@ -1152,104 +1356,6 @@ Response:
 DELETE /api/v1/files/{file_id}
 ```
 
-### Capacity Estimation
-
-- 1M users, each uploading ~5 files/day
-- Average file size: ~5 MB
-- Daily upload volume: ~25 TB
-- Peak upload throughput: ~200 MB/s
-- Read-heavy (downloads dominate uploads, ~10:1 ratio)
-
-### High-Level Design
-
-```text
-Client -> API Gateway -> Upload Service -> Object Storage (S3)
-                        |                      |
-                        v                      v
-                   Metadata DB           CDN (CloudFront)
-                        |
-                        v
-                   Processing Pipeline (thumbnails, virus scan)
-```
-
-Components:
-
-- **Upload Service** -- handles upload requests, generates pre-signed URLs
-- **Object Storage** -- durable, scalable file storage (S3, GCS, MinIO)
-- **Metadata Database** -- stores file metadata, user quotas
-- **CDN** -- caches and serves downloads from edge locations
-- **Processing Pipeline** -- async post-upload tasks (thumbnails, virus scan, content extraction)
-
-### Upload Flow (Small Files, < 100 MB)
-
-1. Client requests an upload slot with file metadata
-2. Upload service validates user quota and file type
-3. Upload service generates a pre-signed URL for direct upload to object storage
-4. Client uploads directly to object storage (bypasses your servers)
-5. Object storage returns success
-6. Upload service records metadata in the database
-7. Publishing event to processing pipeline (thumbnail generation, virus scan)
-
-### Upload Flow (Large Files, Resumable)
-
-Use **tus protocol** or chunked upload:
-
-1. Client requests a new upload session
-2. Upload service creates an upload record with status `in_progress`
-3. Client uploads file in chunks (e.g., 5 MB each)
-4. Each chunk is uploaded to object storage with a part number
-5. Upload service tracks which parts have been received
-6. On final chunk, client signals completion
-7. Upload service triggers a `CompleteMultipartUpload` on object storage
-8. Processing pipeline runs
-
-**Resumability:**
-
-- Client queries upload status to learn which parts were received
-- Client re-uploads only missing parts
-- Upload session expires after 24 hours of inactivity
-
-### Data Model
-
-```sql
-CREATE TABLE files (
-    id          UUID PRIMARY KEY,
-    user_id     BIGINT NOT NULL,
-    object_key  VARCHAR(1024) NOT NULL,
-    file_name   VARCHAR(255) NOT NULL,
-    mime_type   VARCHAR(127),
-    size_bytes  BIGINT,
-    status      ENUM('uploading', 'processing', 'ready', 'failed'),
-    created_at  TIMESTAMP,
-    updated_at  TIMESTAMP
-);
-
-CREATE TABLE upload_parts (
-    upload_id   UUID,
-    part_number INT,
-    object_key  VARCHAR(1024),
-    size_bytes  BIGINT,
-    received_at TIMESTAMP,
-    PRIMARY KEY (upload_id, part_number)
-);
-
-CREATE TABLE download_links (
-    token       VARCHAR(255) PRIMARY KEY,
-    file_id     UUID NOT NULL,
-    expires_at  TIMESTAMP,
-    max_downloads INT,
-    download_count INT DEFAULT 0
-);
-
-CREATE TABLE user_storage (
-    user_id     BIGINT PRIMARY KEY,
-    used_bytes  BIGINT DEFAULT 0,
-    quota_bytes BIGINT
-);
-
-CREATE INDEX idx_files_user ON files(user_id, created_at);
-```
-
 ### Key Deep Dives
 
 **Pre-signed URLs:**
@@ -1302,3 +1408,11 @@ CREATE INDEX idx_files_user ON files(user_id, created_at);
 - Chunked upload adds complexity but is essential for large files and unreliable networks
 - Synchronous processing blocks the user; async processing is preferred but adds eventual consistency
 - CDN caching improves performance but requires cache invalidation strategy for updated files
+
+### Scaling Summary
+
+- **Pre-signed URLs** offload upload/download bandwidth from your servers to object storage
+- **CDN** absorbs download traffic -- origin servers rarely serve hot files
+- **Chunked uploads** with resumability handle large files without server memory pressure
+- **Async processing pipeline** (S3 events -> Lambda/SQS) for thumbnails and virus scanning
+- **Shard metadata database** by user_id if file volume grows beyond single-node capacity
