@@ -2,6 +2,14 @@
 
 **Security** in system design is about protecting data, systems, and users from unauthorized access, misuse, and attacks. It must be considered from the start, not bolted on at the end.
 
+## Techniques
+
+- **API Gateway** -- single entry point for auth, rate limiting, and policy enforcement
+- **TLS** -- encrypt data in transit between all services
+- **Authentication** -- verify identity (passwords, tokens, MFA, OAuth2, OIDC)
+- **Authorization** -- control access (RBAC, ABAC, ACL, policies)
+- **Rate Limiting** -- prevent abuse and brute-force attacks
+
 ## Core Principles
 
 - **Defense in depth** -- multiple layers of security so a single failure does not compromise the system

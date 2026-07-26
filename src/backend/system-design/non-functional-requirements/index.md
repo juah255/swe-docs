@@ -12,6 +12,7 @@ In system design interviews, NFRs are where the hard trade-offs live. Two system
 - [Performance](performance.md): latency, throughput, and resource efficiency
 - [Security](security.md): protecting data, systems, and users from threats
 - [Maintainability](maintainability.md): ease of modification, debugging, and evolution
+- [Fault Tolerance](fault-tolerance.md): continuing to operate correctly when components fail
 
 ## How NFRs Drive Architecture
 

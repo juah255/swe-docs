@@ -2,6 +2,14 @@
 
 **Availability** is the fraction of time the system is operational and reachable. It is usually expressed as a percentage of uptime over a year.
 
+## Techniques
+
+- **Health Checks** -- detect and remove failed instances
+- **Failover** -- automated switch to a standby when primary goes down
+- **Replication** -- copy data across nodes for redundancy
+- **Multi-AZ** -- deploy across availability zones for zone-level failure tolerance
+- **Load Balancer** -- distributes traffic and removes unhealthy nodes
+
 ## Availability Tiers
 
 Each extra nine cuts allowed downtime by roughly `10x`, which directly raises cost and complexity.

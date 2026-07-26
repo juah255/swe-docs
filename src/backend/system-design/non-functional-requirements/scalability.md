@@ -2,6 +2,13 @@
 
 **Scalability** is a system's ability to handle increased load by adding resources. A scalable design keeps latency and reliability acceptable as traffic, data, and users grow.
 
+## Techniques
+
+- **Load Balancer** -- distributes traffic across instances
+- **Sharding** -- splits data across nodes for write and storage scaling
+- **Caching** -- stores hot data in fast storage to offload backends
+- **Auto Scaling** -- adds or removes instances based on metrics
+
 ## Vertical vs Horizontal Scaling
 
 - **Vertical scaling (scale up)** -- add more CPU, RAM, or disk to a single machine. Simple, but has a hard ceiling and a single point of failure.

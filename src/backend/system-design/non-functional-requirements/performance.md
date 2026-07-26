@@ -2,6 +2,14 @@
 
 **Performance** measures how efficiently the system uses resources to handle work. The two primary dimensions are **latency** (how long a request takes) and **throughput** (how many requests the system handles per unit time).
 
+## Techniques
+
+- **Cache** -- store frequently accessed data in fast storage
+- **CDN** -- serve static assets from edge locations close to users
+- **Compression** -- reduce payload size (gzip, brotli)
+- **HTTP/2** -- multiplexing, header compression, server push
+- **Indexes** -- speed up database queries at the cost of write performance
+
 ## Latency
 
 **Latency** is the time from request initiation to response completion. It is measured at percentiles, not averages.

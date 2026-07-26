@@ -112,9 +112,11 @@ nav:
               - Performance: backend/system-design/non-functional-requirements/performance.md
               - Security: backend/system-design/non-functional-requirements/security.md
               - Maintainability: backend/system-design/non-functional-requirements/maintainability.md
+              - Fault Tolerance: backend/system-design/non-functional-requirements/fault-tolerance.md
           - Traffic Management:
               - Load Balancing: backend/system-design/traffic-management/load-balancing.md
               - Reverse Proxy: backend/system-design/traffic-management/reverse-proxy.md
+              - CDN: backend/system-design/traffic-management/cdn.md
               - API Gateway: backend/system-design/traffic-management/api-gateway.md
               - Service Discovery: backend/system-design/traffic-management/service-discovery.md
               - Rate Limiting: backend/system-design/traffic-management/rate-limiting.md

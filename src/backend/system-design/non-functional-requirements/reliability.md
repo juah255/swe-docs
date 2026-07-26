@@ -4,6 +4,13 @@
 
 Availability is about being **reachable**. Reliability is about being **correct**.
 
+## Techniques
+
+- **Retries** -- attempt failed operations again with backoff
+- **Circuit Breaker** -- stop calling a failing dependency temporarily
+- **Idempotency** -- safe retries without side effects
+- **Durable Queues** -- persist messages so work is not lost on failure
+
 ## Key Concepts
 
 - **Correctness** -- the system returns the right data and processes operations accurately
