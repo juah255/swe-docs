@@ -602,9 +602,23 @@ Retry-After: 30
 | Availability | `99.99%` -- chat is a core communication channel |
 | Latency | p99 < 200ms for message delivery (online user); p95 < 100ms |
 | Scalability | 10M DAU, 500K concurrent connections, 20K messages/second peak |
-| Consistency | Message ordering per channel (not global) |
-| Durability | Messages must not be lost; at-least-once delivery |
+| Consistency | Eventual for messages (at-least-once delivery, order per channel); strong for channels and members |
+| Durability | Messages must not be lost; replicated across nodes |
 | Security | End-to-end encryption optional; TLS required; message content not logged |
+
+**Why Cassandra for messages?**
+
+- Write-heavy workload (~20K writes/sec peak, ~4600 avg) -- Cassandra excels at append-heavy writes
+- Read pattern is always by channel + time range -- maps directly to Cassandra's partition + clustering key
+- `99.99%` availability -- Cassandra replicates across nodes with no single point of failure
+- Horizontal scaling -- add nodes as message volume grows, no reshuffling
+- Eventual consistency is acceptable for messages -- ordering is per-channel via TimeUUID, not global
+
+**Why PostgreSQL for channels and members?**
+
+- Small, relational data with integrity constraints (foreign keys, unique members)
+- CRUD operations, not append-heavy
+- Strong consistency needed for channel creation and membership changes
 
 ### Capacity Estimation
 
@@ -613,13 +627,27 @@ Retry-After: 30
 - Each user sends ~40 messages/day
 - Total messages: ~400M/day (~4600 messages/second average, ~20K peak)
 
+**Storage:**
+
+- Messages per day: ~400M * 100 bytes = ~40 GB/day
+- Messages per year: ~40 GB * 365 = ~14.6 TB/year (before replication)
+- With 3x replication: ~44 TB/year
+- Cassandra scales horizontally -- add nodes as storage grows
+- Consider archival: move messages older than 90 days to cold storage (S3/GCS)
+
+**Read throughput:**
+
+- 10M DAU, each loads ~50 messages on open = ~500M reads/day = ~5800 reads/sec avg
+- Cassandra handles this easily with partition-level reads (all messages for a channel on one node)
+
 ### High-Level Design
 
 ```text
 Client <--WebSocket--> Chat Server <---> Message Queue (Kafka)
                                             |
-                                     Presence Service
-                                     Message Storage
+                                     Presence Service (Redis)
+                                     Message Store (Cassandra)
+                                     Metadata Store (PostgreSQL)
                                      Notification Service
 ```
 
@@ -627,8 +655,9 @@ Components:
 
 - **Chat Servers** -- maintain WebSocket connections with clients
 - **Message Queue** -- decouples message ingestion from delivery
-- **Message Store** -- persistent storage for message history
-- **Presence Service** -- tracks online/offline status
+- **Cassandra** -- message storage (append-heavy, partition by channel, time-ordered)
+- **PostgreSQL** -- channels, members, and metadata (relational integrity)
+- **Presence Service** -- tracks online/offline status (Redis)
 - **Push Notification Service** -- notifies offline users
 - **File Service** -- handles image and file uploads
 
@@ -641,17 +670,28 @@ Components:
 
 ### Data Model
 
+**Messages (Cassandra):**
+
 ```sql
 CREATE TABLE messages (
-    id          UUID PRIMARY KEY,
-    channel_id  UUID NOT NULL,
-    sender_id   BIGINT NOT NULL,
+    channel_id  UUID,
+    message_id  TimeUUID,
+    sender_id   BIGINT,
     content     TEXT,
-    type        ENUM('text', 'image', 'file'),
+    type        TEXT,  -- 'text', 'image', 'file'
     created_at  TIMESTAMP,
-    read_at     TIMESTAMP
-);
+    PRIMARY KEY (channel_id, message_id)
+) WITH CLUSTERING ORDER BY (message_id DESC);
+```
 
+- Partition by `channel_id` -- all messages for a channel live on one node
+- Cluster by `message_id` (TimeUUID) -- time-ordered within a partition
+- Read pattern: `WHERE channel_id = ? AND message_id < ? LIMIT 50` (paginate back in time)
+- Write pattern: append-only, no updates
+
+**Channels and Members (PostgreSQL):**
+
+```sql
 CREATE TABLE channels (
     id          UUID PRIMARY KEY,
     type        ENUM('direct', 'group'),
@@ -665,9 +705,16 @@ CREATE TABLE channel_members (
     joined_at   TIMESTAMP,
     PRIMARY KEY (channel_id, user_id)
 );
-
-CREATE INDEX idx_messages_channel ON messages(channel_id, created_at);
 ```
+
+**Why the split?**
+
+| | Cassandra (messages) | PostgreSQL (metadata) |
+|---|---|---|
+| Access pattern | Append-only, read by channel + time range | CRUD with relational integrity |
+| Scale | Horizontal, partition by channel | Vertical, moderate size |
+| Schema | Wide, denormalized | Normalized, constrained |
+| Use case | High write throughput, time-ordered reads | Channels, members, user data |
 
 ### API Design
 
@@ -797,7 +844,7 @@ GET /api/v1/channels/{channel_id}/members
 
 **Offline support:**
 
-- Store messages in the database
+- Messages persist in Cassandra
 - On reconnect, client requests messages since the last received message ID
 - Send unread message count on connection establishment
 
@@ -819,7 +866,8 @@ GET /api/v1/channels/{channel_id}/members
 
 - **Multiple WebSocket servers** with consistent hashing for connection distribution
 - **Redis Pub/Sub** or Kafka for cross-server message routing
-- **Database partitioning** by channel_id or time for message storage scaling
+- **Cassandra** for message storage (partition by channel, time-ordered, horizontally scalable)
+- **PostgreSQL** for channel and member metadata (small tables, relational integrity)
 - **Hybrid fan-out** (push for small groups, pull for large groups)
 - **CDN** for media file downloads to reduce chat server load
 
