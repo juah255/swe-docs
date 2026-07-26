@@ -104,6 +104,7 @@ nav:
       - System Design:
           - Overview: backend/system-design/index.md
           - Requirements: backend/system-design/requirements.md
+          - Non-Functional Requirements: backend/system-design/non-functional-requirements.md
           - Scalability: backend/system-design/scalability.md
           - Microservices: backend/system-design/microservices.md
           - Multi-Tenancy: backend/system-design/multi-tenancy.md
