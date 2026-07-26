@@ -39,8 +39,12 @@ data, and how they interact.
   coupling, boundaries.
 - **Domain-Driven Design**: modeling around the business domain with
   aggregates, bounded contexts, and a ubiquitous language.
-- **Quality Attributes**: the "-ilities" architecture must reason about
-  explicitly.
+- **Microservices**: independent services with their own data, communication
+  patterns, sagas, and when the cost is justified.
+- **Multi-Tenancy**: isolation models, data strategies, and noisy-neighbor
+  management for SaaS systems.
+- **Circuit Breaker**: preventing cascading failures with timeout, retry, and
+  circuit-breaker patterns.
 - **Questions**: reference Q&A for common architecture interview topics.
 
 ## Why Architecture Matters

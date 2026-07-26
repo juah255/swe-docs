@@ -9,12 +9,15 @@ This overview covers the approach. The details live in focused subtopics:
 
 - [Requirements](requirements.md): functional vs non-functional, clarifying
   questions, capacity estimation.
-- [Scalability](scalability.md): scaling, load balancing, caching, replication,
-  sharding, CAP, and rate limiting.
-- [Microservices](microservices.md): monolith vs microservices, service
-  communication, data ownership, sagas, gateways, and serverless.
-- [System Design Questions](questions.md): a quick Q&A reference for common
-  interview topics.
+- [Non-Functional Requirements](non-functional-requirements/index.md):
+  scalability, availability, reliability, performance, security, maintainability.
+- [Traffic Management](traffic-management/load-balancing.md): load balancing,
+  reverse proxy, API gateway, service discovery, rate limiting.
+- [Data Management](data-management/caching.md): caching, database scaling,
+  distributed storage, message queues.
+- [Examples](examples.md): URL shortener, notification service, rate limiter,
+  chat app, auth system, file upload service.
+- [Questions](questions.md): a quick Q&A reference for common interview topics.
 
 ## Steps for Answering System Design Questions
 
@@ -86,9 +89,10 @@ latency, availability, consistency, and failure expectations.
 
 ### 2. How do you keep a system design discussion structured?
 
-**Answer:** Follow a repeatable flow: requirements, estimates, API, data model,
-high-level architecture, then a deep dive on one or two hard components. Write
-the steps down and check them off so you do not skip backwards under pressure.
+**Answer:** Follow a repeatable flow: requirements, estimates, high-level
+architecture, data model, API design, deep dive on hard components, then
+trade-offs. Write the steps down and check them off so you do not skip
+backwards under pressure.
 
 State assumptions explicitly and confirm them. The interviewer is grading your
 reasoning and prioritization, not whether you recall a specific product design.

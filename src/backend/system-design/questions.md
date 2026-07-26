@@ -2,8 +2,10 @@
 
 A quick reference of common system design questions and concise answers. Use it
 to review the vocabulary before an interview; the deeper treatment lives in
-[Requirements](requirements.md), [Scalability](scalability.md), and
-[Microservices](microservices.md).
+[Non-Functional Requirements](non-functional-requirements/index.md),
+[Traffic Management](traffic-management/load-balancing.md),
+[Data Management](data-management/caching.md), and
+[Microservices](../software-architecture/microservices.md).
 
 ## What is latency vs throughput?
 

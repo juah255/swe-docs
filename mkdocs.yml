@@ -104,11 +104,26 @@ nav:
       - System Design:
           - Overview: backend/system-design/index.md
           - Requirements: backend/system-design/requirements.md
-          - Non-Functional Requirements: backend/system-design/non-functional-requirements.md
+          - Non-Functional Requirements:
+              - Overview: backend/system-design/non-functional-requirements/index.md
+              - Scalability: backend/system-design/non-functional-requirements/scalability.md
+              - Availability: backend/system-design/non-functional-requirements/availability.md
+              - Reliability: backend/system-design/non-functional-requirements/reliability.md
+              - Performance: backend/system-design/non-functional-requirements/performance.md
+              - Security: backend/system-design/non-functional-requirements/security.md
+              - Maintainability: backend/system-design/non-functional-requirements/maintainability.md
+          - Traffic Management:
+              - Load Balancing: backend/system-design/traffic-management/load-balancing.md
+              - Reverse Proxy: backend/system-design/traffic-management/reverse-proxy.md
+              - API Gateway: backend/system-design/traffic-management/api-gateway.md
+              - Service Discovery: backend/system-design/traffic-management/service-discovery.md
+              - Rate Limiting: backend/system-design/traffic-management/rate-limiting.md
+          - Data Management:
+              - Caching: backend/system-design/data-management/caching.md
+              - Database Scaling: backend/system-design/data-management/database-scaling.md
+              - Distributed Storage: backend/system-design/data-management/distributed-storage.md
+              - Message Queues: backend/system-design/data-management/message-queues.md
           - Examples: backend/system-design/examples.md
-          - Scalability: backend/system-design/scalability.md
-          - Microservices: backend/system-design/microservices.md
-          - Multi-Tenancy: backend/system-design/multi-tenancy.md
           - Questions: backend/system-design/questions.md
       - Design Patterns:
           - Overview: backend/design-patterns/index.md
@@ -123,7 +138,9 @@ nav:
           - Diagrams: backend/software-architecture/diagrams.md
           - Principles: backend/software-architecture/principles.md
           - Domain-Driven Design: backend/software-architecture/domain-driven-design.md
-          - Quality Attributes: backend/software-architecture/quality-attributes.md
+          - Microservices: backend/software-architecture/microservices.md
+          - Multi-Tenancy: backend/software-architecture/multi-tenancy.md
+          - Circuit Breaker: backend/software-architecture/circuit-breaker.md
           - Questions: backend/software-architecture/questions.md
       - Languages:
           - Overview: backend/languages/index.md

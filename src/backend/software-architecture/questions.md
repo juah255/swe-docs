@@ -83,8 +83,8 @@ invariants inside a transaction. Keep aggregates small.
 ## What are quality attributes?
 
 Non-functional qualities the system must uphold: performance, scalability,
-availability, reliability, maintainability, security, testability,
-portability, observability. Each has a cost and often trades against others.
+availability, reliability, maintainability, security. Each has a cost and often
+trades against others. See [System Design → Non-Functional Requirements](../system-design/non-functional-requirements/index.md).
 
 ## Availability vs Reliability
 

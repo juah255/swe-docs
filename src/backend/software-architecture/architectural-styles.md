@@ -182,7 +182,7 @@ its data.
 - **Use when**: the domain has clear bounded contexts, teams need
   independence, or parts of the system have very different scale profiles.
 
-See also [System Design → Microservices](../system-design/microservices.md).
+See also [Microservices](microservices.md).
 
 ## Monolith
 
