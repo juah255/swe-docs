@@ -156,6 +156,7 @@ nav:
           - Python: backend/languages/python.md
       - Libraries & Frameworks:
           - NestJS: backend/libraries-frameworks/nestjs.md
+          - Django: backend/libraries-frameworks/django.md
           - FastAPI: backend/libraries-frameworks/fast-api.md
           - Spring boot: backend/libraries-frameworks/spring-boot.md
           - React: backend/libraries-frameworks/react.md

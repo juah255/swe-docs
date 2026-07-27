@@ -115,6 +115,84 @@ block the loop.
 Mixing blocking libraries inside `async def` endpoints blocks the entire event
 loop and is a common performance mistake.
 
+## Request Cycle
+
+```
+Client (browser / service)
+│
+▼
+ASGI Server (Uvicorn / Hypercorn)
+│  raw bytes → HTTP request parsed
+▼
+ASGI App (FastAPI)
+│
+▼
+Middleware stack (outermost first)
+│  CORSMiddleware → TrustedHostMiddleware → custom middleware...
+│  Each middleware can modify request, short-circuit, or wrap the response
+▼
+Router
+│  Match path + method → select endpoint function
+│  No match → 404 from Starlette
+▼
+Request parsing & validation
+│  Path params → type-cast by signature
+│  Query params → type-cast by signature
+│  Body → JSON decoded → Pydantic model validated
+│  Header / cookie params → extracted per annotation
+│  Validation failure → 422 response (never reaches endpoint)
+▼
+Dependency resolution (Depends)
+│  Called in dependency graph order (leaf to root)
+│  Yield-based deps run setup → endpoint → teardown
+│  Auth / DB / config deps inject into endpoint signature
+│  Exception in any dep → 401/403/500, endpoint skipped
+▼
+Endpoint function executes
+│  Sync def → run in threadpool (anyio)
+│  Async def → run on event loop
+│  Returns: dict / Pydantic model / Response / StreamingResponse
+▼
+Response serialization
+│  Pydantic model → JSON bytes
+│  Response model validation applied if defined
+│  Status code from decorator or Response object
+▼
+Response middleware (reverse order)
+│  Headers set, timing logged, request ID attached
+▼
+ASGI server sends response bytes to client
+```
+
+### Key details at each stage
+
+**Middleware** — Runs on every request. CORS must be outermost so preflight
+headers are returned before auth middleware rejects the request. Middleware that
+touches headers must run before serialization.
+
+**Routing** — FastAPI uses Starlette's router which supports path converters
+(`{item_id:int}`), mounted sub-applications, and prefix groups. Route order
+matters: a literal `/users/me` must be defined before `/users/{user_id}`.
+
+**Validation** — Happens at two boundaries. *Input* validation rejects bad
+requests before the endpoint runs. *Output* validation (`response_model`) catches
+bugs where the endpoint returns data that doesn't match the documented schema.
+
+**Dependencies** — Resolved per-request and cached within that request. A
+dependency that yields (e.g. DB session) runs its teardown code after the
+response is sent. Dependencies can override each other for testing by replacing
+the `Depends()` return value.
+
+**Sync vs Async** — FastAPI detects the endpoint type at registration time.
+`def` endpoints are always dispatched to a threadpool. `async def` endpoints
+run directly on the event loop — any blocking call inside them blocks all other
+concurrent requests on that worker.
+
+**Error handling** — Exceptions bubble up through dependencies → middleware →
+ASGI server. `HTTPException` is caught and turned into a JSON response.
+Unhandled exceptions become 500. Custom exception handlers registered with
+`@app.exception_handler` intercept specific types before they reach the server.
+
 ## Mid/Senior Interview Questions and Answers
 
 ### 1. What makes FastAPI different from many older Python web frameworks?
