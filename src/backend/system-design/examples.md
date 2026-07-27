@@ -185,6 +185,251 @@ DELETE /api/v1/urls/{short_code}
 
 ---
 
+## Blog System
+
+### Functional Requirements
+
+- Create, edit, publish, and delete blog posts (draft/published states)
+- Tag posts with multiple tags
+- Comment on published posts
+- List posts with pagination and tag filtering
+- Full-text search across post titles and content
+- User registration and authentication
+
+### Non-Functional Requirements
+
+| Requirement | Target |
+|---|---|
+| Availability | `99.99%` -- reads should always work |
+| Latency | p99 < 200ms for post reads; < 500ms for search |
+| Scalability | 100K posts, 1M daily readers, 5K writes/day |
+| Consistency | Strong for post metadata; eventual for search index |
+| Durability | No data loss for published content |
+| Security | JWT auth for writes; public reads; rate limit comments |
+
+### Data Model
+
+```sql
+CREATE TABLE users (
+    id              BIGINT PRIMARY KEY,
+    username        VARCHAR(100) UNIQUE NOT NULL,
+    email           VARCHAR(255) UNIQUE NOT NULL,
+    password_hash   VARCHAR(255) NOT NULL,
+    created_at      TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE posts (
+    id              BIGINT PRIMARY KEY,
+    user_id         BIGINT NOT NULL REFERENCES users(id),
+    title           VARCHAR(500) NOT NULL,
+    slug            VARCHAR(500) UNIQUE NOT NULL,
+    content         TEXT NOT NULL,
+    status          ENUM('draft', 'published') DEFAULT 'draft',
+    published_at    TIMESTAMP,
+    created_at      TIMESTAMP DEFAULT NOW(),
+    updated_at      TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE tags (
+    id      BIGINT PRIMARY KEY,
+    name    VARCHAR(100) UNIQUE NOT NULL,
+    slug    VARCHAR(100) UNIQUE NOT NULL
+);
+
+CREATE TABLE post_tags (
+    post_id BIGINT REFERENCES posts(id) ON DELETE CASCADE,
+    tag_id  BIGINT REFERENCES tags(id) ON DELETE CASCADE,
+    PRIMARY KEY (post_id, tag_id)
+);
+
+CREATE TABLE comments (
+    id          BIGINT PRIMARY KEY,
+    post_id     BIGINT NOT NULL REFERENCES posts(id) ON DELETE CASCADE,
+    user_id     BIGINT NOT NULL REFERENCES users(id),
+    content     TEXT NOT NULL,
+    created_at  TIMESTAMP DEFAULT NOW()
+);
+
+CREATE INDEX idx_posts_user ON posts(user_id);
+CREATE INDEX idx_posts_slug ON posts(slug);
+CREATE INDEX idx_posts_status ON posts(status, published_at DESC);
+CREATE INDEX idx_comments_post ON comments(post_id, created_at);
+CREATE INDEX idx_post_tags_tag ON post_tags(tag_id);
+```
+
+### API Design
+
+**List published posts (pagination, filter by tag):**
+
+```http
+GET /api/v1/posts?limit=20&cursor=1705312200_42&tag=python
+```
+
+Response:
+
+```json
+{
+  "posts": [
+    {
+      "id": 41,
+      "title": "Advanced Python Decorators",
+      "slug": "advanced-python-decorators",
+      "author": "alice",
+      "tags": ["python", "advanced"],
+      "published_at": "2024-01-15T10:30:00Z"
+    }
+  ],
+  "next_cursor": "1705308600_35"
+}
+```
+
+**Get post with comments:**
+
+```http
+GET /api/v1/posts/{slug}
+```
+
+Response:
+
+```json
+{
+  "id": 41,
+  "title": "Advanced Python Decorators",
+  "slug": "advanced-python-decorators",
+  "content": "...",
+  "author": "alice",
+  "tags": ["python", "advanced"],
+  "published_at": "2024-01-15T10:30:00Z",
+  "comments": [
+    {
+      "id": 101,
+      "user": "bob",
+      "content": "Great post!",
+      "created_at": "2024-01-15T12:00:00Z"
+    }
+  ]
+}
+```
+
+**Create post (auth, admin):**
+
+```http
+POST /api/v1/posts
+Authorization: Bearer <token>
+Content-Type: application/json
+
+{
+  "title": "Advanced Python Decorators",
+  "content": "Post content here...",
+  "tags": ["python", "advanced"],
+  "status": "draft"
+}
+```
+
+**Update post (auth, owner):**
+
+```http
+PUT /api/v1/posts/{id}
+Authorization: Bearer <token>
+Content-Type: application/json
+
+{
+  "title": "Updated Title",
+  "content": "Updated content...",
+  "status": "published"
+}
+```
+
+**Soft delete post (auth, owner):**
+
+```http
+DELETE /api/v1/posts/{id}
+Authorization: Bearer <token>
+```
+
+**Add comment (auth):**
+
+```http
+POST /api/v1/posts/{id}/comments
+Authorization: Bearer <token>
+Content-Type: application/json
+
+{
+  "content": "Great post!"
+}
+```
+
+### Key Deep Dives
+
+**Cursor-based pagination:**
+
+- Use `(published_at, id)` as the cursor composite key for deterministic ordering
+- Cursor is the base64-encoded values from the last item on the previous page
+- `WHERE (published_at, id) < (?, ?) ORDER BY published_at DESC, id DESC LIMIT 20`
+- Avoids offset drift when new posts are published during pagination
+
+**Search:**
+
+- PostgreSQL full-text search for small to medium scale (tsvector + GIN index)
+- Elasticsearch for large scale or complex ranking requirements
+- Reindex on post publish/update via an async event (avoid synchronous index writes)
+- Search index stores title, content, tags, and author -- not comments
+
+**Caching (Redis):**
+
+- Cache individual post details by slug: `post:{slug}` with 5-minute TTL
+- Cache recent posts list: `posts:recent` with 1-minute TTL
+- Cache per-tag post lists: `posts:tag:{tag_slug}` with 2-minute TTL
+- Invalidate on update: delete the relevant cache keys when a post is created,
+  updated, or deleted
+- Use cache-aside pattern: read from cache first, fall back to database, then
+  populate cache
+
+**Slug generation:**
+
+- Slugify the title on create: lowercase, replace spaces with hyphens, strip
+  special characters
+- Check uniqueness; append a short suffix on collision (e.g., `my-post-a3x`)
+- Slug is immutable after creation (URL stability)
+
+**Deployment:**
+
+```text
+Client -> CloudFront (CDN) -> ALB -> ECS/EC2 (API)
+                                       |
+                                  PostgreSQL (RDS)
+                                  Redis (ElastiCache)
+                                  Elasticsearch (optional)
+```
+
+- Docker containers on ECS Fargate or EC2
+- PostgreSQL on RDS with read replicas for scaling reads
+- Redis on ElastiCache for caching layer
+- CloudFront in front of the API for static asset caching (images, CSS)
+- CI/CD pipeline: push to main → build → test → deploy
+
+### Trade-offs
+
+- Full-text search in PostgreSQL is simple but limited; Elasticsearch adds power
+  at the cost of operational complexity
+- Cursor pagination is more complex than offset but gives stable, performant
+  results on changing datasets
+- Caching post detail is high-value (hot data); caching comments adds complexity
+  with frequent invalidation
+- Soft delete vs hard delete: soft preserves data and allows recovery but requires
+  filtering deleted posts everywhere
+
+### Scaling Summary
+
+- **Redis cache** absorbs read traffic for hot posts and recent lists
+- **PostgreSQL read replicas** scale read-heavy workloads independently
+- **Elasticsearch** offloads search from the primary database
+- **CDN** for static assets and cached API responses
+- **Async indexing pipeline** for search (publish event → Elasticsearch update)
+- **Shard by user_id** only if user count grows to billions; post count stays manageable longer
+
+---
+
 ## Notification Service
 
 ### Functional Requirements
@@ -870,6 +1115,352 @@ GET /api/v1/channels/{channel_id}/members
 - **PostgreSQL** for channel and member metadata (small tables, relational integrity)
 - **Hybrid fan-out** (push for small groups, pull for large groups)
 - **CDN** for media file downloads to reduce chat server load
+
+---
+
+## Notification System
+
+### Functional Requirements
+
+- Send notifications via multiple channels: push (iOS/Android), email, SMS, in-app
+- Support user preference management (which channels enabled, quiet hours, frequency)
+- Template-based message formatting for each channel
+- Delivery tracking (sent, delivered, opened, failed)
+- Rate limiting per user to prevent notification spam
+- Retry failed deliveries with exponential backoff
+- Support prioritization (critical, high, normal, low)
+- Bulk/broadcast notifications for system-wide announcements
+
+### Non-Functional Requirements
+
+| Requirement | Target |
+|---|---|
+| Availability | `99.9%` -- brief delays acceptable; no notification is truly time-critical |
+| Latency | p99 < 2s for ingestion; delivery latency depends on channel (push < 1s, email < 30s, SMS < 10s) |
+| Scalability | 10M users, 500M notifications/day (~6K QPS avg, ~30K QPS peak) |
+| Consistency | Eventual -- notifications may be delayed but must not be lost |
+| Durability | No lost notifications once accepted; idempotent delivery |
+| Security | No notification content logged in plaintext; user PII encrypted at rest; TLS for all channels |
+
+### Capacity Estimation
+
+- 10M users, ~50 notifications/day average = 500M notifications/day
+- 500M / 86400 ≈ 5.8K QPS average, ~30K QPS peak (3-5x average)
+- Channel distribution estimate:
+  - Push: 40% → ~200M/day
+  - Email: 25% → ~125M/day
+  - SMS: 5% → ~25M/day
+  - In-app: 30% → ~150M/day
+- Notification payload: ~1 KB average (metadata + template reference)
+- Storage per day: `500M * 1KB ≈ 500 GB`
+- Delivery log retention (90 days): `500 GB * 90 ≈ 45 TB` (partitioned, cold-storage older data)
+- Template storage: negligible (~10K templates * 10 KB = 100 MB)
+
+### High-Level Design
+
+```text
+                    ┌──────────────┐
+  Event Sources ───▶│  Notification │──▶ Message Queue (Kafka/SQS)
+                    │   Gateway     │          │
+                    └──────────────┘          ▼
+                                    ┌─────────────────┐
+                                    │  Template Engine │
+                                    └────────┬────────┘
+                                             │
+                                             ▼
+                                    ┌─────────────────┐
+                              ┌────▶│  Rate Limiter    │
+                              │     └────────┬────────┘
+                              │              │
+                              ▼              ▼
+                    ┌──────────────┐  ┌───────────────┐
+                    │  User Prefs  │  │  Notification  │
+                    │  Service     │  │  Router        │
+                    └──────────────┘  └───────┬───────┘
+                                              │
+                         ┌────────────────────┼────────────────────┐
+                         ▼                    ▼                    ▼
+                  ┌────────────┐       ┌────────────┐       ┌────────────┐
+                  │  Push       │       │   Email    │       │    SMS     │
+                  │  Service    │       │  Service   │       │  Service   │
+                  └─────┬──────┘       └─────┬──────┘       └─────┬──────┘
+                        │                    │                     │
+                        ▼                    ▼                     ▼
+                  ┌────────────┐       ┌────────────┐       ┌────────────┐
+                  │  APNs/FCM  │       │  SendGrid/ │       │  Twilio/   │
+                  │            │       │  SES       │       │  Vonage    │
+                  └────────────┘       └────────────┘       └────────────┘
+
+                          In-app notifications ──▶ Redis Pub/Sub + DB
+```
+
+Components:
+
+- **Notification Gateway** -- entry point, validates requests, assigns notification IDs, publishes to Kafka
+- **Template Engine** -- renders notification content from templates with variable substitution (supports per-channel templates)
+- **User Preferences Service** -- fetches user channel preferences and quiet hours from DB/cache
+- **Rate Limiter** -- enforces per-user notification limits using sliding window counters in Redis
+- **Notification Router** -- decides which channels to use based on user preferences, notification priority, and quiet hours
+- **Channel Services (Push/Email/SMS)** -- channel-specific delivery logic, formatting, and provider integration
+- **In-App Service** -- stores in-app notifications in DB, pushes real-time updates via Redis Pub/Sub or WebSocket
+- **Delivery Tracker** -- records delivery status (sent, delivered, opened, failed) for each notification
+
+### Message Queue (Kafka/SQS)
+
+```
+Topic: notifications-ingest
+  Partitions: 64
+  Retention: 7 days
+  Consumers: notification-processor group
+
+Message schema:
+{
+  "notification_id": "uuid",
+  "user_id": "bigint",
+  "type": "transactional|marketing|system",
+  "priority": "critical|high|normal|low",
+  "template_id": "string",
+  "variables": { "key": "value" },
+  "channels": ["push", "email", "sms", "in_app"],
+  "created_at": "timestamp",
+  "idempotency_key": "string"
+}
+```
+
+**Why Kafka:** durable, ordered per partition, consumer groups for parallel processing, replay capability for retries.
+
+**Dead Letter Queue (DLQ):** messages that fail after max retries are routed to a DLQ topic for manual review and reprocessing.
+
+### Data Model
+
+```sql
+-- Notification delivery log (append-only, partitioned by time)
+CREATE TABLE notification_log (
+    notification_id   UUID PRIMARY KEY,
+    user_id           BIGINT NOT NULL,
+    type              VARCHAR(20) NOT NULL,    -- transactional, marketing, system
+    priority          VARCHAR(10) NOT NULL,    -- critical, high, normal, low
+    channel           VARCHAR(10) NOT NULL,    -- push, email, sms, in_app
+    template_id       VARCHAR(100),
+    status            VARCHAR(20) NOT NULL,    -- queued, sent, delivered, opened, failed
+    provider          VARCHAR(50),             -- apns, fcm, ses, twilio, etc.
+    provider_msg_id   VARCHAR(255),            -- external provider message ID
+    error_message     TEXT,
+    retry_count       SMALLINT DEFAULT 0,
+    created_at        TIMESTAMP NOT NULL,
+    sent_at           TIMESTAMP,
+    delivered_at      TIMESTAMP,
+    opened_at         TIMESTAMP,
+    failed_at         TIMESTAMP
+) PARTITION BY RANGE (created_at);
+
+-- User notification preferences
+CREATE TABLE user_preferences (
+    user_id           BIGINT PRIMARY KEY,
+    push_enabled      BOOLEAN DEFAULT TRUE,
+    email_enabled     BOOLEAN DEFAULT TRUE,
+    sms_enabled       BOOLEAN DEFAULT FALSE,
+    in_app_enabled    BOOLEAN DEFAULT TRUE,
+    quiet_hours_start TIME,                    -- e.g., '22:00'
+    quiet_hours_end   TIME,                    -- e.g., '08:00'
+    timezone          VARCHAR(50) DEFAULT 'UTC',
+    max_push_per_day  INT DEFAULT 50,
+    max_email_per_day INT DEFAULT 10,
+    max_sms_per_day   INT DEFAULT 5,
+    updated_at        TIMESTAMP NOT NULL
+);
+
+-- Notification templates
+CREATE TABLE templates (
+    template_id       VARCHAR(100) PRIMARY KEY,
+    channel           VARCHAR(10) NOT NULL,    -- push, email, sms, in_app
+    subject           VARCHAR(255),            -- for email; NULL for push/sms
+    title             VARCHAR(100),            -- for push; NULL for email/sms
+    body_template     TEXT NOT NULL,           -- with {{variable}} placeholders
+    is_active         BOOLEAN DEFAULT TRUE,
+    created_at        TIMESTAMP NOT NULL,
+    updated_at        TIMESTAMP NOT NULL
+);
+```
+
+**Indexing strategy:**
+
+- `notification_log`: partitioned by `created_at` (monthly), indexed on `(user_id, created_at DESC)` for user history queries
+- `user_preferences`: primary key on `user_id`, hot cache in Redis (TTL 1 hour)
+- `templates`: small table, fully cached in Redis
+
+### API Design
+
+**Send a single notification:**
+
+```http
+POST /api/v1/notifications
+Content-Type: application/json
+Authorization: Bearer <service_token>
+
+{
+  "user_id": 12345,
+  "type": "transactional",
+  "priority": "high",
+  "template_id": "order_shipped",
+  "variables": {
+    "order_id": "ORD-9876",
+    "tracking_url": "https://track.example.com/abc123"
+  },
+  "channels": ["push", "email", "in_app"]
+}
+```
+
+Response:
+
+```json
+{
+  "notification_id": "550e8400-e29b-41d4-a716-446655440000",
+  "status": "queued",
+  "accepted_channels": ["push", "email", "in_app"]
+}
+```
+
+**Send bulk notifications (up to 10K per request):**
+
+```http
+POST /api/v1/notifications/bulk
+Content-Type: application/json
+Authorization: Bearer <service_token>
+
+{
+  "type": "marketing",
+  "priority": "low",
+  "template_id": "weekly_digest",
+  "variables": { "digest_text": "Here is your weekly summary..." },
+  "channels": ["email", "in_app"],
+  "user_ids": [12345, 12346, 12347]
+}
+```
+
+**Get notification status:**
+
+```http
+GET /api/v1/notifications/{notification_id}
+Authorization: Bearer <service_token>
+```
+
+**Update user preferences:**
+
+```http
+PUT /api/v1/users/{user_id}/notification-preferences
+Content-Type: application/json
+Authorization: Bearer <user_token>
+
+{
+  "push_enabled": true,
+  "email_enabled": false,
+  "sms_enabled": false,
+  "in_app_enabled": true,
+  "quiet_hours_start": "22:00",
+  "quiet_hours_end": "08:00",
+  "timezone": "America/New_York"
+}
+```
+
+**Get user notification history:**
+
+```http
+GET /api/v1/users/{user_id}/notifications?page=1&limit=50&channel=push
+Authorization: Bearer <user_token>
+```
+
+**Dismiss in-app notification:**
+
+```http
+POST /api/v1/users/{user_id}/notifications/{notification_id}/dismiss
+Authorization: Bearer <user_token>
+```
+
+### Key Deep Dives
+
+**Notification flow (end-to-end):**
+
+1. Event source (e.g., order service) calls Notification Gateway
+2. Gateway validates request, assigns `notification_id`, publishes to Kafka `notifications-ingest` topic
+3. Notification Processor consumes from Kafka
+4. Processor fetches user preferences from cache (Redis) or DB
+5. Processor applies rate limiting -- skip notification if user has exceeded daily cap
+6. Processor checks quiet hours -- if active and notification is not critical, defer delivery
+7. Template Engine renders content for each target channel using variables
+8. Router creates one message per channel, publishes to channel-specific Kafka topics
+9. Channel services consume and send via external providers (APNs, FCM, SES, Twilio)
+10. Delivery Tracker updates status based on provider webhooks/callbacks
+11. In-app notifications stored in DB and pushed via Redis Pub/Sub to connected clients
+
+**Rate limiting:**
+
+- Sliding window counter per user per channel per day
+- Stored in Redis: key = `rate:{user_id}:{channel}:{date}`, value = count
+- Critical priority notifications bypass rate limits
+- Configurable per-user caps (user_preference table) and system-wide caps (config)
+- On rate limit hit: drop low/normal priority, queue high priority for later delivery
+
+**Quiet hours handling:**
+
+- When user has quiet hours set, non-critical notifications are held in a delayed queue
+- A scheduled job checks every minute for notifications past the quiet period and reprocesses them
+- Critical notifications (e.g., security alerts, 2FA codes) always bypass quiet hours
+- Quiet hours are timezone-aware -- stored with user's timezone preference
+
+**Retry with exponential backoff:**
+
+```
+Attempt 1: immediate
+Attempt 2: wait 1 minute
+Attempt 3: wait 5 minutes
+Attempt 4: wait 30 minutes
+Attempt 5: wait 2 hours
+Max retries: 5
+After max retries: move to DLQ
+```
+
+- Retry only for transient failures (provider timeout, 5xx errors)
+- Permanent failures (invalid phone number, unsubscribed email) are not retried
+- DLQ messages are monitored and alerted on; bulk reprocess tool available
+
+**Delivery tracking and webhooks:**
+
+- Each provider supports delivery status callbacks (webhooks)
+- Push: APNs and FCM report delivered/failed status
+- Email: SES/SendGrid report delivered, opened (via pixel), bounced, complained
+- SMS: Twilio reports delivered, failed, undelivered
+- Status updates are written to `notification_log` table
+- Aggregated delivery metrics exported to data warehouse for analytics
+
+**Template engine:**
+
+- Templates stored in DB, cached in Redis
+- Syntax: `Hello {{first_name}}, your order {{order_id}} has shipped.`
+- Supports per-channel templates (push title + short body, email subject + HTML body, SMS plain text)
+- Versioned templates -- old notifications use the template version at send time (snapshot variables at ingestion)
+- Template validation on creation (check for missing variables, channel-specific length limits)
+
+### Trade-offs
+
+- Kafka adds operational complexity but provides durability, ordering, and replay that SQS alone cannot
+- Per-channel Kafka topics add partitioning overhead but allow independent scaling per channel
+- Storing all delivery events is expensive; cold-storage old logs (S3/Glacier) after 30 days
+- Rate limiting per user prevents abuse but may delay legitimate high-volume notifications
+- Template snapshots at send time ensure consistent rendering but prevent post-hoc template updates from affecting queued notifications
+- Push notifications are fast and cheap but low engagement; email has higher open rates but higher latency
+- Quiet hours improve UX but add delivery complexity with a delayed queue
+
+### Scaling Summary
+
+- **Kafka** with 64 partitions for ingestion throughput; scale partitions with consumer instances
+- **Redis** for user preference cache, rate limit counters, and in-app Pub/Sub (low-latency fan-out)
+- **Sharded PostgreSQL** partitioned by time for notification log; read replicas for history queries
+- **Independent channel services** -- push, email, SMS scale separately based on their traffic patterns
+- **Provider abstraction layer** -- swap providers (e.g., Twilio to Vonage) without changing core logic
+- **CDN-backed asset delivery** for email templates with images/embedded content
+- **Horizontal scaling** of Notification Processors -- stateless workers, scale by adding consumers
+- **DLQ monitoring and alerting** to catch systematic failures before they compound
 
 ---
 

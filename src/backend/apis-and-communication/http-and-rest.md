@@ -128,3 +128,75 @@ message, request or trace ID, and field-level validation details when relevant.
 
 Avoid exposing stack traces or internal exception messages. Clients need stable
 contracts, while operators need correlation IDs and logs for diagnosis.
+
+### 7. What makes an API RESTful?
+
+**Answer:** An API is RESTful when it follows these constraints:
+
+- **Stateless**: each request contains all info needed (no server-side session)
+- **Client-server**: separation of concerns
+- **Uniform interface**: resources identified by URLs, manipulated via HTTP methods
+- **Resource-based**: nouns not verbs (`/users` not `/getUsers`)
+- **Hypermedia (HATEOAS)**: responses include links to related resources (optional but ideal)
+- **Cacheable**: responses declare cacheability
+- **Layered system**: client cannot tell if it connects directly to server
+
+What most people actually mean in practice: resource URLs + proper HTTP methods + status codes + JSON.
+
+### 8. When should you return 200, 201, 204, 400, 401, 403, 404, 409, 500?
+
+**Answer:**
+
+- **200 OK**: successful request (GET, PUT, PATCH, DELETE)
+- **201 Created**: resource created (POST)
+- **204 No Content**: successful, no body (DELETE)
+- **400 Bad Request**: invalid input, validation error
+- **401 Unauthorized**: not authenticated (missing/invalid token)
+- **403 Forbidden**: authenticated but not allowed
+- **404 Not Found**: resource doesn't exist
+- **409 Conflict**: state conflict (duplicate, version mismatch)
+- **500 Internal Server Error**: server bug, unexpected failure
+
+### 9. Design REST APIs for an e-commerce product service.
+
+**Answer:**
+
+```
+GET    /products              → list products (pagination, filters)
+GET    /products/{id}         → get product details
+POST   /products              → create product (admin)
+PUT    /products/{id}         → replace product (admin)
+PATCH  /products/{id}         → partial update (admin)
+DELETE /products/{id}         → delete product (admin)
+GET    /products/{id}/reviews → get product reviews
+POST   /products/{id}/reviews → add review (auth)
+```
+
+Design considerations:
+
+- Use query params for filtering: `?category=electronics&min_price=100`
+- Pagination: `?page=2&limit=20` or cursor-based
+- Versioning: `/api/v1/products`
+- Idempotency keys for POST
+- Return 201 + `Location` header on create
+- HATEOAS links: `{"_links": {"self": "/products/123", "reviews": "/products/123/reviews"}}`
+
+### 10. Users report duplicate orders when clicking "Pay" multiple times. How would you prevent duplicate order creation?
+
+**Answer:**
+
+- **Idempotency keys**: client sends a unique key (UUID) with each request. Server
+  stores key → result. Duplicate requests with the same key return the cached result
+  instead of creating a new order.
+- **Optimistic locking**: database version check on update. `UPDATE orders SET
+  version=version+1 WHERE id=? AND version=?`. Fails if another write changed the
+  version, preventing concurrent duplicates.
+- **Unique constraint**: add a unique index on `(user_id, idempotency_key)` in the
+  orders table so the database rejects duplicate inserts at the storage level.
+- **Frontend**: disable the Pay button after the first click and show a loading state
+  to prevent the user from triggering multiple requests.
+- **Backend**: check for an existing pending order with the same idempotency key
+  before creating a new one.
+
+Best combination: idempotency key + unique constraint + frontend button disable.
+Defense in depth -- no single layer is sufficient alone.

@@ -152,3 +152,136 @@ business logic into testable services.
 
 Production concerns include ASGI server configuration, timeouts, connection
 pooling, migrations, structured logging, metrics, and health checks.
+
+### 5. Explain the request lifecycle in FastAPI.
+
+**Answer:** The lifecycle runs roughly in this order:
+
+1. Client sends an HTTP request.
+2. ASGI server (e.g. Uvicorn) receives it.
+3. Starlette middleware runs (CORS, auth, logging, request ID).
+4. Router matches the URL to an endpoint function.
+5. Path/query/body parameters are parsed and validated by Pydantic.
+6. Dependencies are resolved (`Depends()` calls run: DB session, auth check, etc.).
+7. Endpoint function executes (business logic).
+8. Return value is serialized to JSON by Pydantic.
+9. Response middleware runs (headers, timing).
+10. ASGI server sends the response to the client.
+
+For async endpoints, steps 5–8 run on the event loop. For sync endpoints, they
+run in a threadpool managed by Starlette.
+
+### 6. What is dependency injection in FastAPI?
+
+**Answer:** DI is a pattern where dependencies (services, DB sessions, auth) are
+provided to endpoints rather than created inside them. FastAPI's `Depends()`
+mechanism:
+
+- Resolves function dependencies automatically from the function signature.
+- Supports nested dependencies (e.g. auth depends on DB).
+- Can yield resources with cleanup (context-manager style).
+- Caches resolved dependencies per request (same dependency = same instance).
+- Easy to override in tests by passing a mock to `Depends()`.
+
+```python
+def get_current_user(token: str = Header(...)) -> User:
+    return verify_token(token)
+
+@app.get("/me")
+def read_me(user: User = Depends(get_current_user)):
+    return user
+```
+
+### 7. What is the difference between Middleware, Dependency, and Background Tasks?
+
+**Answer:**
+
+- **Middleware** wraps every request/response pair. It runs before and after the
+  endpoint. Good for CORS, logging, request IDs, and timing.
+
+- **Dependency** runs before the endpoint to provide resources (DB session, auth,
+  config). Resolved per-request, can be cached, and scoped to specific routes.
+
+- **Background Task** runs after the response is sent. Good for lightweight side
+  effects (send email, log event). Not suited for heavy or long-running work.
+
+```python
+@app.post("/orders", response_model=OrderRead)
+async def create_order(
+    order: OrderCreate,
+    db: Session = Depends(get_db),
+    bg: BackgroundTasks = BackgroundTasks(),
+):
+    new_order = process_order(db, order)
+    bg.add_task(send_confirmation_email, new_order.id)
+    return new_order
+```
+
+### 8. How do you validate request data in FastAPI?
+
+**Answer:**
+
+- Pydantic models for request bodies (automatic validation, type coercion,
+  helpful error messages).
+- `Path()` and `Query()` for path/query parameters with constraints (min, max,
+  regex, description).
+- `Annotated` types for modern inline validation:
+  `Annotated[int, Field(ge=0)]`.
+- Custom validators with `@field_validator` or `@model_validator` in Pydantic
+  models.
+- FastAPI returns `422 Unprocessable Entity` automatically when validation fails.
+
+```python
+from pydantic import BaseModel, Field, field_validator
+
+class CreateUser(BaseModel):
+    username: str = Field(min_length=3, max_length=32)
+    age: int = Field(ge=0, le=150)
+
+    @field_validator("username")
+    @classmethod
+    def username_alphanumeric(cls, v: str) -> str:
+        if not v.isalnum():
+            raise ValueError("must be alphanumeric")
+        return v
+
+@app.post("/users", status_code=201)
+def create_user(user: CreateUser):
+    return {"id": 1, **user.model_dump()}
+```
+
+### 9. How do you handle exceptions globally in FastAPI?
+
+**Answer:**
+
+- `@app.exception_handler(ExceptionType)` to register custom handlers.
+- Custom exception classes for domain-specific errors.
+- `HTTPException` for standard HTTP errors (404, 403, 500, etc.).
+- `RequestValidationError` to customize Pydantic validation error responses.
+- Middleware for catch-all error handling and logging.
+- Always return structured JSON: `{"detail": "message", "code": "ERROR_CODE"}`.
+
+```python
+from fastapi import Request, HTTPException
+from fastapi.responses import JSONResponse
+
+class AppError(Exception):
+    def __init__(self, code: str, status: int, detail: str):
+        self.code = code
+        self.status = status
+        self.detail = detail
+
+@app.exception_handler(AppError)
+async def app_error_handler(request: Request, exc: AppError):
+    return JSONResponse(
+        status_code=exc.status,
+        content={"detail": exc.detail, "code": exc.code},
+    )
+
+@app.exception_handler(RequestValidationError)
+async def validation_error_handler(request: Request, exc: RequestValidationError):
+    return JSONResponse(
+        status_code=422,
+        content={"detail": "Validation failed", "errors": exc.errors()},
+    )
+```

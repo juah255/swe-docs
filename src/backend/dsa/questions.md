@@ -159,3 +159,94 @@ but takes minutes at a million, while the alternative stays fast but uses more
 memory and is harder to maintain. I tie the choice to product impact, latency,
 cost, and reliability, rather than notation. The goal is a decision the team can
 revisit with data, not a math lecture.
+
+### 6. Find duplicates in a list.
+
+**Answer:** Use a set to track seen items. O(n) time, O(n) space.
+
+```python
+def find_duplicates(lst):
+    seen = set()
+    duplicates = set()
+    for item in lst:
+        if item in seen:
+            duplicates.add(item)
+        seen.add(item)
+    return list(duplicates)
+```
+
+### 7. Reverse a string.
+
+**Answer:** Slice notation `s[::-1]` or loop.
+
+```python
+def reverse_string(s):
+    return s[::-1]
+```
+
+### 8. Check if a string is a palindrome.
+
+**Answer:** Compare string with its reverse. Ignore case and non-alphanumeric.
+
+```python
+def is_palindrome(s):
+    cleaned = ''.join(c.lower() for c in s if c.isalnum())
+    return cleaned == cleaned[::-1]
+```
+
+### 9. Implement LRU Cache.
+
+**Answer:** Use `OrderedDict` or hash map + doubly linked list. O(1) get/put.
+
+```python
+from collections import OrderedDict
+
+class LRUCache:
+    def __init__(self, capacity):
+        self.cache = OrderedDict()
+        self.capacity = capacity
+
+    def get(self, key):
+        if key not in self.cache:
+            return -1
+        self.cache.move_to_end(key)
+        return self.cache[key]
+
+    def put(self, key, value):
+        if key in self.cache:
+            self.cache.move_to_end(key)
+        self.cache[key] = value
+        if len(self.cache) > self.capacity:
+            self.cache.popitem(last=False)
+```
+
+### 10. Flatten `[1,[2,[3,4],5],6]`.
+
+**Answer:** Recursive approach.
+
+```python
+def flatten(lst):
+    result = []
+    for item in lst:
+        if isinstance(item, list):
+            result.extend(flatten(item))
+        else:
+            result.append(item)
+    return result
+```
+
+### 11. Group words that are anagrams.
+
+**Answer:** Sort each word's characters as key. O(n * k log k) where k is word
+length.
+
+```python
+from collections import defaultdict
+
+def group_anagrams(words):
+    groups = defaultdict(list)
+    for word in words:
+        key = ''.join(sorted(word.lower()))
+        groups[key].append(word)
+    return list(groups.values())
+```

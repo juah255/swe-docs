@@ -6,18 +6,19 @@ DevOps-focused notes covering infrastructure, delivery, and operations workflows
 
 Follow these topics in order when learning DevOps from the beginning:
 
-1. [DevOps Fundamentals](fundamentals.md): understand DevOps principles, Linux, the command line, processes, and services.
-2. [Git and Collaboration](git-and-collaboration.md): manage source code and team workflows.
-3. [Networking and Web Infrastructure](networking-and-web.md): learn how applications communicate and receive traffic.
-4. [Containers](containers.md): package and run applications consistently with Docker.
-5. [CI/CD](ci-cd.md): automate application validation, building, and delivery.
-6. [Infrastructure as Code](infrastructure-as-code.md): provision and configure infrastructure with code.
-7. [Orchestration](orchestration.md): operate containerized applications with Kubernetes or Nomad.
-8. [Cloud Platforms](cloud-platforms.md): learn core cloud compute, storage, networking, and identity services.
-9. [Observability](observability.md): use logs, metrics, traces, and alerts to understand systems.
-10. [Security and Secrets](security-and-secrets.md): protect infrastructure, credentials, and delivery pipelines.
-11. [Testing and Reliability](testing-and-reliability.md): validate releases and design dependable operations.
-12. [Deployment Troubleshooting](deployment-troubleshooting.md): diagnose failures across an application's deployment path.
+1. [DevOps Fundamentals](fundamentals.md): understand DevOps principles and core concepts.
+2. [Linux](linux.md): command line, processes, services, and system administration.
+3. [Git & Version Control](git-and-version-control/git-basics.md): source control, branching, merging, and team workflows.
+4. [Networking](networking-and-web.md): how applications communicate and receive traffic.
+5. [Docker](docker/images.md): package and run applications consistently with containers.
+6. [CI/CD](ci-cd.md): automate validation, building, and delivery.
+7. [Kubernetes](orchestration.md): orchestrate containerized applications at scale.
+8. [Infrastructure as Code](infrastructure-as-code/terraform.md): provision and configure infrastructure with code.
+9. [Cloud](cloud/aws/ec2.md): compute, storage, networking, and identity services across AWS, Azure, and GCP.
+10. [Monitoring & Logging](monitoring-and-logging.md): use logs, metrics, traces, and alerts to understand systems.
+11. [Security and Secrets](security-and-secrets.md): protect infrastructure, credentials, and delivery pipelines.
+12. [Testing and Reliability](testing-and-reliability.md): validate releases and design dependable operations.
+13. [Deployment Troubleshooting](deployment-troubleshooting.md): diagnose failures across an application's deployment path.
 
 ## Suggested Practice
 

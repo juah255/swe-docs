@@ -221,3 +221,19 @@ denormalizing without a plan to keep duplicated data correct.
 
 Senior design separates transactional schemas from read-optimized projections
 when the workload needs both.
+
+### 6. Normalize the table: OrderID, CustomerName, CustomerPhone, ProductName,
+Quantity.
+
+**Answer:** The original table violates `2NF` and `3NF`. `CustomerName` and
+`CustomerPhone` depend only on `OrderID` (partial dependency). Product details
+are mixed with order data.
+
+Normalized to `3NF`:
+
+- **orders** (`order_id` PK, `customer_id` FK, `order_date`)
+- **customers** (`customer_id` PK, name, phone)
+- **order_items** (`order_item_id` PK, `order_id` FK, `product_id` FK, quantity)
+- **products** (`product_id` PK, name, price)
+
+Each fact is stored once. Customer info is not repeated per order line.

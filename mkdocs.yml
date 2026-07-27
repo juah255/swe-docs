@@ -64,7 +64,9 @@ nav:
   - Home: index.md
   - Backend:
       - Overview: backend/index.md
-      - Basic: backend/basic/index.md
+      - Basic:
+          - Overview: backend/basic/index.md
+          - Web Fundamentals: backend/basic/web-fundamentals.md
       - DSA:
           - Overview: backend/dsa/index.md
           - Complexity Analysis: backend/dsa/complexity.md
@@ -93,6 +95,7 @@ nav:
           - Concurrency Control: backend/dbms/concurrency-control.md
           - Normalization: backend/dbms/normalization.md
           - Indexing: backend/dbms/indexing.md
+          - Redis: backend/dbms/redis.md
           - ORM: backend/dbms/orm.md
           - Questions: backend/dbms/questions.md
       - OOP:
@@ -176,17 +179,51 @@ nav:
           - HTTPS and TLS: backend/security/https-and-tls.md
           - OWASP Top 10: backend/security/owasp-top-10.md
           - Questions: backend/security/questions.md
+      - Dev Tools:
+          - Docker: devops/docker/images.md
+          - Git: devops/git-and-version-control/git-basics.md
+          - AWS: devops/cloud/aws/ec2.md
   - DevOps:
       - Overview: devops/index.md
       - Fundamentals: devops/fundamentals.md
-      - Git and Collaboration: devops/git-and-collaboration.md
-      - Networking and Web: devops/networking-and-web.md
-      - Containers: devops/containers.md
+      - Linux: devops/linux.md
+      - Git & Version Control:
+          - Git Basics: devops/git-and-version-control/git-basics.md
+          - Branching: devops/git-and-version-control/branching.md
+          - Merge vs Rebase: devops/git-and-version-control/merge-vs-rebase.md
+          - Cherry-pick: devops/git-and-version-control/cherry-pick.md
+          - GitHub Flow: devops/git-and-version-control/github-flow.md
+          - GitHub Actions: devops/git-and-version-control/github-actions.md
+      - Networking: devops/networking-and-web.md
+      - Docker:
+          - Images: devops/docker/images.md
+          - Containers: devops/docker/containers.md
+          - Volumes: devops/docker/volumes.md
+          - Networks: devops/docker/networks.md
+          - Docker Compose: devops/docker/docker-compose.md
+          - Dockerfile Best Practices: devops/docker/dockerfile-best-practices.md
       - CI/CD: devops/ci-cd.md
-      - Infrastructure as Code: devops/infrastructure-as-code.md
-      - Orchestration: devops/orchestration.md
-      - Cloud Platforms: devops/cloud-platforms.md
-      - Observability: devops/observability.md
+      - Kubernetes: devops/orchestration.md
+      - Infrastructure as Code:
+          - Overview: devops/infrastructure-as-code.md
+          - Terraform: devops/infrastructure-as-code/terraform.md
+          - Ansible: devops/infrastructure-as-code/ansible.md
+      - Cloud:
+          - Overview: devops/cloud-platforms.md
+          - AWS:
+              - EC2: devops/cloud/aws/ec2.md
+              - ELB: devops/cloud/aws/elb.md
+              - Auto Scaling: devops/cloud/aws/auto-scaling.md
+              - S3: devops/cloud/aws/s3.md
+              - RDS: devops/cloud/aws/rds.md
+              - IAM: devops/cloud/aws/iam.md
+              - VPC: devops/cloud/aws/vpc.md
+              - Route 53: devops/cloud/aws/route-53.md
+              - CloudWatch: devops/cloud/aws/cloudwatch.md
+              - Lambda: devops/cloud/aws/lambda.md
+          - Azure: devops/cloud/azure.md
+          - GCP: devops/cloud/gcp.md
+      - Monitoring & Logging: devops/monitoring-and-logging.md
       - Security and Secrets: devops/security-and-secrets.md
       - Testing and Reliability: devops/testing-and-reliability.md
       - Deployment Troubleshooting: devops/deployment-troubleshooting.md

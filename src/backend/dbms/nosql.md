@@ -241,3 +241,25 @@ when update fan-out is large, or when the team lacks a reliable mechanism to
 repair inconsistencies.
 
 Duplication is a performance tool, not free storage design.
+
+### 6. When would you choose PostgreSQL instead of MongoDB?
+
+**Answer:** Choose PostgreSQL when:
+
+- data has clear relationships (foreign keys, joins);
+- you need `ACID` transactions across multiple tables;
+- complex queries are needed (aggregations, window functions, CTEs);
+- data integrity matters (constraints, unique, check);
+- ad hoc queries are needed (reporting, analytics); or
+- the schema is relatively stable.
+
+Choose MongoDB when:
+
+- the schema changes frequently;
+- data is naturally document-shaped (nested, hierarchical);
+- high write throughput is needed with simple read patterns;
+- horizontal scaling is critical from day one; or
+- rapid prototyping with evolving data models is the priority.
+
+Most production systems use both: PostgreSQL for core transactional data,
+Redis/MongoDB for caching or flexible schemas.

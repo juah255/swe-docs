@@ -147,3 +147,23 @@ API, and route to it incrementally (the strangler-fig pattern).
 
 Measure whether the split actually reduced coupling or deployment pain. If it
 did not, stop; not every domain benefits from being a separate service.
+
+### 6. An API suddenly becomes slow after reaching 5,000 requests/minute. How would you investigate?
+
+**Answer:** Work from the outside in, checking each layer systematically:
+
+1. **Metrics**: latency (p50/p95/p99), error rate, throughput, CPU, and memory on
+   the API servers. Isolate whether it's a spike in latency or a drop in throughput.
+2. **Database**: slow query log, connection pool exhaustion, missing indexes, lock
+   contention. A new query pattern or data growth can cause regressions.
+3. **Dependencies**: external API latency, cache hit rate, queue depth. A slow
+   downstream service cascades into your API.
+4. **Infrastructure**: CPU saturation, memory pressure, network I/O, disk I/O, GC
+   pauses. Check whether the container or host is resource-constrained.
+5. **Recent changes**: deployments, config changes, traffic pattern shifts. Correlate
+   the slowdown timestamp with release or config timelines.
+6. **Tools**: APM dashboards (Datadog, New Relic), database profiler (pg_stat_statements),
+   load balancer logs, and distributed traces.
+
+Common causes: missing index after data growth, connection pool exhaustion, cache
+stampede, memory leak, or a noisy neighbor on shared infrastructure.

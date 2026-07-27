@@ -185,3 +185,30 @@ phishing. An attacker who takes over a phone number can receive OTP codes.
 Better alternatives include TOTP apps (Google Authenticator, Authy), hardware
 security keys (YubiKey via WebAuthn/FIDO2), and push-based MFA. WebAuthn is
 the most phishing-resistant option.
+
+### 7. How would you implement authentication? Compare Session, JWT, and OAuth.
+
+**Answer:**
+
+- **Session**: server stores session data, client gets a session ID cookie. Simple,
+  stateful, easy to revoke by deleting the server-side record. Problem: doesn't scale
+  well across servers without a shared session store, and is vulnerable to CSRF.
+- **JWT**: stateless token with encoded claims, signed by the server. Scales easily
+  (no server state needed), works across services. Problem: can't revoke until expiry
+  (requires a blacklist for revocation), token size grows with claims, and needs
+  refresh token rotation for long-lived sessions.
+- **OAuth**: delegated authorization framework. User grants limited access to a third
+  party without sharing credentials. Used for social login (Google, GitHub). Combines
+  with JWT as the token format.
+
+When to use:
+
+| Approach | Best For |
+|---|---|
+| Session | Traditional web apps, monoliths |
+| JWT | APIs, microservices, mobile apps |
+| OAuth | Third-party access, social login, SSO |
+
+In practice, most systems combine these: OAuth for social login, JWT for API
+authentication, and sessions only for server-rendered apps where immediate
+revocation matters.

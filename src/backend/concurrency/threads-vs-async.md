@@ -145,3 +145,50 @@ running other ready tasks while waiting for completion.
 Blocking I/O is simpler and works well with thread pools, but each wait consumes
 a worker. Non-blocking I/O improves I/O concurrency, but blocking calls inside
 the event loop can still stall every task sharing that loop.
+
+### 6. Explain the difference between Threading, Multiprocessing, and Asyncio. When would you use each?
+
+**Answer:**
+
+- **Threading**: Multiple threads share the same process memory. Good for
+  I/O-bound tasks where threads spend time waiting (file reads, network calls,
+  DB queries). In Python, limited by GIL for CPU-bound work.
+- **Multiprocessing**: Multiple processes, each with its own memory and GIL.
+  True parallelism for CPU-bound tasks. Higher memory overhead, IPC is more
+  complex (pipes, queues, shared memory).
+- **Asyncio**: Single-threaded event loop with coroutines. Best for
+  high-concurrency I/O (thousands of connections). Minimal overhead per task.
+  Not suitable for CPU-bound work or blocking libraries.
+
+When to use each:
+
+- I/O-bound, few concurrent operations → threading or asyncio
+- I/O-bound, thousands of concurrent operations → asyncio
+- CPU-bound → multiprocessing
+- CPU-bound + I/O-bound → multiprocessing for CPU, asyncio for I/O
+
+### 7. Your API processes uploaded images. Would you choose threads, processes, or async? Explain why.
+
+**Answer:**
+
+Image processing (resize, compress, format conversion) is CPU-bound work. Use
+**multiprocessing** or a dedicated task queue (Celery with process pool).
+
+- asyncio alone will not help because image libraries (Pillow, OpenCV) release
+  the GIL briefly or not at all
+- threading will not give true parallelism for CPU work in Python
+- Practical pattern: API endpoint receives upload → pushes to message queue →
+  worker processes with process pool handle image processing
+
+```py
+from concurrent.futures import ProcessPoolExecutor
+from PIL import Image
+
+executor = ProcessPoolExecutor(max_workers=4)
+
+async def handle_upload(file):
+    loop = asyncio.get_event_loop()
+    await loop.run_in_executor(executor, process_image, file)
+```
+
+This keeps the API responsive and lets image processing scale independently.
