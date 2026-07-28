@@ -180,6 +180,7 @@ nav:
           - HTTPS and TLS: backend/security/https-and-tls.md
           - OWASP Top 10: backend/security/owasp-top-10.md
           - Questions: backend/security/questions.md
+      - Questions: backend/questions.md
       - Dev Tools:
           - Docker: devops/docker/images.md
           - Git: devops/git-and-version-control/git-basics.md
