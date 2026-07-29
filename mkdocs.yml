@@ -229,6 +229,7 @@ nav:
       - Security and Secrets: devops/security-and-secrets.md
       - Testing and Reliability: devops/testing-and-reliability.md
       - Deployment Troubleshooting: devops/deployment-troubleshooting.md
+      - Questions: devops/questions.md
   - AI Engineering:
       - Overview: ai-engineering/index.md
       - LLM Fundamentals: ai-engineering/llm-fundamentals.md
