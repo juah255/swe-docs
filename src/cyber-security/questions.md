@@ -1,70 +1,148 @@
-# Cyber Security Questions
+# Cyber Security Interview Questions
 
-## Mid/Senior Interview Questions and Answers
+Comprehensive index of all mid/senior interview questions across cyber security topics.
+Answers are in the referenced source files.
 
-### 1. What is CSRF?
+## Fundamentals
 
-**Answer:** Cross-site request forgery tricks a logged-in browser into sending a
-state-changing request to a site where the user is authenticated.
+*Source:* `cyber-security/fundamentals.md`
 
-Defenses include `SameSite` cookies, CSRF tokens, checking origin or referer for
-sensitive requests, and avoiding unsafe state changes through `GET`.
+- What is the difference between a vulnerability, a threat, and a risk?
+- What is defense in depth and how do you apply it?
+- What does the principle of least privilege mean in practice?
+- What is the difference between a trust boundary and an attack surface?
+- What is the CIA triad and how does it apply to backend security?
 
-### 2. What is CORS, and what does it not protect?
+## Web Security
 
-**Answer:** CORS controls whether browser JavaScript from one origin can read
-responses from another origin. It is enforced by browsers.
+*Source:* `cyber-security/web-security.md`
 
-CORS is not authentication, authorization, or server-to-server protection.
-Postman, curl, and backend services are not blocked by browser CORS rules.
+- What is CSRF and how do you prevent it?
+- What is CORS, and what does it not protect?
+- What is the difference between stored, reflected, and DOM-based XSS?
+- How do you prevent XSS?
+- What is a Content Security Policy and how do you deploy it safely?
+- What does HttpOnly, Secure, and SameSite do on a cookie?
+- What security headers should every backend response include?
 
-### 3. How do you prevent XSS?
+## Authentication and Sessions
 
-**Answer:** Escape output by context, sanitize rich HTML, avoid unsafe DOM APIs,
-use framework-safe rendering defaults, validate input, and apply a restrictive
-content security policy where practical.
+*Source:* `cyber-security/authentication-and-sessions.md`
 
-Storing untrusted input safely is not enough. Output must be encoded for the
-specific context where it appears.
+- How should passwords be stored in a backend system?
+- What is MFA and when should you enforce it?
+- What makes a session ID secure?
+- What are the common JWT validation mistakes?
+- How does OAuth 2.0 work for delegated authorization?
+- What is the difference between OAuth and OpenID Connect?
+- How do you handle session expiration and renewal?
 
-### 4. How do you prevent SQL injection?
+## Authorization and Access Control
 
-**Answer:** Use parameterized queries, prepared statements, query builders, or
-ORM APIs that bind values safely. Never concatenate untrusted input into SQL.
+*Source:* `cyber-security/authorization-and-access-control.md`
 
-Database permissions should also be least-privilege so one injection does not
-become full database compromise.
+- What is insecure direct object reference and how do you fix it?
+- How does RBAC differ from ABAC and ReBAC?
+- How do you enforce object-level authorization?
+- How do you isolate data in a multi-tenant system?
+- What is privilege escalation and how do you prevent it?
 
-### 5. What is the difference between hashing and encryption?
+## Injection and Input Validation
 
-**Answer:** Hashing is one-way and used for integrity or password verification.
-Encryption is reversible with a key and used for confidentiality.
+*Source:* `cyber-security/injection-and-input-validation.md`
 
-Passwords should be hashed with a password-hashing algorithm and per-password
-salt, not encrypted for later recovery.
+- How do you prevent SQL injection?
+- What is command injection and how do you prevent it?
+- What is SSRF and how do you defend against it?
+- What is path traversal and how do you prevent it?
+- When should you use an allowlist vs a blocklist for input validation?
 
-### 6. What is insecure direct object reference?
+## Cryptography Basics
 
-**Answer:** Insecure direct object reference (`IDOR`) happens when a user can
-access an object by changing an identifier in the request.
+*Source:* `cyber-security/cryptography-basics.md`
 
-The fix is object-level authorization. The server must check whether the current
-actor is allowed to access the specific object, not only whether the endpoint is
-protected.
+- What is the difference between hashing and encryption?
+- How does bcrypt or Argon2 work for password hashing?
+- What is the difference between symmetric and asymmetric encryption?
+- How does a TLS handshake work?
+- When should you not implement cryptography yourself?
 
-### 7. How do you protect secrets in production?
+## Secrets and Key Management
 
-**Answer:** Store secrets in a secrets manager, restrict access by service,
-avoid committing secrets to source control, redact logs, rotate leaked
-credentials, and use short-lived credentials where possible.
+*Source:* `cyber-security/secrets-and-key-management.md`
 
-Secret handling should include detection, rotation, auditability, and least
-privilege.
+- How do you protect secrets in production?
+- How do you rotate secrets without downtime?
+- How do you detect secret leaks in a codebase?
+- What is the difference between a KMS and an HSM?
+- How do you manage encryption keys across environments?
 
-### 8. What makes a security log useful?
+## Secure API Design
 
-**Answer:** A useful security log records who did what, to which object, when,
-from where, and whether it succeeded.
+*Source:* `cyber-security/secure-api-design.md`
 
-Logs should support investigation without exposing passwords, tokens, private
-keys, or unnecessary personal data.
+- How do you authenticate API requests?
+- How do you authorize each endpoint call?
+- How do you protect an API from abuse?
+- What makes a security log useful?
+- How do you prevent sensitive data exposure in API responses?
+
+## Network Security
+
+*Source:* `cyber-security/network-security.md`
+
+- What is the difference between a firewall and a WAF?
+- What is mutual TLS and when should you use it?
+- How do you segment a network for security?
+- What is a zero-trust network architecture?
+- How do you prevent data exfiltration from a backend service?
+
+## Cloud and Container Security
+
+*Source:* `cyber-security/cloud-and-container-security.md`
+
+- How do you apply least privilege to cloud IAM roles?
+- How do you secure a container image pipeline?
+- What Kubernetes security controls matter most?
+- How do you protect cloud storage buckets from unauthorized access?
+- How do you handle credentials in a containerized environment?
+
+## Dependency and Supply Chain
+
+*Source:* `cyber-security/dependency-and-supply-chain.md`
+
+- What are the biggest supply chain risks for backend services?
+- How do you keep dependencies safe without slowing development?
+- What is a software bill of materials and why does it matter?
+- How do you verify build integrity in a CI pipeline?
+- What is typosquatting and how do you protect against it?
+
+## Logging, Monitoring, and Incident Response
+
+*Source:* `cyber-security/logging-monitoring-incident-response.md`
+
+- What information should every security log entry contain?
+- How do you prevent sensitive data from appearing in logs?
+- What are the phases of an incident response plan?
+- How do you design an actionable security alert?
+- What should a postmortem for a security incident include?
+
+## Threat Modeling
+
+*Source:* `cyber-security/threat-modeling.md`
+
+- What is threat modeling and when should you do it?
+- How does STRIDE help identify threats?
+- What is a trust boundary and why does it matter?
+- How do you prioritize threats after modeling?
+- How do you keep threat models from going stale?
+
+## Security Testing
+
+*Source:* `cyber-security/security-testing.md`
+
+- What is the difference between SAST and DAST?
+- What should a security-focused code review look for?
+- How do you write regression tests for past security vulnerabilities?
+- When should you use an external penetration tester?
+- How do you build a security test suite into CI/CD?
