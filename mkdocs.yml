@@ -262,7 +262,17 @@ nav:
       - Threat Modeling: cyber-security/threat-modeling.md
       - Security Testing: cyber-security/security-testing.md
       - Questions: cyber-security/questions.md
-  - Frontend: frontend/index.md
+  - Frontend:
+      - Overview: frontend/index.md
+      - HTML and CSS: frontend/html-css.md
+      - JavaScript: frontend/javascript.md
+      - State Management: frontend/state-management.md
+      - Performance: frontend/performance.md
+      - Accessibility: frontend/accessibility.md
+      - Build and Tooling: frontend/build-and-tooling.md
+      - Testing: frontend/testing.md
+      - Security: frontend/security.md
+      - Questions: frontend/questions.md
   - Projects:
       - Overview: projects/index.md
       - DoNow: projects/donow.md
