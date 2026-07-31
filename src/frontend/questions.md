@@ -3,6 +3,12 @@
 Comprehensive index of all mid/senior interview questions across frontend topics.
 Answers are in the referenced source files.
 
+## Overview
+
+*Source:* `frontend/index.md`
+
+- How do frontend and backend contracts stay reliable?
+
 ## HTML and CSS
 
 *Source:* `frontend/html-css.md`
