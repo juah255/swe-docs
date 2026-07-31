@@ -125,13 +125,22 @@ sync.
 
 ### 3. When would you choose gRPC over REST?
 
-**Answer:** Use gRPC for internal, high-volume service-to-service calls where
-performance, compact payloads, strong typing, and streaming matter. Protocol
-Buffers and HTTP/2 give lower latency and smaller messages than JSON over
-HTTP/1.1.
+**Answer:**
+**Use gRPC when:**
 
-REST stays preferable for public-facing APIs, browser clients, and easy
-debugging. Many systems use REST at the edge and gRPC internally.
+- High performance and low latency are important.
+- Communication is between internal microservices.
+- You need streaming (client, server, or bidirectional).
+- You want efficient binary serialization with Protocol Buffers.
+
+**Use REST when:**
+
+- Building public APIs.
+- Supporting web browsers or third-party clients.
+- You prefer simple, human-readable JSON APIs.
+- Ease of debugging and compatibility are more important than maximum performance.
+
+**Common practice:** REST for client-to-server communication, gRPC for service-to-service communication.
 
 ### 4. How do you evolve a monolith toward microservices?
 
