@@ -1,4 +1,4 @@
-# Model Integration
+# AI APIs
 
 Model integration is the application code around model calls: request building,
 streaming, retries, parsing, failure handling, and fallbacks.
@@ -11,22 +11,6 @@ streaming, retries, parsing, failure handling, and fallbacks.
 - Use request IDs so logs and traces can connect model calls to user workflows.
 - Set token limits, timeouts, and retry budgets.
 - Avoid sending secrets, credentials, or unnecessary personal data.
-
-## Streaming
-
-Streaming improves perceived latency for interactive workflows.
-
-Use streaming when:
-
-- Users benefit from seeing partial output.
-- The response may be long.
-- The interface can handle partial text safely.
-
-Avoid streaming when:
-
-- The response must be validated before display.
-- The result drives a business action.
-- Partial output could expose sensitive or unsafe content.
 
 ## Retries and Fallbacks
 
@@ -58,18 +42,7 @@ and make sure every call emits latency, token usage, and status so you can
 see failure modes before users do. The client is the seam where reliability
 lives; do not spread this logic across call sites.
 
-### 2. When do you stream versus return a full response?
-
-**Answer:** Stream when a human is watching and perceived latency matters —
-chat, long-form generation, reasoning steps. Do not stream when the response
-drives a business action, needs validation before display, or is short enough
-that streaming adds complexity for no perceived gain.
-
-Streaming complicates error handling, retries, structured output validation,
-and observability. If the surface is a background job or an API returning
-JSON to another service, non-streaming is almost always the right call.
-
-### 3. Is a provider abstraction worth building?
+### 2. Is a provider abstraction worth building?
 
 **Answer:** A thin abstraction — one interface, a few concrete adapters — is
 usually worth it for testability, fallback routing, and swapping models per
@@ -81,7 +54,7 @@ Rule of thumb: abstract what you actually use across providers today
 client for anything provider-specific. Do not build a framework speculating
 about a future migration you may never do.
 
-### 4. How do you handle rate limits and quotas?
+### 3. How do you handle rate limits and quotas?
 
 **Answer:** Read the provider's rate-limit headers, back off with jitter, and
 queue rather than retry-hammer. For predictable load, request quota increases
@@ -94,7 +67,7 @@ batch job. When you approach limits, degrade gracefully — smaller model,
 cached response, or a clear "try again shortly" — instead of failing the
 user request outright.
 
-### 5. What does secrets and config discipline look like for LLM apps?
+### 4. What does secrets and config discipline look like for LLM apps?
 
 **Answer:** API keys in a secret manager, never in code or images, rotated
 on a schedule and on staff changes. Per-environment keys so a staging bug

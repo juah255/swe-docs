@@ -1,44 +1,12 @@
-# Evaluation
+# Automated Evaluation
 
-Evaluation checks whether an AI feature is actually useful, safe, and stable.
-
-## Evaluation Inputs
-
-- **Golden dataset**: representative examples with expected behavior.
-- **Unit tests**: prompt formatting, schema validation, tool routing, and parser
-  behavior.
-- **Regression tests**: prevent prompt or model changes from breaking known
-  cases.
-- **Human review**: useful for subjective quality, tone, reasoning, and safety.
 - **Automated scoring**: useful for format, exact matching, retrieval recall,
   groundedness, and classification accuracy.
-- **Production monitoring**: catches distribution shifts and failures not
-  present in test data.
 
-## Dimensions To Score
-
-- Task success.
-- Factual accuracy.
-- Grounding in sources.
-- Formatting correctness.
-- Safety and policy compliance.
-- Latency.
-- Cost.
-- User satisfaction.
-
-## RAG Evaluation
-
-Evaluate retrieval and generation separately.
-
-- Did retrieval find the right documents?
-- Did the model use the retrieved evidence correctly?
-- Did the answer cite the right source?
-- Did the model say it does not know when evidence was missing?
-
-## Practical Advice
-
-Start with a small but realistic dataset. Add new examples whenever production
-feedback reveals a failure, edge case, or ambiguous requirement.
+- Rule-based checks: exact match, schema validity, containment.
+- LLM-as-judge with explicit rubrics and examples.
+- Score each dimension separately, then alert on per-dimension drops.
+- Run the eval on every prompt, model, or retrieval change.
 
 ## Mid/Senior Interview Questions and Answers
 

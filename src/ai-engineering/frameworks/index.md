@@ -3,23 +3,15 @@
 Frameworks help with orchestration, retrieval, tools, memory, and evaluation,
 but they should not hide core system behavior.
 
-## LangChain
+## Framework Guides
 
-- Useful for chains, prompt templates, document loaders, retrievers, and tool
-  integrations.
-- Good for prototyping and connecting common AI building blocks.
-- Keep business logic outside framework-specific chains where possible.
-
-## LangGraph
-
-- Useful for stateful agent workflows.
-- Supports graph-based flows, branching, retries, checkpoints, and human review.
-- Good fit when the process has multiple steps and explicit state.
-
-## LlamaIndex
-
-- Useful for data ingestion, indexing, retrieval, and RAG over documents.
-- Good fit for knowledge-base and document-heavy applications.
+- [LangChain](langchain.md)
+- [LangGraph](langgraph.md)
+- [LlamaIndex](llamaindex.md)
+- [OpenAI SDK](openai-sdk.md)
+- [Vercel AI SDK](vercel-ai-sdk.md)
+- [Pydantic AI](pydantic-ai.md)
+- [Mastra](mastra.md)
 
 ## Selection Criteria
 

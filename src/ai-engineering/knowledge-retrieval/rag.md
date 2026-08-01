@@ -1,4 +1,4 @@
-# Retrieval-Augmented Generation
+# RAG
 
 Retrieval-augmented generation (`RAG`) retrieves relevant external content and
 gives it to the model as context before generation. It is useful when answers
@@ -20,12 +20,13 @@ depend on private, current, or domain-specific information.
 ## Design Choices
 
 - **Chunking**: chunks should preserve enough meaning without wasting context.
+  (see [Chunking](chunking.md))
 - **Metadata**: store source, owner, permissions, timestamps, document type, and
   section titles.
 - **Retrieval depth**: retrieve enough context to answer, but not so much that
   irrelevant text distracts the model.
 - **Reranking**: improves result order by scoring retrieved chunks against the
-  query more carefully.
+  query more carefully. (see [Re-ranking](re-ranking.md))
 - **Grounding**: require the answer to stay within retrieved evidence.
 - **Citations**: help users inspect the source and catch retrieval mistakes.
 
@@ -70,16 +71,6 @@ documents also breaks RAG because retrieval only surfaces top-k chunks.
 If the answer requires computation, joins, or authoritative state, build a tool
 call, not a retriever.
 
-### 3. How do you evaluate a RAG pipeline end-to-end?
-
-**Answer:** Evaluate retrieval and generation as separate stages. For retrieval,
-measure recall at k and MRR against a labeled set of real questions with known
-relevant chunks. For generation, measure faithfulness (does the answer stay
-within retrieved evidence), answer correctness, and citation accuracy.
-
-End-to-end scores hide where the pipeline is broken. If recall at k is low, no
-prompt engineering will save the answer.
-
 ### 4. How do you keep the index fresh without rebuilding everything?
 
 **Answer:** Track document identity and content hashes, then re-embed only what
@@ -89,14 +80,3 @@ version the model alongside the vectors and keep both live during migration.
 
 Freshness SLAs should be explicit per source. A pricing doc probably needs
 minutes, a policy PDF can tolerate a day.
-
-### 5. Hybrid search versus pure vector search — which do you pick?
-
-**Answer:** Default to hybrid. Pure vector search loses on exact identifiers,
-acronyms, product codes, error strings, and rare terms that embeddings smooth
-over. Keyword search alone misses paraphrase and semantic overlap. A BM25 plus
-vector blend with a reranker on top handles both cases and is usually worth
-the extra latency.
-
-The one time pure vector wins is short, highly semantic queries over clean
-prose. Most real corpora are not that.

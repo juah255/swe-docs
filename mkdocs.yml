@@ -228,22 +228,69 @@ nav:
       - Questions: devops/questions.md
   - AI Engineering:
       - Overview: ai-engineering/index.md
-      - LLM Fundamentals: ai-engineering/llm-fundamentals.md
-      - Prompt Engineering: ai-engineering/prompt-engineering.md
-      - Model Integration: ai-engineering/model-integration.md
-      - Structured Outputs: ai-engineering/structured-outputs.md
-      - RAG: ai-engineering/rag.md
-      - Vector Databases: ai-engineering/vector-databases.md
-      - Tool Calling: ai-engineering/tool-calling.md
-      - Agents and Workflows: ai-engineering/agents-and-workflows.md
-      - MCP: ai-engineering/mcp.md
-      - Frameworks: ai-engineering/frameworks.md
-      - Evaluation: ai-engineering/evaluation.md
-      - Observability: ai-engineering/observability.md
-      - Cost and Latency: ai-engineering/cost-and-latency.md
-      - Safety and Security: ai-engineering/safety-and-security.md
-      - Deployment: ai-engineering/deployment.md
-      - MLOps and LLMOps: ai-engineering/mlops-and-llmops.md
+      - Foundations:
+          - Overview: ai-engineering/foundations/index.md
+          - What is AI Engineering?: ai-engineering/foundations/what-is-ai-engineering.md
+          - LLM Fundamentals: ai-engineering/foundations/llm-fundamentals.md
+          - Tokens and Context Windows: ai-engineering/foundations/tokens-and-context-windows.md
+          - Embeddings: ai-engineering/foundations/embeddings.md
+          - Prompt Engineering: ai-engineering/foundations/prompt-engineering.md
+          - Structured Outputs: ai-engineering/foundations/structured-outputs.md
+      - Model Integration:
+          - Overview: ai-engineering/model-integration/index.md
+          - AI APIs: ai-engineering/model-integration/ai-apis.md
+          - Streaming Responses: ai-engineering/model-integration/streaming-responses.md
+          - Chat Completions: ai-engineering/model-integration/chat-completions.md
+          - Function / Tool Calling: ai-engineering/model-integration/function-tool-calling.md
+          - Vision Models: ai-engineering/model-integration/vision-models.md
+          - Image Generation: ai-engineering/model-integration/image-generation.md
+          - Audio Models: ai-engineering/model-integration/audio-models.md
+          - Reasoning Models: ai-engineering/model-integration/reasoning-models.md
+      - Knowledge Retrieval:
+          - Overview: ai-engineering/knowledge-retrieval/index.md
+          - RAG: ai-engineering/knowledge-retrieval/rag.md
+          - Chunking: ai-engineering/knowledge-retrieval/chunking.md
+          - Embedding Models: ai-engineering/knowledge-retrieval/embedding-models.md
+          - Vector Databases: ai-engineering/knowledge-retrieval/vector-databases.md
+          - Hybrid Search: ai-engineering/knowledge-retrieval/hybrid-search.md
+          - Re-ranking: ai-engineering/knowledge-retrieval/re-ranking.md
+          - Context Compression: ai-engineering/knowledge-retrieval/context-compression.md
+      - AI Agents:
+          - Overview: ai-engineering/ai-agents/index.md
+          - Agent Fundamentals: ai-engineering/ai-agents/agent-fundamentals.md
+          - Planning: ai-engineering/ai-agents/planning.md
+          - Memory: ai-engineering/ai-agents/memory.md
+          - Multi-Agent Systems: ai-engineering/ai-agents/multi-agent-systems.md
+          - Workflows: ai-engineering/ai-agents/workflows.md
+          - MCP: ai-engineering/ai-agents/mcp.md
+          - Tool Ecosystems: ai-engineering/ai-agents/tool-ecosystems.md
+      - Frameworks:
+          - Overview: ai-engineering/frameworks/index.md
+          - LangChain: ai-engineering/frameworks/langchain.md
+          - LangGraph: ai-engineering/frameworks/langgraph.md
+          - LlamaIndex: ai-engineering/frameworks/llamaindex.md
+          - OpenAI SDK: ai-engineering/frameworks/openai-sdk.md
+          - Vercel AI SDK: ai-engineering/frameworks/vercel-ai-sdk.md
+          - Pydantic AI: ai-engineering/frameworks/pydantic-ai.md
+          - Mastra: ai-engineering/frameworks/mastra.md
+      - Evaluation:
+          - Overview: ai-engineering/evaluation/index.md
+          - Prompt Evaluation: ai-engineering/evaluation/prompt-evaluation.md
+          - RAG Evaluation: ai-engineering/evaluation/rag-evaluation.md
+          - Agent Evaluation: ai-engineering/evaluation/agent-evaluation.md
+          - Benchmarks: ai-engineering/evaluation/benchmarks.md
+          - Human Evaluation: ai-engineering/evaluation/human-evaluation.md
+          - Automated Evaluation: ai-engineering/evaluation/automated-evaluation.md
+      - Production:
+          - Overview: ai-engineering/production/index.md
+          - Observability: ai-engineering/production/observability.md
+          - Cost Optimization: ai-engineering/production/cost-optimization.md
+          - Latency Optimization: ai-engineering/production/latency-optimization.md
+          - Caching: ai-engineering/production/caching.md
+          - Guardrails: ai-engineering/production/guardrails.md
+          - Safety and Security: ai-engineering/production/safety-and-security.md
+          - Deployment: ai-engineering/production/deployment.md
+          - MLOps / LLMOps: ai-engineering/production/mlops-llmops.md
       - Questions: ai-engineering/questions.md
   - Cyber Security:
       - Overview: cyber-security/index.md

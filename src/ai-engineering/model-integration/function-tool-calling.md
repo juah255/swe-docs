@@ -1,4 +1,4 @@
-# Tool Calling
+# Function / Tool Calling
 
 Tool calling lets the model request an application-defined function instead of
 only returning text.
