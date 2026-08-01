@@ -247,20 +247,108 @@ nav:
       - Questions: ai-engineering/questions.md
   - Cyber Security:
       - Overview: cyber-security/index.md
-      - Fundamentals: cyber-security/fundamentals.md
-      - Web Security: cyber-security/web-security.md
-      - Authentication and Sessions: cyber-security/authentication-and-sessions.md
-      - Authorization and Access Control: cyber-security/authorization-and-access-control.md
-      - Injection and Input Validation: cyber-security/injection-and-input-validation.md
-      - Cryptography Basics: cyber-security/cryptography-basics.md
-      - Secrets and Key Management: cyber-security/secrets-and-key-management.md
-      - Secure API Design: cyber-security/secure-api-design.md
-      - Network Security: cyber-security/network-security.md
-      - Cloud and Container Security: cyber-security/cloud-and-container-security.md
-      - Dependency and Supply Chain: cyber-security/dependency-and-supply-chain.md
-      - Logging, Monitoring, and Incident Response: cyber-security/logging-monitoring-incident-response.md
-      - Threat Modeling: cyber-security/threat-modeling.md
-      - Security Testing: cyber-security/security-testing.md
+      - Fundamentals:
+          - Overview: cyber-security/fundamentals/index.md
+          - CIA Triad: cyber-security/fundamentals/cia-triad.md
+          - Security Principles: cyber-security/fundamentals/security-principles.md
+          - Threat, Vulnerability, Risk: cyber-security/fundamentals/threat-vulnerability-risk.md
+          - Attack Surface: cyber-security/fundamentals/attack-surface.md
+          - Defense in Depth: cyber-security/fundamentals/defense-in-depth.md
+          - Zero Trust: cyber-security/fundamentals/zero-trust.md
+          - Security Lifecycle: cyber-security/fundamentals/security-lifecycle.md
+      - Identity and Access Management:
+          - Overview: cyber-security/identity-and-access-management/index.md
+          - Authentication: cyber-security/identity-and-access-management/authentication.md
+          - Authorization: cyber-security/identity-and-access-management/authorization.md
+          - Sessions and Cookies: cyber-security/identity-and-access-management/sessions-and-cookies.md
+          - JWT and Tokens: cyber-security/identity-and-access-management/jwt-and-tokens.md
+          - OAuth 2.0: cyber-security/identity-and-access-management/oauth-2.0.md
+          - OpenID Connect: cyber-security/identity-and-access-management/openid-connect.md
+          - MFA: cyber-security/identity-and-access-management/mfa.md
+          - Password Security: cyber-security/identity-and-access-management/password-security.md
+      - Application Security:
+          - Overview: cyber-security/application-security/index.md
+          - Secure Coding Principles: cyber-security/application-security/secure-coding-principles.md
+          - Input Validation: cyber-security/application-security/input-validation.md
+          - Injection Attacks: cyber-security/application-security/injection-attacks.md
+          - SQL Injection: cyber-security/application-security/sql-injection.md
+          - NoSQL Injection: cyber-security/application-security/nosql-injection.md
+          - Command Injection: cyber-security/application-security/command-injection.md
+          - XSS: cyber-security/application-security/xss.md
+          - CSRF: cyber-security/application-security/csrf.md
+          - SSRF: cyber-security/application-security/ssrf.md
+          - XXE: cyber-security/application-security/xxe.md
+          - File Upload Security: cyber-security/application-security/file-upload-security.md
+          - Path Traversal: cyber-security/application-security/path-traversal.md
+          - Deserialization: cyber-security/application-security/deserialization.md
+          - Clickjacking: cyber-security/application-security/clickjacking.md
+          - CORS: cyber-security/application-security/cors.md
+          - CSP: cyber-security/application-security/csp.md
+          - Security Headers: cyber-security/application-security/security-headers.md
+      - API Security:
+          - Overview: cyber-security/api-security/index.md
+          - Secure API Design: cyber-security/api-security/secure-api-design.md
+          - API Authentication: cyber-security/api-security/api-authentication.md
+          - API Authorization: cyber-security/api-security/api-authorization.md
+          - Rate Limiting: cyber-security/api-security/rate-limiting.md
+          - API Keys: cyber-security/api-security/api-keys.md
+          - HMAC Signatures: cyber-security/api-security/hmac-signatures.md
+          - Webhooks Security: cyber-security/api-security/webhooks-security.md
+          - GraphQL Security: cyber-security/api-security/graphql-security.md
+          - REST Security: cyber-security/api-security/rest-security.md
+          - gRPC Security: cyber-security/api-security/grpc-security.md
+      - Cryptography:
+          - Overview: cyber-security/cryptography/index.md
+          - Cryptography Basics: cyber-security/cryptography/cryptography-basics.md
+          - Hashing: cyber-security/cryptography/hashing.md
+          - Encryption: cyber-security/cryptography/encryption.md
+          - Digital Signatures: cyber-security/cryptography/digital-signatures.md
+          - Certificates: cyber-security/cryptography/certificates.md
+          - PKI: cyber-security/cryptography/pki.md
+          - HTTPS and TLS: cyber-security/cryptography/https-and-tls.md
+          - Secrets Management: cyber-security/cryptography/secrets-management.md
+          - Key Management: cyber-security/cryptography/key-management.md
+      - Infrastructure Security:
+          - Overview: cyber-security/infrastructure-security/index.md
+          - Network Security: cyber-security/infrastructure-security/network-security.md
+          - Firewalls: cyber-security/infrastructure-security/firewalls.md
+          - VPN: cyber-security/infrastructure-security/vpn.md
+          - DNS Security: cyber-security/infrastructure-security/dns-security.md
+          - Cloud Security: cyber-security/infrastructure-security/cloud-security.md
+          - Container Security: cyber-security/infrastructure-security/container-security.md
+          - Kubernetes Security: cyber-security/infrastructure-security/kubernetes-security.md
+          - OS Hardening: cyber-security/infrastructure-security/os-hardening.md
+      - Software Supply Chain:
+          - Overview: cyber-security/software-supply-chain/index.md
+          - Dependency Security: cyber-security/software-supply-chain/dependency-security.md
+          - SBOM: cyber-security/software-supply-chain/sbom.md
+          - Vulnerability Scanning: cyber-security/software-supply-chain/vulnerability-scanning.md
+          - Package Signing: cyber-security/software-supply-chain/package-signing.md
+          - CI/CD Security: cyber-security/software-supply-chain/ci-cd-security.md
+      - Security Architecture:
+          - Overview: cyber-security/security-architecture/index.md
+          - Threat Modeling: cyber-security/security-architecture/threat-modeling.md
+          - Secure Design Principles: cyber-security/security-architecture/secure-design-principles.md
+          - OWASP Top 10: cyber-security/security-architecture/owasp-top-10.md
+          - STRIDE: cyber-security/security-architecture/stride.md
+          - Least Privilege: cyber-security/security-architecture/least-privilege.md
+          - Defense in Depth: cyber-security/security-architecture/defense-in-depth.md
+      - Monitoring and Incident Response:
+          - Overview: cyber-security/monitoring-incident-response/index.md
+          - Logging: cyber-security/monitoring-incident-response/logging.md
+          - Security Monitoring: cyber-security/monitoring-incident-response/security-monitoring.md
+          - SIEM: cyber-security/monitoring-incident-response/siem.md
+          - IDS / IPS: cyber-security/monitoring-incident-response/ids-ips.md
+          - Incident Response: cyber-security/monitoring-incident-response/incident-response.md
+          - Forensics Basics: cyber-security/monitoring-incident-response/forensics-basics.md
+      - Security Testing:
+          - Overview: cyber-security/security-testing/index.md
+          - SAST: cyber-security/security-testing/sast.md
+          - DAST: cyber-security/security-testing/dast.md
+          - SCA: cyber-security/security-testing/sca.md
+          - Penetration Testing: cyber-security/security-testing/penetration-testing.md
+          - Vulnerability Assessment: cyber-security/security-testing/vulnerability-assessment.md
+          - Fuzz Testing: cyber-security/security-testing/fuzz-testing.md
       - Questions: cyber-security/questions.md
   - Frontend:
       - Overview: frontend/index.md

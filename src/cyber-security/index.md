@@ -13,35 +13,31 @@ response.
 Follow these topics in order when learning cyber security for software
 engineering:
 
-1. [Security Fundamentals](fundamentals.md): risk, threat, vulnerability,
-   controls, least privilege, and defense in depth.
-2. [Web Security](web-security.md): browser security, XSS, CSRF, CORS, cookies,
-   headers, and content security policy.
-3. [Authentication and Sessions](authentication-and-sessions.md): login,
-   passwords, MFA, sessions, cookies, JWTs, OAuth, and OIDC.
-4. [Authorization and Access Control](authorization-and-access-control.md):
-   RBAC, ABAC, object-level authorization, tenancy, and permission checks.
-5. [Injection and Input Validation](injection-and-input-validation.md): SQL
-   injection, command injection, SSRF, path traversal, and validation.
-6. [Cryptography Basics](cryptography-basics.md): hashing, encryption,
-   signatures, TLS, password hashing, and key handling.
-7. [Secrets and Key Management](secrets-and-key-management.md): credentials,
-   environment variables, vaults, rotation, and leakage prevention.
-8. [Secure API Design](secure-api-design.md): API authentication, rate limits,
-   request validation, idempotency, pagination, and abuse resistance.
-9. [Network Security](network-security.md): firewalls, TLS, VPNs, segmentation,
-   private networking, and zero trust basics.
-10. [Cloud and Container Security](cloud-and-container-security.md): IAM,
-    storage policies, container images, Kubernetes, and runtime controls.
-11. [Dependency and Supply Chain Security](dependency-and-supply-chain.md):
-    package risk, lockfiles, SBOMs, signing, CI/CD, and build integrity.
-12. [Logging, Monitoring, and Incident Response](logging-monitoring-incident-response.md):
-    audit logs, alerts, detection, triage, containment, and post-incident
-    reviews.
-13. [Threat Modeling](threat-modeling.md): assets, actors, trust boundaries,
-    attack paths, and mitigations.
-14. [Security Testing](security-testing.md): code review, SAST, DAST,
-    dependency scanning, penetration testing, and regression tests.
+1. [Fundamentals](fundamentals/index.md): CIA triad, security principles,
+   threat/vulnerability/risk, attack surface, defense in depth, zero trust, and
+   the security lifecycle.
+2. [Identity and Access Management](identity-and-access-management/index.md):
+   authentication, authorization, sessions, JWTs, OAuth 2.0, OIDC, MFA, and
+   password security.
+3. [Application Security](application-security/index.md): injection, XSS, CSRF,
+   SSRF, XXE, file uploads, deserialization, CORS, CSP, and security headers.
+4. [API Security](api-security/index.md): secure API design, authentication,
+   authorization, rate limiting, API keys, HMAC signatures, webhooks, and
+   GraphQL/REST/gRPC.
+5. [Cryptography](cryptography/index.md): hashing, encryption, signatures,
+   certificates, PKI, HTTPS/TLS, and secrets and key management.
+6. [Infrastructure Security](infrastructure-security/index.md): network
+   security, firewalls, VPN, DNS, cloud, containers, Kubernetes, and OS
+   hardening.
+7. [Software Supply Chain](software-supply-chain/index.md): dependency security,
+   SBOMs, vulnerability scanning, package signing, and CI/CD security.
+8. [Security Architecture](security-architecture/index.md): threat modeling,
+   secure design principles, OWASP Top 10, and STRIDE.
+9. [Monitoring and Incident Response](monitoring-incident-response/index.md):
+   logging, security monitoring, SIEM, IDS/IPS, incident response, and forensics
+   basics.
+10. [Security Testing](security-testing/index.md): SAST, DAST, SCA, penetration
+    testing, vulnerability assessment, and fuzz testing.
 
 ## Suggested Practice
 
