@@ -42,7 +42,7 @@ into the broader field.
 
 ## Mid/Senior Interview Questions and Answers
 
-### 4. What are the trade-offs of a larger context window?
+### 1. What are the trade-offs of a larger context window?
 
 **Answer:** Larger context lets you skip aggressive retrieval, but it costs
 more per token, increases latency, and often degrades quality — models attend
@@ -52,3 +52,39 @@ stuff everything in" is rarely the right answer.
 Prefer targeted retrieval, deduplication, and summarization. Use long context
 for tasks that genuinely require cross-document reasoning, and measure whether
 quality actually improves versus a smaller, well-curated context.
+
+### 2. How do you estimate token counts and cost before sending a request?
+
+**Answer:** Estimate tokens with the provider's tokenizer for the actual model,
+since counts differ across tokenizers, and multiply input plus a reserved
+output budget by the per-token price. Measure real usage on production traffic
+instead of trusting rough character counts, which drift badly for code, JSON,
+and non-English text. Build the estimate into a pre-request budget check so an
+oversized prompt fails fast rather than silently exceeding limits.
+
+### 3. When do you reach for more context window versus retrieval?
+
+**Answer:** Use retrieval when the corpus is larger than the window or only a
+subset is relevant, and reserve long context for tasks that genuinely need
+cross-document reasoning. The cutoff is economic as much as technical: long
+context costs more per token and degrades attention, so stuffing everything in
+is rarely cheaper than a targeted retrieval step. Decide by measuring answer
+quality and cost on both approaches.
+
+### 4. How do long contexts degrade quality, and how do you compensate?
+
+**Answer:** Long contexts degrade quality because attention spreads across more
+tokens and irrelevant content dilutes the signal, so the model can miss the
+most important evidence. Compensate by ordering critical context first,
+deduplicating, and summarizing filler, and evaluate on your real distribution
+of prompt lengths. When quality falls off at the tail, treat it as a retrieval
+or pruning problem, not a reason to buy a bigger window.
+
+### 5. How do you handle output token limits when the response is too long?
+
+**Answer:** Split the work when the expected output exceeds the output budget:
+produce section-by-section generation, summaries, or chunks and concatenate,
+or ask the model to draft then trim. Prefer a larger-capable model only when
+the task genuinely needs one long, coherent response, since more output tokens
+also mean more latency and cost. Detect and surface max_tokens truncation
+rather than silently treating it as a complete answer.

@@ -28,6 +28,41 @@
 
 ## Mid/Senior Interview Questions and Answers
 
+### 1. How does RRF merge keyword and vector results without score calibration?
+
+**Answer:** Reciprocal rank fusion assigns each candidate a score based on its
+rank in each result list — 1 / (k + rank) — and sums across lists, so it needs
+no score calibration and is robust to lists of different scales. That matters
+because keyword and vector scores are not comparable. RRF only needs the
+rankings, which is why it is the default for hybrid fusion; weighted blending
+requires tuning weights that break when either side changes.
+
+### 2. How do you tune rank thresholds for hybrid search?
+
+**Answer:** Set a minimum score or rank cutoff so weak candidates never reach
+the model, and tune it against labeled retrieval evaluation rather than
+intuition. The threshold interacts with fusion: a too-low cutoff lets noise
+through, a too-high one drops relevant chunks. Track precision and recall at
+the cutoff, and re-tune whenever the corpus, index, or fusion method changes.
+The goal is a bounded candidate set for the reranker or prompt stage.
+
+### 3. How do you evaluate whether hybrid search is worth the added complexity?
+
+**Answer:** Compare hybrid against each single method on the same labeled
+question set, measuring recall at k and end-to-end answer quality. Hybrid
+should win on queries with exact identifiers and terms that embeddings miss,
+and on paraphrases that keyword search misses — if your real traffic does not
+contain both, the extra index and fusion logic may not pay for itself. Measure
+on real user queries, since synthetic sets overstate the benefit.
+
+### 4. How do you keep hybrid search fast when querying two indexes?
+
+**Answer:** The two retrievals run in parallel, so the combined latency is
+roughly the slower one; the levers are index-side. Keep both indexes tight with
+the same metadata filters, use approximate vector search with a bounded
+candidate set, and limit keyword hits. Fusion is cheap compared to retrieval,
+so focus optimization on the slower stage and on p99 rather than the mean.
+
 ### 5. Hybrid search versus pure vector search — which do you pick?
 
 **Answer:** Default to hybrid. Pure vector search loses on exact identifiers,

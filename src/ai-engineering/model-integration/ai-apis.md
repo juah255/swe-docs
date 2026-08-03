@@ -79,3 +79,12 @@ Log the config values that affect behavior — model, prompt version,
 temperature — on every request. Never log the prompt or response payload
 without a redaction pass; user data and PII end up in traces faster than
 teams expect.
+
+### 5. How do you design idempotent retries for side-effecting calls?
+
+**Answer:** Generate a client-supplied idempotency key per logical operation
+and have the provider or your own store deduplicate on it, so a retry after a
+timeout cannot double-charge or double-send. Retry side-effecting calls only
+when the operation is known idempotent, and otherwise return a clear
+recoverable error and let the workflow reconcile. Never blindly retry a tool
+call that writes, emails, or pays.

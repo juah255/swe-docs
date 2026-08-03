@@ -71,6 +71,16 @@ documents also breaks RAG because retrieval only surfaces top-k chunks.
 If the answer requires computation, joins, or authoritative state, build a tool
 call, not a retriever.
 
+### 3. How do you keep the model grounded in the retrieved context?
+
+**Answer:** Constrain generation to the retrieved evidence: instruct the model
+to answer only from context, require citations to specific retrieved chunks,
+and add an explicit "not found" path when the evidence is missing. Grounding
+is not a prompt-only fix — enforce it by filtering what reaches the model, by
+validating that cited chunks exist and match, and by logging the retrieval IDs
+with each answer. If the model can cite passages that were not retrieved,
+grounding has failed.
+
 ### 4. How do you keep the index fresh without rebuilding everything?
 
 **Answer:** Track document identity and content hashes, then re-embed only what
@@ -80,3 +90,20 @@ version the model alongside the vectors and keep both live during migration.
 
 Freshness SLAs should be explicit per source. A pricing doc probably needs
 minutes, a policy PDF can tolerate a day.
+
+### 5. RAG versus a long context window — how do you decide?
+
+**Answer:** Long context wins when the relevant material is bounded and known
+in advance — a handful of documents, a session transcript, a single spec. RAG
+wins when the corpus is large, changes often, or is permission-scoped, because
+you cannot stuff a million documents into a prompt and the retrieval step also
+enforces access control.
+
+The cost comparison matters too: long context charges you per token on every
+request, while RAG pays for indexing plus a smaller prompt per query. In
+practice, measure whether the retrieved context actually improves answer
+quality over a long-context baseline on your eval set before committing to
+either.
+
+See [RAG Evaluation](../evaluation/rag-evaluation.md) for how to measure the
+pipeline.

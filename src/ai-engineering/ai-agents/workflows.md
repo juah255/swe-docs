@@ -39,6 +39,24 @@ workflow so it cannot spiral.
 Most systems that call themselves agents are workflows with one model-driven
 step. That is usually the right shape.
 
+### 2. How do you model state in a graph-based workflow?
+
+**Answer:** Define one typed state object that flows through every node, and let
+each step read and update only the fields it owns. Keep the graph acyclic
+unless a retry loop is explicit and bounded, and store checkpoints of the
+state at each node so a failure resumes from the last completed step. The
+state schema is your contract: nodes that mutate it inconsistently are the
+most common source of graph bugs.
+
+### 3. How do you handle retries and failures in a workflow?
+
+**Answer:** Retry idempotent steps with bounded backoff, and distinguish
+transient failures (timeouts, rate limits) from permanent ones (schema
+mismatch, invalid input). Model retries as explicit graph edges with a counter,
+not hidden code, so the policy is visible and testable. Fail closed when
+retries exhaust, persist the partial state, and route the error to a handler
+rather than looping.
+
 ### 4. What human-in-the-loop patterns actually work?
 
 **Answer:** Interrupt-before-side-effect is the most useful pattern: the agent
@@ -51,3 +69,12 @@ calibration is poor.
 Whatever you pick, persist state so a human can come back tomorrow, and make
 the review UI show the retrieved context and tool history — not just the final
 proposal.
+
+### 5. How is testing a workflow different from testing an agent?
+
+**Answer:** A workflow is a deterministic program, so you can test it like one:
+unit-test each node, then property-test the graph over the state space —
+branch coverage, every retry path, every failure edge. Agents need scenario
+tests with tolerated variance instead. If your workflow is so dynamic it needs
+agent-style probabilistic testing, that is a sign it should have been an
+agent.

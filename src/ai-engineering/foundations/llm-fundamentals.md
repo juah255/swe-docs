@@ -65,3 +65,21 @@ Mitigations: ground the answer with retrieval and cite sources, tell the model
 explicitly to say "not provided" when data is missing, constrain outputs with
 a schema, validate any factual field against a source, and evaluate for
 faithfulness — not just fluency. Never rely on the model to police itself.
+
+### 4. How do you evaluate a model before committing to it?
+
+**Answer:** Build a small golden set of real, representative inputs with labeled
+outputs and run candidates against it, scoring on the metrics that matter for
+the task — accuracy, faithfulness, format compliance, cost, and latency. Do not
+rely on three happy-path examples or public benchmarks, which rarely match your
+distribution. Treat the eval as a gate that a new model must pass before it is
+promoted to production.
+
+### 5. How do you explain sampling and randomness to a product team?
+
+**Answer:** Explain that the model does not "know" one correct answer but
+samples from a probability distribution over likely next words, and temperature
+tunes how flat or peaked that distribution is. Low temperature makes the most
+likely answer more consistent; higher temperature makes output more varied and
+creative. The product takeaway: temperature changes style and stability, not
+correctness, and it should be tuned per surface, not globally.

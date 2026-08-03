@@ -82,5 +82,28 @@ because public jailbreaks get patched by providers. Pair it with an
 internal bug-bounty channel where employees can report the ones the
 suite missed.
 
+### 4. How do you secure model API keys and secrets in production?
+
+**Answer:** Store keys in a secret manager, never in code, config files, or
+build artifacts, and rotate them on a schedule and on any suspected leak.
+Scope credentials per environment and service so a leaked staging key does
+not expose production billing.
+
+Two model-specific hazards: never pass secrets into the context window, and
+assume anything sent to the provider is readable by it — if you cannot send
+it, do not prompt it. Centralize key access and audit which services call
+the provider.
+
+### 5. How do you prevent data leakage through tool results and logs?
+
+**Answer:** Tool results are untrusted input arriving in a privileged
+context, so sanitize them before the model sees them: strip credentials and
+unrelated fields, cap result size, and filter by the calling user's
+permissions so a tool never returns rows the user cannot read.
+
+Logs are the quieter leak. Redact prompts and tool payloads at the logging
+boundary, mask PII and secrets, and set retention windows. Assume any log is
+a breach candidate and design it so losing the logs loses no sensitive data.
+
 See [Guardrails](guardrails.md) for input/output filtering and boundary
 enforcement.
