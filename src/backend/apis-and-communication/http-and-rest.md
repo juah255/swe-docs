@@ -33,33 +33,35 @@ Examples:
 
 ## Status Code Categories
 
-- `2xx`: success
+### `2xx`: success
 
- 200 OK:
- 201 Created:
- 204 No Content:
+ - 200 OK:
+ - 201 Created:
+ - 204 No Content:
 
-- `3xx`: redirection
+### `3xx`: redirection
 
 **301 Moved Permanently:** Resource has permanently moved to a new URL
 **302 Found:** Resource is temporarily at a different URL.
 
-- `4xx`: client error
+### `4xx`: client error
 
-400 Bad Request:
-**401 Unauthorized:** authentication required
-**403 Forbidden:** unauthorized
-**404 Not Found:** the requested resource does not exist
-409 Conflict:
-410 Gone:
-**422 Unprocessable Content:** The request syntax is correct, but semantic validation fails
+- 400 Bad Request:
+- **401 Unauthorized:** authentication required
+- **403 Forbidden:** unauthorized
+- **404 Not Found:** the requested resource does not exist
+- 405 Method Not Allowed:
+- 409 Conflict:
+- 410 Gone:
+- **422 Unprocessable Content:** The request syntax is correct, but semantic validation fails
+- 429 Too Many Requests:
 
-- `5xx`: server error
+### `5xx`: server error
 
-**500 Internal Server Error:** The application processed the request but failed. (Bug in fast api backend)
-**502 Bad gateway:** The gateway got a bad response from the application. ( Fast api sends and invalid response)
-**503 Service Unavailable:** The application/service is not available to handle requests. ( fastapi stopped)
-**504 Gateway Timeout:** The application didn't respond in time. (Fast api took long time to give response)
+- **500 Internal Server Error:** The application processed the request but failed. (Bug in fast api backend)
+- **502 Bad gateway:** The gateway got a bad response from the application. ( Fast api sends and invalid response)
+- **503 Service Unavailable:** The application/service is not available to handle requests. ( fastapi stopped)
+- **504 Gateway Timeout:** The application didn't respond in time. (Fast api took long time to give response)
 
 ## Mid/Senior Interview Questions and Answers
 
