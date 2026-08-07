@@ -96,6 +96,18 @@ X-RateLimit-Reset: 1640995200
 - Fail open is usually preferred -- availability over strict rate limiting
 - Alert on Redis failures and monitor rate limit bypasses
 
+## Backpressure
+
+Rate limiting is one form of **backpressure**: instead of accepting every
+request and letting queues grow until the system collapses, the system signals
+the client to slow down.
+
+- Return `429 Too Many Requests` with a `Retry-After` header when overloaded
+- Do not let work queues grow unboundedly -- cap them and reject early
+- Combine with concurrency limits and circuit breakers so an overloaded
+  downstream is not flooded further
+- Bounded queues and early rejection keep p95 latency stable under spikes
+
 ## Mid/Senior Interview Questions and Answers
 
 ### 1. Which rate limiting algorithm would you pick and why?

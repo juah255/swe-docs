@@ -22,6 +22,8 @@
 Why percentiles matter more than averages:
 
 - An average of 100ms could hide 99% of requests at 50ms and 1% at 5 seconds
+- Example: 99 requests at 20ms plus 1 request at 1000ms averages ~30ms, which
+  looks fine, but that one user experienced a full second
 - Users experience the tail, not the average
 - SLAs are usually expressed in p99 or p99.9
 

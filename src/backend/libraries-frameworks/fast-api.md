@@ -115,6 +115,26 @@ block the loop.
 Mixing blocking libraries inside `async def` endpoints blocks the entire event
 loop and is a common performance mistake.
 
+### Async Best Practices
+
+`async def` alone does not make an application scalable. The whole pipeline must
+be async end to end:
+
+```text
+Client -> NGINX -> FastAPI (ASGI) -> business logic
+                                        -> async DB driver -> connection pool -> PostgreSQL
+```
+
+- Marking an endpoint `async def` only helps if nothing inside it blocks
+- One sync call (blocking DB driver, `requests.get`, file read) stalls the
+  event loop and serializes all concurrent requests on that worker
+- Use async drivers end to end: `asyncpg` or SQLAlchemy `AsyncSession` for the
+  database, `httpx.AsyncClient` for HTTP calls
+- Offload CPU-bound work (PDF, video, AI inference, large CSV) to a task queue
+  such as Celery instead of running it in the request path
+- Apps that go async end to end see lower p95 latency and higher throughput
+  under traffic spikes
+
 ## Request Cycle
 
 ```
@@ -363,3 +383,15 @@ async def validation_error_handler(request: Request, exc: RequestValidationError
         content={"detail": "Validation failed", "errors": exc.errors()},
     )
 ```
+
+### 10. Why does marking an endpoint `async def` not automatically make it scalable?
+
+**Answer:** `async def` only lets the event loop interleave work while the
+handler awaits. If anything inside the handler blocks -- a sync database
+driver, `requests.get`, file reads -- the event loop stalls for that whole
+duration and every concurrent request sharing the loop queues behind it.
+
+For real scalability the whole path must be async end to end: async database
+drivers (asyncpg, SQLAlchemy `AsyncSession`), async HTTP clients
+(`httpx.AsyncClient`), and connection pooling. CPU-bound work should be
+offloaded to a task queue such as Celery, not run on the event loop.

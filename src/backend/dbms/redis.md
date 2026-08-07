@@ -76,6 +76,18 @@ def update_user(user_id: int, data: dict) -> dict:
     return user.to_dict()
 ```
 
+### When Redis Caching Helps
+
+Redis is most effective for repeated reads of hot data: user sessions, product
+catalogs, frequently queried rows, or expensive computed results. Each cache
+hit avoids a database round trip.
+
+- Cache reads that repeat; keep the database as the source of truth
+- Set a TTL so stale data expires, and invalidate on writes
+- Do not cache data that changes on every request or writes
+- An in-memory cache is bounded by memory and eviction policy, not by database
+  query speed
+
 ### TTL and Expiration
 
 TTL prevents stale data and manages memory. Choose TTL based on how stale data

@@ -46,6 +46,15 @@ save_user(response.json())
 In this style, `save_user()` cannot run until the HTTP request completes, and
 the worker cannot handle another task while it waits.
 
+Blocking database drivers have the same effect: a query that takes 20ms
+occupies the worker for its full duration. Inside an async endpoint this
+blocks the event loop and serializes all other requests sharing that loop, so
+requests queue up one at a time per worker.
+
+In Python the blocking HTTP client is `requests.get(...)` and the non-blocking
+equivalent is `await httpx.AsyncClient().get(...)`. Using the blocking client
+inside an `async def` endpoint stalls the event loop until the call returns.
+
 ## Non-Blocking I/O
 
 Non-blocking I/O starts an operation without forcing the current worker to sit

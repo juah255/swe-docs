@@ -66,6 +66,22 @@ Multiple consumers read from the same queue. Each message is processed by exactl
 
 One message is delivered to multiple consumers or queues. Used when one event triggers multiple downstream actions (e.g., order placed -> send email, update inventory, charge payment).
 
+## Background Workers
+
+Long-running or CPU-bound work (PDF generation, video transcoding, AI
+inference, large CSV exports) should not run inside an API request. Push the
+job to a queue and let a worker process it in the background.
+
+- Queue libraries: Celery, RQ, or Arq, backed by Redis or RabbitMQ as the broker
+- The API returns a **Job ID** immediately and the client polls a status endpoint
+- Workers scale independently from the API and from each other
+
+```text
+POST /export                    POST /jobs/123/status
+  -> job = enqueue(job)            -> PENDING / RUNNING / DONE
+  <- { "job_id": 123 }             <- { "download_url": "..." }
+```
+
 ## Mid/Senior Interview Questions and Answers
 
 ### 1. When would you choose a message queue over synchronous communication?

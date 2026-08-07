@@ -125,6 +125,23 @@ Related data is loaded together with the main query.
 This can reduce the number of database queries, but loading too much related
 data can hurt performance.
 
+## Async Database Access
+
+Sync drivers (psycopg2) block the calling thread while a query runs. In an
+async framework (FastAPI, Starlette) that block occupies the event loop and
+stalls every other request sharing it.
+
+Async drivers hand the wait back to the event loop so other requests can run
+while the database responds:
+
+- **asyncpg** -- fast async PostgreSQL driver
+- **SQLAlchemy Async** -- `AsyncEngine` and `AsyncSession` for async ORM access
+- **psycopg3** -- has an async variant of the classic PostgreSQL driver
+
+Match the driver to the framework. FastAPI is async, so pair it with an async
+driver and a connection pool. The database access layer must be async end to
+end; a single sync call anywhere in the path serializes requests.
+
 ## ORM Advantages
 
 - Faster development for common database operations.

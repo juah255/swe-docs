@@ -38,6 +38,35 @@ Reads  -> Replica 1
 - Critical reads (post-write-read consistency) must hit the primary
 - Use `read-your-writes` consistency for user-facing reads after writes
 
+## Connection Pooling
+
+Every request that opens a fresh database connection pays for the TCP
+handshake, auth, and setup. Under load, a Connect -> Query -> Disconnect
+pattern can reach ~500 connection changes per second. Pools reuse a fixed set
+of connections instead.
+
+- **Application-side pools** (SQLAlchemy pool, psycopg2 pool) reuse connections
+  within a single app process
+- App workers multiply connections: each worker holds its own, so 100 workers
+  x 20 connections each = 2000 logical connections to the database
+
+### PgBouncer
+
+PgBouncer is a lightweight connection pooler that sits between the application
+and PostgreSQL. Many app connections share a small number of real database
+connections.
+
+- **Session pooling** -- a pooled connection is held for the whole client
+  session until disconnect; simple, but idle sessions waste connections
+- **Transaction pooling** -- a pooled connection is returned to the pool as
+  soon as the transaction ends; better for short-lived API requests, but apps
+  must avoid session state (prepared statements, LISTEN/NOTIFY, temp tables)
+- With PgBouncer, 100 workers x 20 connections each (2000 logical) drops to
+  ~100 real database connections
+
+Real-world result: a pooled async setup lowered p95 latency, cut database
+connection changes by ~60%, and raised throughput during spikes.
+
 ## Sharding / Partitioning
 
 **Sharding** splits data across multiple nodes so no single machine holds everything. It scales writes and storage, which replication alone cannot.

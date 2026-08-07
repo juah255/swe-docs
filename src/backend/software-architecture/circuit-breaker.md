@@ -68,6 +68,19 @@ Common libraries:
 - **golang-circuit-breaker** -- Go implementations
 - **Istio/Envoy** -- service mesh with built-in circuit breaking
 
+## Fail Fast with Fallbacks
+
+When the circuit is open, respond immediately instead of waiting on a failing
+dependency:
+
+- Return an error with a clear status code
+- Serve a cached or default response (stale cache, default recommendations)
+- Fall back to a degraded mode or alternate service
+
+Fail fast turns a 5-30 second hang into a quick, predictable response. It
+bounds latency under failures and keeps shared resources (threads,
+connections) available for healthy dependencies.
+
 ## Mid/Senior Interview Questions and Answers
 
 ### 1. How do circuit breakers prevent cascading failures?
