@@ -213,6 +213,8 @@ ASGI server. `HTTPException` is caught and turned into a JSON response.
 Unhandled exceptions become 500. Custom exception handlers registered with
 `@app.exception_handler` intercept specific types before they reach the server.
 
+- How would you design a scalable FastAPI application to handle thousands of concurrent requests efficiently?
+
 ## Mid/Senior Interview Questions and Answers
 
 ### 1. What makes FastAPI different from many older Python web frameworks?
@@ -251,7 +253,7 @@ business logic into testable services.
 Production concerns include ASGI server configuration, timeouts, connection
 pooling, migrations, structured logging, metrics, and health checks.
 
-### 5. Explain the request lifecycle in FastAPI.
+### 5. Explain the request lifecycle in FastAPI
 
 **Answer:** The lifecycle runs roughly in this order:
 
