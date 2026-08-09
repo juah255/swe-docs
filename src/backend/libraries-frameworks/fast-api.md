@@ -215,6 +215,29 @@ Unhandled exceptions become 500. Custom exception handlers registered with
 
 - How would you design a scalable FastAPI application to handle thousands of concurrent requests efficiently?
 
+**Application Side:**
+
+- Use async def for I/O-bound endpoints.
+- Use non-blocking DB/HTTP drivers.
+- Configure connection pooling.
+- Use Redis for frequently accessed data.
+- Move CPU-heavy/long-running tasks to Celery/background workers.
+- Add rate limiting, timeouts, circuit breakers, and backpressure.
+
+**Infrastructure / Outside Application:**
+
+- Run multiple FastAPI workers.
+- Use horizontal scaling to handle increased traffic.
+- Use PgBouncer for database connection management.
+
+**Monitoring:**
+
+- p95/p99 latency
+- Error rates
+- CPU/memory usage
+- Throughput
+- DB connection usage
+
 ## Mid/Senior Interview Questions and Answers
 
 ### 1. What makes FastAPI different from many older Python web frameworks?
