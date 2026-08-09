@@ -35,9 +35,10 @@ Examples:
 
 ### `2xx`: success
 
- - 200 OK:
- - 201 Created:
- - 204 No Content:
+- 200 OK:
+- 201 Created:
+- 202 Accepted
+- 204 No Content:
 
 ### `3xx`: redirection
 

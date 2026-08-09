@@ -190,3 +190,39 @@ Important areas:
 
 Most Python backend performance issues come from blocking I/O, inefficient
 queries, large in-memory data handling, or too few worker processes.
+
+### 11. How would you use Python's `match`/`case` in a FastAPI/Django backend for request parsing while avoiding name-binding issues and keeping protocol matching explicit?
+
+**Answer:** I'd use `match`/`case` at the API boundary to match JSON structures,
+extract fields, and keep handlers small:
+
+```py
+from enum import Enum
+
+class EventType(str, Enum):
+    USER_CREATED = "user_created"
+    ORDER_CREATED = "order_created"
+
+def process_event(event: dict):
+    match event:
+        case {"type": EventType.USER_CREATED, "user_id": user_id}:
+            return create_user(user_id)
+
+        case {"type": EventType.ORDER_CREATED, "order_id": order_id}:
+            return create_order(order_id)
+
+        case _:
+            return {"error": "Unsupported event"}
+```
+
+Using enums or qualified constants keeps protocol values explicit and avoids
+accidentally treating a bare name as a capture pattern. For more complex
+conditions, I can use a guard:
+
+```py
+case event_type if event_type == SOME_CONSTANT:
+    ...
+```
+
+This reduces nested `if`/`elif` logic while keeping request parsing easy to
+test.
