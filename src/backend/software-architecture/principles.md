@@ -95,6 +95,25 @@ is right — for example, tight coupling inside a hot path is sometimes the
 correct choice. Senior engineers apply principles with judgment and can
 explain the trade-off when they break one.
 
+## Tell Some Software Architecture Principles
+
+- **Separation of Concerns** — Separate different responsibilities into distinct components.
+- **Loose Coupling** — Minimize dependencies between components.
+- **High Cohesion** — Keep closely related responsibilities together.
+- **Single Responsibility** — Each component should have a clear, focused responsibility.
+- **Dependency Inversion** — High-level business logic should not depend directly on low-level implementation details.
+- **Encapsulation** — Hide implementation details behind well-defined interfaces.
+- **Framework Independence** — Keep core business logic independent of specific frameworks.
+- **Explicit Boundaries** — Define clear boundaries between modules, layers, and domains.
+- **Design for Change** — Isolate areas likely to change so modifications have limited impact.
+- **Testability** — Design components so business logic can be tested independently.
+- **Simplicity (KISS)** — Avoid unnecessary complexity and over-engineering.
+- **Avoid Premature Abstraction** — Introduce abstractions when they solve a real problem.
+- **Scalability** — Design the system to handle increasing load appropriately.
+- **Resilience** — Expect failures and handle them gracefully.
+- **Security by Design** — Consider security requirements from the beginning.
+- **Observability** — Make system behavior and failures measurable through logs, metrics, and traces.
+
 ## Mid/Senior Interview Questions and Answers
 
 ### 1. How do cohesion and coupling actually guide your work?
