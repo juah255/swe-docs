@@ -55,7 +55,7 @@ foreign keys, unique constraints, check constraints, and not-null constraints.
 They protect data even when bugs, concurrent requests, scripts, or multiple
 services write to the database.
 
-### 6. Design a database for an online bookstore.
+### 6. Design a database for an online bookstore
 
 **Answer:** Tables:
 
@@ -109,3 +109,44 @@ It hurts performance when:
 
 Rule: index columns used in `WHERE`, `JOIN`, and `ORDER BY`. Don't index
 everything.
+
+## More Questions
+
+### What is the difference between `INNER JOIN` and `LEFT JOIN`?
+
+**`INNER JOIN`** returns only rows that have a match in both tables.
+
+```sql
+SELECT *
+FROM users u
+INNER JOIN orders o
+  ON u.id = o.user_id;
+```
+
+In the Users and Orders tables, if a user has no order, that user won't appear.
+
+**`LEFT JOIN`** returns all rows from the left table, plus matching rows from the
+right table.
+
+```sql
+SELECT *
+FROM users u
+LEFT JOIN orders o
+  ON u.id = o.user_id;
+```
+
+In the Users and Orders tables, if a user has no order, the user still appears,
+but the order columns will be `NULL`.
+
+### Give an example of a one-to-one, one-to-many, and many-to-many relationship.
+
+**Answer:**
+
+- **One-to-one**: each `user` has one `shopping_cart`, and each cart belongs to
+  exactly one user. Model with a `user_id` foreign key (and unique constraint) on
+  the `shopping_cart` table.
+- **One-to-many**: one `customer` has many `orders`. The `orders` table holds a
+  `customer_id` foreign key referencing the `customers` table.
+- **Many-to-many**: `products` and `categories`. A product can belong to many
+  categories, and a category can contain many products. Model with a junction
+  table `product_categories` (`product_id`, `category_id`).
