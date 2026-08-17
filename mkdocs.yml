@@ -155,7 +155,20 @@ nav:
           - PHP: backend/languages/php.md
           - Python: backend/languages/python.md
       - Libraries & Frameworks:
-          - NestJS: backend/libraries-frameworks/nestjs.md
+          - NestJS:
+              - Overview: backend/libraries-frameworks/nestjs/index.md
+              - Fundamentals: backend/libraries-frameworks/nestjs/fundamentals.md
+              - Controllers & HTTP: backend/libraries-frameworks/nestjs/controllers-and-http.md
+              - DTO & Validation: backend/libraries-frameworks/nestjs/dto-and-validation.md
+              - Database & ORM: backend/libraries-frameworks/nestjs/database-and-orm.md
+              - Authentication & Authorization: backend/libraries-frameworks/nestjs/authentication-and-authorization.md
+              - Request Lifecycle: backend/libraries-frameworks/nestjs/request-lifecycle.md
+              - Advanced Modules & Architecture: backend/libraries-frameworks/nestjs/advanced-modules.md
+              - API Design: backend/libraries-frameworks/nestjs/api-design.md
+              - Testing: backend/libraries-frameworks/nestjs/testing.md
+              - Real-time & Async: backend/libraries-frameworks/nestjs/realtime-and-async.md
+              - Microservices: backend/libraries-frameworks/nestjs/microservices.md
+              - Production & Deployment: backend/libraries-frameworks/nestjs/production-and-deployment.md
           - Django: backend/libraries-frameworks/django.md
           - FastAPI: backend/libraries-frameworks/fast-api.md
           - Spring boot: backend/libraries-frameworks/spring-boot.md
