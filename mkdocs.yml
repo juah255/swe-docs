@@ -169,8 +169,24 @@ nav:
               - Real-time & Async: backend/libraries-frameworks/nestjs/realtime-and-async.md
               - Microservices: backend/libraries-frameworks/nestjs/microservices.md
               - Production & Deployment: backend/libraries-frameworks/nestjs/production-and-deployment.md
+          - FastAPI:
+              - Overview: backend/libraries-frameworks/fastapi/index.md
+              - Fundamentals: backend/libraries-frameworks/fastapi/fundamentals.md
+              - Pydantic & Data Validation: backend/libraries-frameworks/fastapi/pydantic.md
+              - Dependency Injection: backend/libraries-frameworks/fastapi/dependency-injection.md
+              - Request & Response Handling: backend/libraries-frameworks/fastapi/request-response-handling.md
+              - Routing & Application Structure: backend/libraries-frameworks/fastapi/routing-and-structure.md
+              - Database Integration: backend/libraries-frameworks/fastapi/database-integration.md
+              - Authentication & Authorization: backend/libraries-frameworks/fastapi/authentication-and-authorization.md
+              - Async Programming: backend/libraries-frameworks/fastapi/async-programming.md
+              - Middleware & Request Lifecycle: backend/libraries-frameworks/fastapi/middleware-and-lifecycle.md
+              - Background Tasks & Job Queues: backend/libraries-frameworks/fastapi/background-tasks-and-queues.md
+              - Testing: backend/libraries-frameworks/fastapi/testing.md
+              - API Design: backend/libraries-frameworks/fastapi/api-design.md
+              - Performance & Scalability: backend/libraries-frameworks/fastapi/performance-and-scalability.md
+              - Production & Deployment: backend/libraries-frameworks/fastapi/production-and-deployment.md
+              - Advanced FastAPI: backend/libraries-frameworks/fastapi/advanced-fastapi.md
           - Django: backend/libraries-frameworks/django.md
-          - FastAPI: backend/libraries-frameworks/fast-api.md
           - Spring boot: backend/libraries-frameworks/spring-boot.md
           - React: backend/libraries-frameworks/react.md
           - NextJS: backend/libraries-frameworks/nextjs.md
