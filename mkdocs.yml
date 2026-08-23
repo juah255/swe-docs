@@ -64,6 +64,10 @@ nav:
   - Home: index.md
   - Backend:
       - Overview: backend/index.md
+      - Web & HTTP: backend/web-and-http/index.md
+      - API: backend/api/index.md
+      - Asynchronous Processing: backend/asynchronous-processing/index.md
+      - Testing: backend/testing/index.md
       - Basic:
           - Overview: backend/basic/index.md
           - Web Fundamentals: backend/basic/web-fundamentals.md
