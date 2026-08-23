@@ -64,19 +64,21 @@ nav:
   - Home: index.md
   - Backend:
       - Overview: backend/index.md
-      - Web & HTTP: backend/web-and-http/index.md
-      - API: backend/api/index.md
+      - API:
+          - Overview: backend/api/index.md
+          - Auth and Tokens: backend/api/auth-and-tokens.md
+          - API Architecture: backend/api/api-architecture.md
       - Asynchronous Processing: backend/asynchronous-processing/index.md
-      - Testing: backend/testing/index.md
+      - Authentication & Authorization:
+          - Overview: backend/authentication-and-authorization/index.md
+          - Authentication: backend/security/authentication.md
+          - Authorization: backend/security/authorization.md
+          - Sessions and Cookies: backend/security/sessions-and-cookies.md
+          - JWT and Tokens: backend/security/jwt-and-tokens.md
+          - Password Security: backend/security/password-security.md
       - Basic:
           - Overview: backend/basic/index.md
           - Web Fundamentals: backend/basic/web-fundamentals.md
-      - DSA:
-          - Overview: backend/dsa/index.md
-          - Complexity Analysis: backend/dsa/complexity.md
-          - Data Structures: backend/dsa/data-structures.md
-          - Algorithms: backend/dsa/algorithms.md
-          - Questions: backend/dsa/questions.md
       - Concurrency:
           - Overview: backend/concurrency/overview.md
           - Race Condition: backend/concurrency/race-condition.md
@@ -84,13 +86,6 @@ nav:
           - Locks and Semaphores: backend/concurrency/locks-and-semaphores.md
           - Threads vs Async: backend/concurrency/threads-vs-async.md
           - Questions: backend/concurrency/questions.md
-      - APIs and Communication:
-          - Overview: backend/apis-and-communication/index.md
-          - HTTP and REST: backend/apis-and-communication/http-and-rest.md
-          - WebSockets: backend/apis-and-communication/websockets.md
-          - Auth and Tokens: backend/apis-and-communication/auth-and-tokens.md
-          - API Architecture: backend/apis-and-communication/api-architecture.md
-          - Questions: backend/apis-and-communication/questions.md
       - DBMS:
           - Overview: backend/dbms/overview.md
           - SQL: backend/dbms/sql.md
@@ -102,55 +97,18 @@ nav:
           - Redis: backend/dbms/redis.md
           - ORM: backend/dbms/orm.md
           - Questions: backend/dbms/questions.md
-      - OOP:
-          - Overview: backend/oop/overview.md
-          - SOLID: backend/oop/solid.md
-          - Design Patterns: backend/oop/design-patterns.md
-          - Relationship: backend/oop/relationship.md
-          - Questions: backend/oop/questions.md
-      - System Design:
-          - Overview: backend/system-design/index.md
-          - Requirements: backend/system-design/requirements.md
-          - Non-Functional Requirements:
-              - Overview: backend/system-design/non-functional-requirements/index.md
-              - Scalability: backend/system-design/non-functional-requirements/scalability.md
-              - Availability: backend/system-design/non-functional-requirements/availability.md
-              - Reliability: backend/system-design/non-functional-requirements/reliability.md
-              - Performance: backend/system-design/non-functional-requirements/performance.md
-              - Security: backend/system-design/non-functional-requirements/security.md
-              - Maintainability: backend/system-design/non-functional-requirements/maintainability.md
-              - Fault Tolerance: backend/system-design/non-functional-requirements/fault-tolerance.md
-          - Traffic Management:
-              - Load Balancing: backend/system-design/traffic-management/load-balancing.md
-              - Reverse Proxy: backend/system-design/traffic-management/reverse-proxy.md
-              - CDN: backend/system-design/traffic-management/cdn.md
-              - API Gateway: backend/system-design/traffic-management/api-gateway.md
-              - Service Discovery: backend/system-design/traffic-management/service-discovery.md
-              - Rate Limiting: backend/system-design/traffic-management/rate-limiting.md
-          - Data Management:
-              - Caching: backend/system-design/data-management/caching.md
-              - Database Scaling: backend/system-design/data-management/database-scaling.md
-              - Distributed Storage: backend/system-design/data-management/distributed-storage.md
-              - Message Queues: backend/system-design/data-management/message-queues.md
-          - Examples: backend/system-design/examples.md
-          - Questions: backend/system-design/questions.md
       - Design Patterns:
           - Overview: backend/design-patterns/index.md
           - Creational: backend/design-patterns/creational.md
           - Structural: backend/design-patterns/structural.md
           - Behavioral: backend/design-patterns/behavioral.md
           - Questions: backend/design-patterns/questions.md
-      - Software Architecture:
-          - Overview: backend/software-architecture/index.md
-          - Architectural Styles: backend/software-architecture/architectural-styles.md
-          - Building Blocks: backend/software-architecture/building-blocks.md
-          - Diagrams: backend/software-architecture/diagrams.md
-          - Principles: backend/software-architecture/principles.md
-          - Domain-Driven Design: backend/software-architecture/domain-driven-design.md
-          - Microservices: backend/software-architecture/microservices.md
-          - Multi-Tenancy: backend/software-architecture/multi-tenancy.md
-          - Circuit Breaker: backend/software-architecture/circuit-breaker.md
-          - Questions: backend/software-architecture/questions.md
+      - DSA:
+          - Overview: backend/dsa/index.md
+          - Complexity Analysis: backend/dsa/complexity.md
+          - Data Structures: backend/dsa/data-structures.md
+          - Algorithms: backend/dsa/algorithms.md
+          - Questions: backend/dsa/questions.md
       - Languages:
           - Overview: backend/languages/index.md
           - Go: backend/languages/go.md
@@ -195,6 +153,12 @@ nav:
           - React: backend/libraries-frameworks/react.md
           - NextJS: backend/libraries-frameworks/nextjs.md
           - WordPress: backend/libraries-frameworks/wordpress.md
+      - OOP:
+          - Overview: backend/oop/overview.md
+          - SOLID: backend/oop/solid.md
+          - Design Patterns: backend/oop/design-patterns.md
+          - Relationship: backend/oop/relationship.md
+          - Questions: backend/oop/questions.md
       - OS:
           - Overview: backend/os/index.md
           - Processes and Threads: backend/os/processes-and-threads.md
@@ -204,15 +168,53 @@ nav:
           - Questions: backend/os/questions.md
       - Security:
           - Overview: backend/security/index.md
-          - Authentication: backend/security/authentication.md
-          - Authorization: backend/security/authorization.md
-          - Sessions and Cookies: backend/security/sessions-and-cookies.md
-          - JWT and Tokens: backend/security/jwt-and-tokens.md
-          - Password Security: backend/security/password-security.md
           - API Security: backend/security/api-security.md
           - HTTPS and TLS: backend/security/https-and-tls.md
           - OWASP Top 10: backend/security/owasp-top-10.md
           - Questions: backend/security/questions.md
+      - Software Architecture:
+          - Overview: backend/software-architecture/index.md
+          - Architectural Styles: backend/software-architecture/architectural-styles.md
+          - Building Blocks: backend/software-architecture/building-blocks.md
+          - Diagrams: backend/software-architecture/diagrams.md
+          - Principles: backend/software-architecture/principles.md
+          - Domain-Driven Design: backend/software-architecture/domain-driven-design.md
+          - Microservices: backend/software-architecture/microservices.md
+          - Multi-Tenancy: backend/software-architecture/multi-tenancy.md
+          - Circuit Breaker: backend/software-architecture/circuit-breaker.md
+          - Questions: backend/software-architecture/questions.md
+      - System Design:
+          - Overview: backend/system-design/index.md
+          - Requirements: backend/system-design/requirements.md
+          - Non-Functional Requirements:
+              - Overview: backend/system-design/non-functional-requirements/index.md
+              - Scalability: backend/system-design/non-functional-requirements/scalability.md
+              - Availability: backend/system-design/non-functional-requirements/availability.md
+              - Reliability: backend/system-design/non-functional-requirements/reliability.md
+              - Performance: backend/system-design/non-functional-requirements/performance.md
+              - Security: backend/system-design/non-functional-requirements/security.md
+              - Maintainability: backend/system-design/non-functional-requirements/maintainability.md
+              - Fault Tolerance: backend/system-design/non-functional-requirements/fault-tolerance.md
+          - Traffic Management:
+              - Load Balancing: backend/system-design/traffic-management/load-balancing.md
+              - Reverse Proxy: backend/system-design/traffic-management/reverse-proxy.md
+              - CDN: backend/system-design/traffic-management/cdn.md
+              - API Gateway: backend/system-design/traffic-management/api-gateway.md
+              - Service Discovery: backend/system-design/traffic-management/service-discovery.md
+              - Rate Limiting: backend/system-design/traffic-management/rate-limiting.md
+          - Data Management:
+              - Caching: backend/system-design/data-management/caching.md
+              - Database Scaling: backend/system-design/data-management/database-scaling.md
+              - Distributed Storage: backend/system-design/data-management/distributed-storage.md
+              - Message Queues: backend/system-design/data-management/message-queues.md
+          - Examples: backend/system-design/examples.md
+          - Questions: backend/system-design/questions.md
+      - Testing: backend/testing/index.md
+      - Web & HTTP:
+          - Overview: backend/web-and-http/index.md
+          - HTTP and REST: backend/web-and-http/http-and-rest.md
+          - WebSockets: backend/web-and-http/websockets.md
+          - Questions: backend/web-and-http/questions.md
       - Questions: backend/questions.md
   - DevOps:
       - Overview: devops/index.md
