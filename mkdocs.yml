@@ -115,7 +115,17 @@ nav:
           - JavaScript: backend/languages/javascript.md
           - TypeScript: backend/languages/type-script.md
           - PHP: backend/languages/php.md
-          - Python: backend/languages/python.md
+          - Python:
+              - Overview: backend/languages/python/index.md
+              - Language Fundamentals: backend/languages/python/fundamentals.md
+              - Functions and Pythonic Abstractions: backend/languages/python/functions-and-abstractions.md
+              - Typing and Data Models: backend/languages/python/typing-and-data-models.md
+              - Concurrency and Async I/O: backend/languages/python/concurrency-and-async.md
+              - Memory and Performance: backend/languages/python/memory-and-performance.md
+              - Project Structure and Packaging: backend/languages/python/project-structure-and-packaging.md
+              - Testing and Code Quality: backend/languages/python/testing-and-quality.md
+              - Production Backend Services: backend/languages/python/production-backend-services.md
+              - Questions: backend/languages/python/questions.md
       - Libraries & Frameworks:
           - NestJS:
               - Overview: backend/libraries-frameworks/nestjs/index.md

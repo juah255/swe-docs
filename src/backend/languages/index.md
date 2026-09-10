@@ -9,7 +9,7 @@ references.
 - [JavaScript](javascript.md)
 - [TypeScript](type-script.md)
 - [PHP](php.md)
-- [Python](python.md)
+- [Python](python/index.md)
 
 ## Mid/Senior Interview Questions and Answers
 
