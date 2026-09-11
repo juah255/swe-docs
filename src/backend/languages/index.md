@@ -6,7 +6,7 @@ references.
 ## Pages
 
 - [Go](go.md)
-- [JavaScript](javascript.md)
+- [JavaScript](javascript/index.md)
 - [TypeScript](type-script.md)
 - [PHP](php.md)
 - [Python](python/index.md)

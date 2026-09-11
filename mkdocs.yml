@@ -112,7 +112,18 @@ nav:
       - Languages:
           - Overview: backend/languages/index.md
           - Go: backend/languages/go.md
-          - JavaScript: backend/languages/javascript.md
+          - JavaScript:
+              - Overview: backend/languages/javascript/index.md
+              - Language Fundamentals: backend/languages/javascript/fundamentals.md
+              - Functions, Objects, and Prototypes: backend/languages/javascript/functions-objects-and-prototypes.md
+              - Promises, Async/Await, and the Event Loop: backend/languages/javascript/async-and-event-loop.md
+              - Node.js Runtime and Modules: backend/languages/javascript/node-runtime-and-modules.md
+              - Streams and Data Processing: backend/languages/javascript/streams-and-data-processing.md
+              - Errors and Reliability: backend/languages/javascript/errors-and-reliability.md
+              - Testing and Code Quality: backend/languages/javascript/testing-and-quality.md
+              - Performance and Memory: backend/languages/javascript/performance-and-memory.md
+              - Production Node.js Services: backend/languages/javascript/production-node-services.md
+              - Questions: backend/languages/javascript/questions.md
           - TypeScript: backend/languages/type-script.md
           - PHP: backend/languages/php.md
           - Python:
