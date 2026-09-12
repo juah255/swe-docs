@@ -7,7 +7,7 @@ references.
 
 - [Go](go.md)
 - [JavaScript](javascript/index.md)
-- [TypeScript](type-script.md)
+- [TypeScript](typescript/index.md)
 - [PHP](php.md)
 - [Python](python/index.md)
 

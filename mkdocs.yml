@@ -124,7 +124,19 @@ nav:
               - Performance and Memory: backend/languages/javascript/performance-and-memory.md
               - Production Node.js Services: backend/languages/javascript/production-node-services.md
               - Questions: backend/languages/javascript/questions.md
-          - TypeScript: backend/languages/type-script.md
+          - TypeScript:
+              - Overview: backend/languages/typescript/index.md
+              - Type System Fundamentals: backend/languages/typescript/type-system-fundamentals.md
+              - Unions and Narrowing: backend/languages/typescript/unions-and-narrowing.md
+              - Generics and Type Transformations: backend/languages/typescript/generics-and-type-transformations.md
+              - Objects, Interfaces, and Classes: backend/languages/typescript/objects-interfaces-and-classes.md
+              - Runtime Validation and Boundaries: backend/languages/typescript/runtime-validation-and-boundaries.md
+              - Compiler, Modules, and Project Configuration: backend/languages/typescript/compiler-modules-and-project-configuration.md
+              - Async Code and Error Handling: backend/languages/typescript/async-code-and-error-handling.md
+              - Architecture and API Design: backend/languages/typescript/architecture-and-api-design.md
+              - Testing and Code Quality: backend/languages/typescript/testing-and-quality.md
+              - Production TypeScript Services: backend/languages/typescript/production-typescript-services.md
+              - Questions: backend/languages/typescript/questions.md
           - PHP: backend/languages/php.md
           - Python:
               - Overview: backend/languages/python/index.md
