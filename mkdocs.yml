@@ -111,7 +111,18 @@ nav:
           - Questions: backend/dsa/questions.md
       - Languages:
           - Overview: backend/languages/index.md
-          - Go: backend/languages/go.md
+          - Go:
+              - Overview: backend/languages/go/index.md
+              - Language Fundamentals: backend/languages/go/language-fundamentals.md
+              - Interfaces and Generics: backend/languages/go/interfaces-and-generics.md
+              - Errors and Resource Management: backend/languages/go/errors-and-resource-management.md
+              - Concurrency: backend/languages/go/concurrency.md
+              - Memory and Data Representation: backend/languages/go/memory-and-data-representation.md
+              - Modules, Packages, and Project Structure: backend/languages/go/modules-packages-and-project-structure.md
+              - Testing and Code Quality: backend/languages/go/testing-and-quality.md
+              - Performance and Profiling: backend/languages/go/performance-and-profiling.md
+              - Production Go Services: backend/languages/go/production-go-services.md
+              - Questions: backend/languages/go/questions.md
           - JavaScript:
               - Overview: backend/languages/javascript/index.md
               - Language Fundamentals: backend/languages/javascript/fundamentals.md
