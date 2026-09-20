@@ -194,7 +194,19 @@ nav:
               - Advanced FastAPI: backend/libraries-frameworks/fastapi/advanced-fastapi.md
           - Django: backend/libraries-frameworks/django.md
           - Spring boot: backend/libraries-frameworks/spring-boot.md
-          - React: backend/libraries-frameworks/react.md
+          - React:
+              - Overview: backend/libraries-frameworks/react/index.md
+              - Fundamentals and Rendering: backend/libraries-frameworks/react/fundamentals-and-rendering.md
+              - Components and Composition: backend/libraries-frameworks/react/components-and-composition.md
+              - State, Reducers, and Context: backend/libraries-frameworks/react/state-reducers-and-context.md
+              - Effects, Refs, and External Systems: backend/libraries-frameworks/react/effects-refs-and-external-systems.md
+              - Data Fetching, Actions, and Suspense: backend/libraries-frameworks/react/data-fetching-actions-and-suspense.md
+              - Forms and Validation: backend/libraries-frameworks/react/forms-and-validation.md
+              - Routing and Rendering Architectures: backend/libraries-frameworks/react/routing-and-rendering-architectures.md
+              - Testing and Accessibility: backend/libraries-frameworks/react/testing-and-accessibility.md
+              - Performance: backend/libraries-frameworks/react/performance.md
+              - Security and Production: backend/libraries-frameworks/react/security-and-production.md
+              - Questions: backend/libraries-frameworks/react/questions.md
           - NextJS: backend/libraries-frameworks/nextjs.md
           - WordPress: backend/libraries-frameworks/wordpress.md
       - OOP:
