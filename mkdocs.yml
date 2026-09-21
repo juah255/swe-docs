@@ -207,7 +207,21 @@ nav:
               - Performance: backend/libraries-frameworks/react/performance.md
               - Security and Production: backend/libraries-frameworks/react/security-and-production.md
               - Questions: backend/libraries-frameworks/react/questions.md
-          - NextJS: backend/libraries-frameworks/nextjs.md
+          - Next.js:
+              - Overview: backend/libraries-frameworks/nextjs/index.md
+              - Project Structure and App Router: backend/libraries-frameworks/nextjs/project-structure-and-app-router.md
+              - Routing, Layouts, and Navigation: backend/libraries-frameworks/nextjs/routing-layouts-and-navigation.md
+              - Server and Client Components: backend/libraries-frameworks/nextjs/server-and-client-components.md
+              - Data Fetching and Streaming: backend/libraries-frameworks/nextjs/data-fetching-and-streaming.md
+              - Caching and Revalidation: backend/libraries-frameworks/nextjs/caching-and-revalidation.md
+              - Mutations, Forms, and Server Functions: backend/libraries-frameworks/nextjs/mutations-forms-and-server-functions.md
+              - Route Handlers, Proxy, and BFF: backend/libraries-frameworks/nextjs/route-handlers-proxy-and-bff.md
+              - Authentication and Security: backend/libraries-frameworks/nextjs/authentication-and-security.md
+              - Performance, Metadata, and Assets: backend/libraries-frameworks/nextjs/performance-metadata-and-assets.md
+              - Testing and Observability: backend/libraries-frameworks/nextjs/testing-and-observability.md
+              - Deployment and Production: backend/libraries-frameworks/nextjs/deployment-and-production.md
+              - Pages Router and Migration: backend/libraries-frameworks/nextjs/pages-router-and-migration.md
+              - Questions: backend/libraries-frameworks/nextjs/questions.md
           - WordPress: backend/libraries-frameworks/wordpress.md
       - OOP:
           - Overview: backend/oop/overview.md

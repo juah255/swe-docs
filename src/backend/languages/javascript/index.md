@@ -65,5 +65,5 @@ and error ownership explicit.
 6. Study event-loop health, worker capacity, observability, and shutdown.
 
 After the language foundations, continue with [NestJS](../../libraries-frameworks/nestjs/index.md)
-or [Next.js](../../libraries-frameworks/nextjs.md) for framework-specific
+or [Next.js](../../libraries-frameworks/nextjs/index.md) for framework-specific
 patterns.

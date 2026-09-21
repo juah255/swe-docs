@@ -75,7 +75,7 @@ trusting client code with server-side security decisions.
 
 React assumes strong JavaScript knowledge. Review [JavaScript](../../languages/javascript/index.md)
 and [TypeScript](../../languages/typescript/index.md) as needed, then continue to
-[Next.js](../nextjs.md) for one full-stack React framework.
+[Next.js](../nextjs/index.md) for one full-stack React framework.
 
 ## Official References
 
