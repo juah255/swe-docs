@@ -192,7 +192,21 @@ nav:
               - Performance & Scalability: backend/libraries-frameworks/fastapi/performance-and-scalability.md
               - Production & Deployment: backend/libraries-frameworks/fastapi/production-and-deployment.md
               - Advanced FastAPI: backend/libraries-frameworks/fastapi/advanced-fastapi.md
-          - Django: backend/libraries-frameworks/django.md
+          - Django:
+              - Overview: backend/libraries-frameworks/django/index.md
+              - Project Structure & Settings: backend/libraries-frameworks/django/project-structure-and-settings.md
+              - Requests, URLs, Views & Middleware: backend/libraries-frameworks/django/requests-urls-views-and-middleware.md
+              - Models & ORM: backend/libraries-frameworks/django/models-and-orm.md
+              - Migrations & Transactions: backend/libraries-frameworks/django/migrations-and-transactions.md
+              - Forms, Validation & Templates: backend/libraries-frameworks/django/forms-validation-and-templates.md
+              - Authentication, Authorization & Sessions: backend/libraries-frameworks/django/authentication-authorization-and-sessions.md
+              - Django REST Framework: backend/libraries-frameworks/django/django-rest-framework.md
+              - Async & Background Tasks: backend/libraries-frameworks/django/async-and-background-tasks.md
+              - Caching & Performance: backend/libraries-frameworks/django/caching-and-performance.md
+              - Testing & Quality: backend/libraries-frameworks/django/testing-and-quality.md
+              - Security: backend/libraries-frameworks/django/security.md
+              - Production & Deployment: backend/libraries-frameworks/django/production-and-deployment.md
+              - Questions: backend/libraries-frameworks/django/questions.md
           - Spring boot: backend/libraries-frameworks/spring-boot.md
           - React:
               - Overview: backend/libraries-frameworks/react/index.md

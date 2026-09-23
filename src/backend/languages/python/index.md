@@ -63,5 +63,5 @@ database access, worker capacity, and failure handling.
    metrics, and graceful shutdown.
 
 Frameworks build on these concepts. Continue with [FastAPI](../../libraries-frameworks/fastapi/index.md)
-or [Django](../../libraries-frameworks/django.md) after the language foundations
+or [Django](../../libraries-frameworks/django/index.md) after the language foundations
 are comfortable.
