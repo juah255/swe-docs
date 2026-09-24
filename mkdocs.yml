@@ -207,7 +207,21 @@ nav:
               - Security: backend/libraries-frameworks/django/security.md
               - Production & Deployment: backend/libraries-frameworks/django/production-and-deployment.md
               - Questions: backend/libraries-frameworks/django/questions.md
-          - Spring boot: backend/libraries-frameworks/spring-boot.md
+          - Spring Boot:
+              - Overview: backend/libraries-frameworks/spring-boot/index.md
+              - Fundamentals & Auto-configuration: backend/libraries-frameworks/spring-boot/fundamentals-and-auto-configuration.md
+              - Project Structure & Configuration: backend/libraries-frameworks/spring-boot/project-structure-and-configuration.md
+              - Dependency Injection & Beans: backend/libraries-frameworks/spring-boot/dependency-injection-and-beans.md
+              - Spring MVC & REST APIs: backend/libraries-frameworks/spring-boot/web-mvc-and-rest-apis.md
+              - Data, JPA & Transactions: backend/libraries-frameworks/spring-boot/data-jpa-and-transactions.md
+              - Spring Security: backend/libraries-frameworks/spring-boot/security.md
+              - WebFlux & Concurrency: backend/libraries-frameworks/spring-boot/webflux-and-concurrency.md
+              - Messaging & Scheduled Work: backend/libraries-frameworks/spring-boot/messaging-and-scheduled-work.md
+              - Caching, Performance & Resilience: backend/libraries-frameworks/spring-boot/caching-performance-and-resilience.md
+              - Testing: backend/libraries-frameworks/spring-boot/testing.md
+              - Actuator & Observability: backend/libraries-frameworks/spring-boot/actuator-and-observability.md
+              - Production & Deployment: backend/libraries-frameworks/spring-boot/production-and-deployment.md
+              - Questions: backend/libraries-frameworks/spring-boot/questions.md
           - React:
               - Overview: backend/libraries-frameworks/react/index.md
               - Fundamentals and Rendering: backend/libraries-frameworks/react/fundamentals-and-rendering.md
