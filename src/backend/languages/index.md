@@ -8,7 +8,7 @@ references.
 - [Go](go/index.md)
 - [JavaScript](javascript/index.md)
 - [TypeScript](typescript/index.md)
-- [PHP](php.md)
+- [PHP](php/index.md)
 - [Python](python/index.md)
 
 ## Mid/Senior Interview Questions and Answers

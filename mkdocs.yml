@@ -148,7 +148,21 @@ nav:
               - Testing and Code Quality: backend/languages/typescript/testing-and-quality.md
               - Production TypeScript Services: backend/languages/typescript/production-typescript-services.md
               - Questions: backend/languages/typescript/questions.md
-          - PHP: backend/languages/php.md
+          - PHP:
+              - Overview: backend/languages/php/index.md
+              - Language Fundamentals: backend/languages/php/language-fundamentals.md
+              - Type System: backend/languages/php/type-system.md
+              - Functions, Closures & Generators: backend/languages/php/functions-closures-and-generators.md
+              - Object-Oriented PHP: backend/languages/php/object-oriented-php.md
+              - Errors & Resource Management: backend/languages/php/errors-and-resource-management.md
+              - Composer & Project Structure: backend/languages/php/composer-and-project-structure.md
+              - Web Runtime & Concurrency: backend/languages/php/web-runtime-and-concurrency.md
+              - Database & Persistence: backend/languages/php/database-and-persistence.md
+              - Security: backend/languages/php/security.md
+              - Testing & Code Quality: backend/languages/php/testing-and-code-quality.md
+              - Performance & Memory: backend/languages/php/performance-and-memory.md
+              - Production PHP Services: backend/languages/php/production-php-services.md
+              - Questions: backend/languages/php/questions.md
           - Python:
               - Overview: backend/languages/python/index.md
               - Language Fundamentals: backend/languages/python/fundamentals.md
